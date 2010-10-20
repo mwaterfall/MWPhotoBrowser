@@ -1,0 +1,24 @@
+# Ignore some Xcode auto-generated files
+build/
+*~.nib/
+
+# Ignore user specific Xcode files
+# As only 1 developer, don't ignore them (breakpoints, env. vars etc)
+#*.perspective
+#*.perspectivev3
+#*.pbxuser
+#*.mode1v3
+#*.mode2v3
+
+# OS X noise
+.DS_Store
+profile
+
+# Backups created by text editors
+*~
+*.bak
+
+# Object/generated files
+*.o
+*.pyc
+*.pyo
