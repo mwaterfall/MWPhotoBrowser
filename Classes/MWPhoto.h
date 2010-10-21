@@ -25,6 +25,7 @@
 	NSURL *photoURL;
 	UIImage *photoImage;
 	
+	// Flags
 	BOOL workingInBackground;
 	
 }

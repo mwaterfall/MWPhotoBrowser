@@ -20,14 +20,14 @@
 		tapView = [[UIViewTap alloc] initWithFrame:frame];
 		tapView.tapDelegate = self;
 		tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		tapView.backgroundColor = [UIColor blueColor];
+		tapView.backgroundColor = [UIColor blackColor];
 		[self addSubview:tapView];
 		
 		// Image view
 		photoImageView = [[UIImageViewTap alloc] initWithFrame:CGRectZero];
 		photoImageView.tapDelegate = self;
 		photoImageView.contentMode = UIViewContentModeCenter;
-		photoImageView.backgroundColor = [UIColor greenColor];
+		photoImageView.backgroundColor = [UIColor blackColor];
 		[self addSubview:photoImageView];
 		
 		// Spinner
@@ -38,11 +38,11 @@
 		[self addSubview:spinner];
 		
 		// Setup
-		self.backgroundColor = [UIColor redColor];
+		self.backgroundColor = [UIColor blackColor];
 		self.delegate = self;
 		self.showsHorizontalScrollIndicator = NO;
 		self.showsVerticalScrollIndicator = NO;
-        //self.decelerationRate = UIScrollViewDecelerationRateFast;
+		self.decelerationRate = UIScrollViewDecelerationRateFast;
 		
 	}
 	return self;
@@ -142,6 +142,9 @@
     // Set
     self.maximumZoomScale = maxScale;
     self.minimumZoomScale = minScale;
+	
+	// Reset position
+	photoImageView.frame = CGRectMake(0, 0, photoImageView.frame.size.width, photoImageView.frame.size.height);
 
 }
 
@@ -149,6 +152,9 @@
 #pragma mark UIView Layout
 
 - (void)layoutSubviews {
+	
+	// Update tap view frame
+	tapView.frame = self.bounds;
 	
 	// Spinner
 	if (!spinner.hidden) spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
@@ -179,37 +185,6 @@
 		photoImageView.frame = frameToCenter;
 	
 }
-
-//-(void)setContentSize:(CGSize)size {
-//	if (self.delegate)
-//	{
-//		UIView *content = [self.delegate viewForZoomingInScrollView:self];
-//		
-//		CGSize newSize = size;
-//		CGSize contentSize = content.frame.size;
-//		
-//		if (newSize.width > contentSize.width)
-//			newSize.width = contentSize.width;
-//		if (newSize.height > contentSize.height)
-//			newSize.height = contentSize.height;
-//		
-//		super.contentSize = newSize;
-//	}
-//	else 
-//		[super setContentSize:size];
-//}
-
-//-(void)setContentOffset:(CGPoint)point {
-//	CGSize scrollSize = self.bounds.size;
-//	if(self.contentSize.width < scrollSize.width) {
-//		point.x = -(scrollSize.width - self.contentSize.width) / 2.0;
-//	}
-//	if(self.contentSize.height < scrollSize.height) {
-//		point.y = -(scrollSize.height - self.contentSize.height) / 2.0;
-//	}
-//	
-//	super.contentOffset = point;
-//}
 
 #pragma mark -
 #pragma mark UIScrollViewDelegate
