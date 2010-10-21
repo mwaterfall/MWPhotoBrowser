@@ -282,8 +282,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
-									<integer>2</integer>
+									<integer>5</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -338,7 +337,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>4C3EAFD6126FC70A00C7CF25</string>
+										<string>4C1C97A31270980E0076418C</string>
 										<key>history</key>
 										<array>
 											<string>4C75D4A3126B7ABF004D0ECF</string>
@@ -355,7 +354,7 @@
 											<string>4C3EAFD1126FC70A00C7CF25</string>
 											<string>4C3EAFD2126FC70A00C7CF25</string>
 											<string>4C3EAFD3126FC70A00C7CF25</string>
-											<string>4C3EAFD4126FC70A00C7CF25</string>
+											<string>4C3EAFD6126FC70A00C7CF25</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -413,9 +412,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4C3EAFAC126FC57800C7CF25</string>
+				<string>4C1C97A01270978C0076418C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4C3EAFAD126FC57800C7CF25</string>
+				<string>4C1C97A11270978C0076418C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -553,11 +552,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>4C3EAFB6126FC57800C7CF25</string>
-		<string>4C3EAFB7126FC57800C7CF25</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>4CC82BC01266793900C05633</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/Michael/My Work/d3i/Projects/MWPhotoBrowser/MWPhotoBrowser.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -638,7 +633,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4CC82BC01266793900C05633</string>
-				<string>4C3EAFAE126FC57800C7CF25</string>
+				<string>4C1C97A21270978C0076418C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
