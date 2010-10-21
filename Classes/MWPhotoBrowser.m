@@ -9,12 +9,14 @@
 #import "MWPhotoBrowser.h"
 #import "ZoomingScrollView.h"
 
-#define PADDING				10
+#define PADDING 10
 
+// Handle depreciations and supress hide warnings
 @interface UIApplication (DepreciationWarningSuppresion)
 - (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated;
 @end
 
+// MWPhotoBrowser
 @implementation MWPhotoBrowser
 
 - (id)initWithPhotos:(NSArray *)photosArray {
@@ -26,7 +28,6 @@
         // Defaults
 		self.wantsFullScreenLayout = YES;
 		currentPageIndex = 0;
-		previousStatusBarStyle = UIStatusBarStyleDefault;
 		
 	}
 	return self;
@@ -55,6 +56,7 @@
 	[pagingScrollView release];
 	[visiblePages release];
 	[recycledPages release];
+	[toolbar release];
 }
 
 - (void)dealloc {
@@ -62,6 +64,7 @@
 	[pagingScrollView release];
 	[visiblePages release];
 	[recycledPages release];
+	[toolbar release];
     [super dealloc];
 }
 
@@ -91,13 +94,19 @@
 	recycledPages = [[NSMutableSet alloc] init];
 	[self tilePages];
 	
-	// Bars
+	// Navigation Bar
+	self.navigationController.navigationBar.tintColor = nil;
 	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-	self.navigationController.toolbar.barStyle = UIBarStyleBlackTranslucent;
+	
+	// Toolbar
+	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
+	toolbar.tintColor = nil;
+	toolbar.barStyle = UIBarStyleBlackTranslucent;
+	[self.view addSubview:toolbar];
 	
 	// Toolbar Items
-	UIBarButtonItem *previousImage = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRewind target:self action:@selector(gotoPreviousPage)];
-	UIBarButtonItem *nextImage = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFastForward target:self action:@selector(gotoNextPage)];
+	UIBarButtonItem *previousImage = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+	UIBarButtonItem *nextImage = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
 	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
 	NSMutableArray *items = [[NSMutableArray alloc] init];
 	[items addObject:space];
@@ -105,7 +114,7 @@
 	[items addObject:space];
 	if (photos.count > 1) [items addObject:nextImage];
 	[items addObject:space];
-	[self setToolbarItems:items];
+	[toolbar setItems:items];
 	[items release];
 	[previousImage release], [nextImage release], [space release];
 
@@ -114,19 +123,16 @@
 	
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
 	
 	// Super
 	[super viewWillAppear:animated];
 	
-	// Set status bar style to black translucent and remember previous
-	previousStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
+	// Layout
+	[self performLayout];
 	
-	// Show Toolbar
-	previousToolbarVisibility = self.navigationController.toolbarHidden;
-	self.navigationController.toolbarHidden = NO;
+	// Set status bar style to black translucent
+	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
 	
 	// Navigation
 	[self updateNavigation];
@@ -143,12 +149,44 @@
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	
-	// Reset Toolbar
-	self.navigationController.toolbarHidden = previousToolbarVisibility;
+}
+
+#pragma mark -
+#pragma mark Layout
+
+// Layout subviews
+- (void)performLayout {
 	
-	// Reset status bar style
-	[[UIApplication sharedApplication] setStatusBarStyle:previousStatusBarStyle animated:YES];
+	// Toolbar
+	toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
 	
+	// Remember index
+	int indexPriorToLayout = currentPageIndex;
+	
+	// Get paging scroll view frame to determine if anything needs changing
+	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
+		
+	// Frame needs changing
+	pagingScrollView.frame = pagingScrollViewFrame;
+	
+	// Recalculate contentSize based on current orientation
+	pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
+	
+	// Adjust frames and configuration of each visible page
+	for (ZoomingScrollView *page in visiblePages) {
+		page.frame = [self frameForPageAtIndex:page.index];
+		[page setMaxMinZoomScalesForCurrentBounds];
+		page.zoomScale = page.minimumZoomScale;
+	}
+	
+	// adjust contentOffset to preserve page location based on values collected prior to location
+	CGFloat pageWidth = pagingScrollView.bounds.size.width;
+	CGFloat newOffset = indexPriorToLayout * pageWidth;
+	pagingScrollView.contentOffset = CGPointMake(newOffset, 0);
+	
+	// Reset page
+	currentPageIndex = indexPriorToLayout;
+
 }
 
 #pragma mark -
@@ -180,19 +218,23 @@
 			
 			// Tell page to display image again
 			ZoomingScrollView *page = [self pageDisplayedAtIndex:index];
-			if (page) {
-				
-				// Display
-				[page displayImage];
-				
-			}
+			if (page) [page displayImage];
 			
 		}
 	}
 }
 
 - (void)photoDidFailToLoad:(MWPhoto *)photo {
-	NSLog(@"MWPhotoBrowser: Photo failed to load in background");
+	int index = [photos indexOfObject:photo];
+	if (index != NSNotFound) {
+		if ([self isDisplayingPageForIndex:index]) {
+			
+			// Tell page it failed
+			ZoomingScrollView *page = [self pageDisplayedAtIndex:index];
+			if (page) [page displayImageFailure];
+			
+		}
+	}
 }
 
 #pragma mark -
@@ -213,7 +255,7 @@
 	for (ZoomingScrollView *page in visiblePages) {
 		if (page.index < firstNeededPageIndex || page.index > lastNeededPageIndex) {
 			[recycledPages addObject:page];
-			NSLog(@"Removed page at index %i", page.index);
+			/*NSLog(@"Removed page at index %i", page.index);*/
 			page.index = NSNotFound; // empty
 			[page removeFromSuperview];
 		}
@@ -231,7 +273,7 @@
 			[self configurePage:page forIndex:index];
 			[visiblePages addObject:page];
 			[pagingScrollView addSubview:page];
-			NSLog(@"Added page at index %i", page.index);
+			/*NSLog(@"Added page at index %i", page.index);*/
 		}
 	}
 	
@@ -285,7 +327,7 @@
 #pragma mark Frame Calculations
 
 - (CGRect)frameForPagingScrollView {
-    CGRect frame = [[UIScreen mainScreen] bounds];
+    CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
     frame.origin.x -= PADDING;
     frame.size.width += (2 * PADDING);
     return frame;
@@ -354,8 +396,11 @@
 - (void)updateNavigation {
 
 	// Title
-	self.title = [NSString stringWithFormat:@"%i of %i", currentPageIndex+1, photos.count];
-	//navigationBar.topItem.title = 
+	if (photos.count > 1) {
+		self.title = [NSString stringWithFormat:@"%i of %i", currentPageIndex+1, photos.count];		
+	} else {
+		self.title = nil;
+	}
 	
 }
 
@@ -410,7 +455,7 @@
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration:0.35];
 	[self.navigationController.navigationBar setAlpha:hidden ? 0 : 1];
-	[self.navigationController.toolbar setAlpha:hidden ? 0 : 1];
+	[toolbar setAlpha:hidden ? 0 : 1];
 	[UIView commitAnimations];
 	
 	// Control hiding timer
@@ -455,21 +500,10 @@
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-
-    // recalculate contentSize based on current orientation
-    pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-    
-    // adjust frames and configuration of each visible page
-    for (ZoomingScrollView *page in visiblePages) {
-        page.frame = [self frameForPageAtIndex:page.index];
-        [page setMaxMinZoomScalesForCurrentBounds];
-		page.zoomScale = page.minimumZoomScale;
-    }
-    
-    // adjust contentOffset to preserve page location based on values collected prior to location
-    CGFloat pageWidth = pagingScrollView.bounds.size.width;
-    CGFloat newOffset = pageIndexBeforeRotation * pageWidth;
-    pagingScrollView.contentOffset = CGPointMake(newOffset, 0);
+	
+	// Perform layout
+	currentPageIndex = pageIndexBeforeRotation;
+	[self performLayout];
 	
 	// Delay control holding
 	[self hideControlsAfterDelay];

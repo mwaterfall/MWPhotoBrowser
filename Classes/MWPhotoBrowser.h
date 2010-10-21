@@ -25,11 +25,8 @@
 	int pageIndexBeforeRotation;
 	
 	// Navigation & controls
+	UIToolbar *toolbar;
 	NSTimer *controlVisibilityTimer;
-	
-	// Misc
-	UIStatusBarStyle previousStatusBarStyle;
-	BOOL previousToolbarVisibility;
 
 }
 
@@ -38,6 +35,9 @@
 
 // Photos
 - (UIImage *)imageAtIndex:(int)index;
+
+// Layout
+- (void)performLayout;
 
 // Paging
 - (void)tilePages;

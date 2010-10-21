@@ -116,6 +116,11 @@
 	}
 }
 
+// Image failed so just show black!
+- (void)displayImageFailure {
+	[spinner stopAnimating];
+}
+
 #pragma mark -
 #pragma mark Setup Content
 

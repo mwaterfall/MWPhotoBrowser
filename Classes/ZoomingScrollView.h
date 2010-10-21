@@ -33,6 +33,7 @@
 
 // Methods
 - (void)displayImage;
+- (void)displayImageFailure;
 - (void)setMaxMinZoomScalesForCurrentBounds;
 - (void)handleSingleTap:(CGPoint)touchPoint;
 - (void)handleDoubleTap:(CGPoint)touchPoint;
