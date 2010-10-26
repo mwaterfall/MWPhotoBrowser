@@ -77,10 +77,12 @@
 
 // Get and display image
 - (void)displayImage {
-	if (index != NSNotFound) {
+	if (index != NSNotFound && photoImageView.image == nil) {
 		
 		// Reset
-		self.zoomScale = 1; // Reset zoom scale to 1
+		self.maximumZoomScale = 1;
+		self.minimumZoomScale = 1;
+		self.zoomScale = 1;
 		self.contentSize = CGSizeMake(0, 0);
 		
 		// Get image
@@ -103,7 +105,6 @@
 
 			// Set zoom to minimum zoom
 			[self setMaxMinZoomScalesForCurrentBounds];
-			self.zoomScale = self.minimumZoomScale;
 			
 		} else {
 			
@@ -114,6 +115,7 @@
 		}
 		
 	}
+	[self setNeedsLayout];
 }
 
 // Image failed so just show black!
@@ -126,9 +128,17 @@
 
 - (void)setMaxMinZoomScalesForCurrentBounds {
 	
+	// Reset
+	self.maximumZoomScale = 1;
+	self.minimumZoomScale = 1;
+	self.zoomScale = 1;
+	
+	// Bail
+	if (photoImageView.image == nil) return;
+	
 	// Sizes
     CGSize boundsSize = self.bounds.size;
-    CGSize imageSize = photoImageView.bounds.size;
+    CGSize imageSize = photoImageView.frame.size;
     
     // Calculate Min
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
@@ -136,17 +146,21 @@
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
     
 	// Calculate Max
-	CGFloat maxScale = 1.0;
+	CGFloat maxScale = 2.0; // Allow double scale
     // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
     // maximum zoom scale to 0.5.
-	//if ([UIScreen instancesRespondToSelector:@selector(scale)]) maxScale = 1.0 / [[UIScreen mainScreen] scale];
-    
-    // Don't let minScale exceed maxScale. (If the image is smaller than the screen, we don't want to force it to be zoomed.) 
-    if (minScale > maxScale) minScale = maxScale;
-
-    // Set
-    self.maximumZoomScale = maxScale;
-    self.minimumZoomScale = minScale;
+	//if ([UIScreen instancesRespondToSelector:@selector(scale)]) maxScale = maxScale / [[UIScreen mainScreen] scale];
+	
+	// If image is smaller than the screen then ensure we show it at
+	// min scale of 1
+	if (xScale > 1 && yScale > 1) {
+		minScale = 1.0;
+	}
+	
+	// Set
+	self.maximumZoomScale = maxScale;
+	self.minimumZoomScale = minScale;
+	self.zoomScale = minScale;
 	
 	// Reset position
 	photoImageView.frame = CGRectMake(0, 0, photoImageView.frame.size.width, photoImageView.frame.size.height);

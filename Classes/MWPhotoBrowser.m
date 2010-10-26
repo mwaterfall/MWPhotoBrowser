@@ -28,6 +28,8 @@
         // Defaults
 		self.wantsFullScreenLayout = YES;
 		currentPageIndex = 0;
+		performingLayout = NO;
+		rotating = NO;
 		
 	}
 	return self;
@@ -57,6 +59,8 @@
 	[visiblePages release];
 	[recycledPages release];
 	[toolbar release];
+	[previousButton release];
+	[nextButton release];
 }
 
 - (void)dealloc {
@@ -65,6 +69,8 @@
 	[visiblePages release];
 	[recycledPages release];
 	[toolbar release];
+	[previousButton release];
+	[nextButton release];
     [super dealloc];
 }
 
@@ -87,6 +93,7 @@
 	pagingScrollView.showsVerticalScrollIndicator = NO;
 	pagingScrollView.backgroundColor = [UIColor blackColor];
     pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
+	pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:currentPageIndex];
 	[self.view addSubview:pagingScrollView];
 	
 	// Setup pages
@@ -105,18 +112,18 @@
 	[self.view addSubview:toolbar];
 	
 	// Toolbar Items
-	UIBarButtonItem *previousImage = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
-	UIBarButtonItem *nextImage = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+	previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+	nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
 	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
 	NSMutableArray *items = [[NSMutableArray alloc] init];
 	[items addObject:space];
-	if (photos.count > 1) [items addObject:previousImage];
+	if (photos.count > 1) [items addObject:previousButton];
 	[items addObject:space];
-	if (photos.count > 1) [items addObject:nextImage];
+	if (photos.count > 1) [items addObject:nextButton];
 	[items addObject:space];
 	[toolbar setItems:items];
 	[items release];
-	[previousImage release], [nextImage release], [space release];
+	[space release];
 
 	// Super
     [super viewDidLoad];
@@ -157,6 +164,9 @@
 // Layout subviews
 - (void)performLayout {
 	
+	// Flag
+	performingLayout = YES;
+	
 	// Toolbar
 	toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
 	
@@ -176,16 +186,14 @@
 	for (ZoomingScrollView *page in visiblePages) {
 		page.frame = [self frameForPageAtIndex:page.index];
 		[page setMaxMinZoomScalesForCurrentBounds];
-		page.zoomScale = page.minimumZoomScale;
 	}
 	
-	// adjust contentOffset to preserve page location based on values collected prior to location
-	CGFloat pageWidth = pagingScrollView.bounds.size.width;
-	CGFloat newOffset = indexPriorToLayout * pageWidth;
-	pagingScrollView.contentOffset = CGPointMake(newOffset, 0);
+	// Adjust contentOffset to preserve page location based on values collected prior to location
+	pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:indexPriorToLayout];
 	
-	// Reset page
+	// Reset
 	currentPageIndex = indexPriorToLayout;
+	performingLayout = NO;
 
 }
 
@@ -351,6 +359,12 @@
     return CGSizeMake(bounds.size.width * photos.count, bounds.size.height);
 }
 
+- (CGPoint)contentOffsetForPageAtIndex:(int)index {
+	CGFloat pageWidth = pagingScrollView.bounds.size.width;
+	CGFloat newOffset = index * pageWidth;
+	return CGPointMake(newOffset, 0);
+}
+
 - (CGRect)frameForNavigationBarAtOrientation:(UIInterfaceOrientation)orientation {
 	CGFloat height = UIInterfaceOrientationIsPortrait(orientation) ? 44 : 32;
 	return CGRectMake(0, 20, self.view.bounds.size.width, height);
@@ -365,6 +379,8 @@
 #pragma mark UIScrollView Delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+	
+	if (performingLayout || rotating) return;
 	
 	// Tile pages
 	[self tilePages];
@@ -401,6 +417,10 @@
 	} else {
 		self.title = nil;
 	}
+	
+	// Buttons
+	previousButton.enabled = (currentPageIndex > 0);
+	nextButton.enabled = (currentPageIndex < photos.count-1);
 	
 }
 
@@ -496,6 +516,7 @@
 
 	// Remember page index before rotation
 	pageIndexBeforeRotation = currentPageIndex;
+	rotating = YES;
 	
 }
 
@@ -508,6 +529,23 @@
 	// Delay control holding
 	[self hideControlsAfterDelay];
 	
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+	rotating = NO;
+}
+
+#pragma mark -
+#pragma mark Properties
+
+- (void)setInitialPageIndex:(int)index {
+	if (![self isViewLoaded]) {
+		if (index < 0 || index >= photos.count) {
+			currentPageIndex = 0;
+		} else {
+			currentPageIndex = index;
+		}
+	}
 }
 
 @end

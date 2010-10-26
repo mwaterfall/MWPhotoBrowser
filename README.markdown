@@ -21,6 +21,12 @@ See the code snippet below for an example of how to implement the photo browser.
     MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
     [self.navigationController pushViewController:browser animated:YES];
 
+If desired, you can choose which photo is displayed first:
+
+    // Create & present browser
+    MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
+    [browser setInitialPageIndex:2]; // Show second page first
+    [self.navigationController pushViewController:browser animated:YES];
 
 
 ## Adding to your project

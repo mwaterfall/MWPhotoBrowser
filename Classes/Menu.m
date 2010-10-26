@@ -99,6 +99,7 @@
 	
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
+	// [browser setInitialPageIndex:1]; Can be changed if desired
 	[self.navigationController pushViewController:browser animated:YES];
 	[browser release];
 	[photos release];

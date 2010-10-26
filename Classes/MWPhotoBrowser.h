@@ -27,7 +27,11 @@
 	// Navigation & controls
 	UIToolbar *toolbar;
 	NSTimer *controlVisibilityTimer;
+	UIBarButtonItem *previousButton, *nextButton;
 
+	BOOL performingLayout;
+	BOOL rotating;
+	
 }
 
 // Init
@@ -51,6 +55,7 @@
 - (CGRect)frameForPagingScrollView;
 - (CGRect)frameForPageAtIndex:(NSUInteger)index;
 - (CGSize)contentSizeForPagingScrollView;
+- (CGPoint)contentOffsetForPageAtIndex:(int)index;
 - (CGRect)frameForNavigationBarAtOrientation:(UIInterfaceOrientation)orientation;
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation;
 
@@ -65,6 +70,9 @@
 - (void)hideControlsAfterDelay;
 - (void)setControlsHidden:(BOOL)hidden;
 - (void)toggleControls;
+
+// Properties
+- (void)setInitialPageIndex:(int)index;
 
 @end
 

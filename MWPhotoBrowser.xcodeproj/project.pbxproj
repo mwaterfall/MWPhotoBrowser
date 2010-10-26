@@ -14,6 +14,7 @@
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* MWPhotoBrowser.m */; };
+		4C4156C61277301E00C96767 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C4156C51277301E00C96767 /* MainWindow-iPad.xib */; };
 		4C48EFCD126F8DD900F85546 /* UIImage+Decompress.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C48EFCC126F8DD900F85546 /* UIImage+Decompress.m */; };
 		4C48EFD2126F90B100F85546 /* UIViewTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C48EFD1126F90B100F85546 /* UIViewTap.m */; };
 		4C667B2D1270AFCE0008B630 /* Menu.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C667B2C1270AFCE0008B630 /* Menu.m */; };
@@ -46,6 +47,7 @@
 		28D7ACF70DDB3853001CB0EB /* MWPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPhotoBrowser.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* MWPhotoBrowser_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhotoBrowser_Prefix.pch; sourceTree = "<group>"; };
+		4C4156C51277301E00C96767 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Resources-iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		4C48EFCB126F8DD900F85546 /* UIImage+Decompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Decompress.h"; sourceTree = "<group>"; };
 		4C48EFCC126F8DD900F85546 /* UIImage+Decompress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Decompress.m"; sourceTree = "<group>"; };
 		4C48EFD0126F90B100F85546 /* UIViewTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewTap.h; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				4C667CB31270D0E50008B630 /* Photos */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				4C4156C41277301D00C96767 /* Resources-iPad */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -149,6 +152,14 @@
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C4156C41277301D00C96767 /* Resources-iPad */ = {
+			isa = PBXGroup;
+			children = (
+				4C4156C51277301E00C96767 /* MainWindow-iPad.xib */,
+			);
+			name = "Resources-iPad";
 			sourceTree = "<group>";
 		};
 		4C48EFD3126F90C600F85546 /* Categories */ = {
@@ -273,6 +284,7 @@
 				4C667C461270C6A50008B630 /* UIBarButtonItemArrowLeft@2x.png in Resources */,
 				4C667C471270C6A50008B630 /* UIBarButtonItemArrowRight.png in Resources */,
 				4C667C481270C6A50008B630 /* UIBarButtonItemArrowRight@2x.png in Resources */,
+				4C4156C61277301E00C96767 /* MainWindow-iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -310,6 +323,8 @@
 				INFOPLIST_FILE = "MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PRODUCT_NAME = MWPhotoBrowser;
+				SDKROOT = iphoneos4.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -317,12 +332,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MWPhotoBrowser_Prefix.pch;
 				INFOPLIST_FILE = "MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PRODUCT_NAME = MWPhotoBrowser;
+				SDKROOT = iphoneos4.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
