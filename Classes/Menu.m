@@ -75,7 +75,7 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+	
 	// Browser
 	NSMutableArray *photos = [[NSMutableArray alloc] init];
 	switch (indexPath.row) {
@@ -99,7 +99,7 @@
 	
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
-	// [browser setInitialPageIndex:1]; Can be changed if desired
+	//[browser setInitialPageIndex:0]; // Can be changed if desired
 	[self.navigationController pushViewController:browser animated:YES];
 	[browser release];
 	[photos release];
@@ -107,6 +107,10 @@
 	// Deselect
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
+}
+
+- (void)done {
+	[self dismissModalViewControllerAnimated:YES];
 }
 
 @end

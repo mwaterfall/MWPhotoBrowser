@@ -113,9 +113,8 @@
 			[spinner startAnimating];
 			
 		}
-		
+		[self setNeedsLayout];
 	}
-	[self setNeedsLayout];
 }
 
 // Image failed so just show black!
@@ -144,17 +143,19 @@
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
     CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
-    
-	// Calculate Max
-	CGFloat maxScale = 2.0; // Allow double scale
-    // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
-    // maximum zoom scale to 0.5.
-	//if ([UIScreen instancesRespondToSelector:@selector(scale)]) maxScale = maxScale / [[UIScreen mainScreen] scale];
 	
 	// If image is smaller than the screen then ensure we show it at
 	// min scale of 1
 	if (xScale > 1 && yScale > 1) {
 		minScale = 1.0;
+	}
+    
+	// Calculate Max
+	CGFloat maxScale = 2.0; // Allow double scale
+    // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
+    // maximum zoom scale to 0.5.
+	if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
+		maxScale = maxScale / [[UIScreen mainScreen] scale];
 	}
 	
 	// Set
@@ -164,6 +165,7 @@
 	
 	// Reset position
 	photoImageView.frame = CGRectMake(0, 0, photoImageView.frame.size.width, photoImageView.frame.size.height);
+	[self setNeedsLayout];
 
 }
 
