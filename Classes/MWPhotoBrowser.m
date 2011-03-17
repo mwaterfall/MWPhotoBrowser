@@ -105,25 +105,29 @@
 	self.navigationController.navigationBar.tintColor = nil;
 	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
-	// Toolbar
-	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-	toolbar.tintColor = nil;
-	toolbar.barStyle = UIBarStyleBlackTranslucent;
-	[self.view addSubview:toolbar];
+	if (photos.count > 1) {
+		
+		// Toolbar
+		toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
+		toolbar.tintColor = nil;
+		toolbar.barStyle = UIBarStyleBlackTranslucent;
+		[self.view addSubview:toolbar];
 	
-	// Toolbar Items
-	previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
-	nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
-	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-	NSMutableArray *items = [[NSMutableArray alloc] init];
-	[items addObject:space];
-	if (photos.count > 1) [items addObject:previousButton];
-	[items addObject:space];
-	if (photos.count > 1) [items addObject:nextButton];
-	[items addObject:space];
-	[toolbar setItems:items];
-	[items release];
-	[space release];
+		// Toolbar Items
+		previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+		nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+		UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+		NSMutableArray *items = [[NSMutableArray alloc] init];
+		[items addObject:space];
+		if (photos.count > 1) [items addObject:previousButton];
+		[items addObject:space];
+		if (photos.count > 1) [items addObject:nextButton];
+		[items addObject:space];
+		[toolbar setItems:items];
+		[items release];
+		[space release];
+
+	}
 
 	// Super
     [super viewDidLoad];
