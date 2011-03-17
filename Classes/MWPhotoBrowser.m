@@ -201,8 +201,8 @@
 #pragma mark Photos
 
 // Get image if it has been loaded, otherwise nil
-- (UIImage *)imageAtIndex:(int)index {
-	if (photos && (index >= 0 && index < photos.count)) {
+- (UIImage *)imageAtIndex:(NSUInteger)index {
+	if (photos && index < photos.count) {
 
 		// Get image or obtain in background
 		MWPhoto *photo = [photos objectAtIndex:index];
@@ -254,9 +254,8 @@
 	// Ignore padding as paging bounces encroach on that
 	// and lead to false page loads
 	CGRect visibleBounds = pagingScrollView.bounds;
-	int firstNeededPageIndex = floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	int lastNeededPageIndex  = floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
-	firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
+	NSUInteger firstNeededPageIndex = MAX(0, floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds))   );
+	NSUInteger lastNeededPageIndex  = MAX(0, floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds)) );
 	lastNeededPageIndex  = MIN(lastNeededPageIndex, photos.count-1);
 	
 	// Recycle no longer needed pages
@@ -271,7 +270,7 @@
 	[visiblePages minusSet:recycledPages];
 	
 	// Add missing pages
-	for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
+	for (NSUInteger index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
 		if (![self isDisplayingPageForIndex:index]) {
 			ZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
@@ -287,13 +286,13 @@
 	
 }
 
-- (BOOL)isDisplayingPageForIndex:(int)index {
+- (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
 	for (ZoomingScrollView *page in visiblePages)
 		if (page.index == index) return YES;
 	return NO;
 }
 
-- (ZoomingScrollView *)pageDisplayedAtIndex:(int)index {
+- (ZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index {
 	ZoomingScrollView *thePage = nil;
 	for (ZoomingScrollView *page in visiblePages) {
 		if (page.index == index) {
@@ -303,7 +302,7 @@
 	return thePage;
 }
 
-- (void)configurePage:(ZoomingScrollView *)page forIndex:(int)index {
+- (void)configurePage:(ZoomingScrollView *)page forIndex:(NSUInteger)index {
 	page.frame = [self frameForPageAtIndex:index];
 	page.index = index;
 }
@@ -318,17 +317,26 @@
 }
 
 // Handle page changes
-- (void)didStartViewingPageAtIndex:(int)index {
+- (void)didStartViewingPageAtIndex:(NSUInteger)index {
 	
-	// Release images further away than +1/-1
-	int i;
-	for (i = 0;       i < index-1;      i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	for (i = index+2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+	NSUInteger photoCount = photos.count;
+	NSUInteger oneOffImageIndex = 0;
+
+	if (index >= 1) {
+		// Release images further away than +1/-1
+		oneOffImageIndex = index - 1;
+		for (NSUInteger i = 0; i < oneOffImageIndex; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+		// Preload the nearest
+		[(MWPhoto *)[photos objectAtIndex:oneOffImageIndex] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/
+	}
 	
-	// Preload next & previous images
-	i = index - 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	i = index + 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	
+	if (index + 1 < photoCount) {
+		oneOffImageIndex = index + 1;
+		// Release images further away than +1/-1
+		for (NSUInteger i = oneOffImageIndex+1; i < photoCount; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+		// Preload the nearest
+		[(MWPhoto *)[photos objectAtIndex:oneOffImageIndex] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ 
+	}	
 }
 
 #pragma mark -
@@ -359,7 +367,7 @@
     return CGSizeMake(bounds.size.width * photos.count, bounds.size.height);
 }
 
-- (CGPoint)contentOffsetForPageAtIndex:(int)index {
+- (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
 	CGFloat pageWidth = pagingScrollView.bounds.size.width;
 	CGFloat newOffset = index * pageWidth;
 	return CGPointMake(newOffset, 0);
@@ -388,9 +396,9 @@
 	// Calculate current page
 	CGRect visibleBounds = pagingScrollView.bounds;
 	int index = floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds));
-	if (index < 0) index = 0;
-	if (index > photos.count-1) photos.count-1;
-	int previousCurrentPage = currentPageIndex;
+	index = MAX(0, index);
+	index = MIN(index, ((NSInteger)photos.count - 1));
+	NSUInteger previousCurrentPage = currentPageIndex;
 	currentPageIndex = index;
 	if (currentPageIndex != previousCurrentPage) [self didStartViewingPageAtIndex:index];
 	
@@ -424,10 +432,10 @@
 	
 }
 
-- (void)jumpToPageAtIndex:(int)index {
+- (void)jumpToPageAtIndex:(NSUInteger)index {
 	
 	// Change page
-	if (index >= 0 && index < photos.count) {
+	if (index < photos.count) {
 		CGRect pageFrame = [self frameForPageAtIndex:index];
 		pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - PADDING, 0);
 		[self updateNavigation];
@@ -538,9 +546,9 @@
 #pragma mark -
 #pragma mark Properties
 
-- (void)setInitialPageIndex:(int)index {
+- (void)setInitialPageIndex:(NSUInteger)index {
 	if (![self isViewLoaded]) {
-		if (index < 0 || index >= photos.count) {
+		if (index >= photos.count) {
 			currentPageIndex = 0;
 		} else {
 			currentPageIndex = index;
