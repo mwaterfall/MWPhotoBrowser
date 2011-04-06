@@ -72,6 +72,7 @@
 	[toolbar release];
 	[previousButton release];
 	[nextButton release];
+	[previousNavigationBarTintColor release];
     [super dealloc];
 }
 
@@ -101,10 +102,6 @@
 	visiblePages = [[NSMutableSet alloc] init];
 	recycledPages = [[NSMutableSet alloc] init];
 	[self tilePages];
-	
-	// Navigation Bar
-	self.navigationController.navigationBar.tintColor = nil;
-	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
 	// Toolbar
 	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
@@ -140,7 +137,16 @@
 	[self performLayout];
 	
 	// Set status bar style to black translucent
+	previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+	previousStatusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
 	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
+	
+	// Navigation Bar
+	[previousNavigationBarTintColor release];
+	previousNavigationBarTintColor = [self.navigationController.navigationBar.tintColor retain];
+	previousNavigationBarStyle = self.navigationController.navigationBar.barStyle;
+	self.navigationController.navigationBar.tintColor = nil;
+	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
 	// Navigation
 	[self updateNavigation];
@@ -157,6 +163,11 @@
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	
+	[[UIApplication sharedApplication] setStatusBarStyle:previousStatusBarStyle];
+	[[UIApplication sharedApplication] setStatusBarHidden:previousStatusBarHidden];
+	
+	self.navigationController.navigationBar.tintColor = previousNavigationBarTintColor;
+	self.navigationController.navigationBar.barStyle = previousNavigationBarStyle;
 }
 
 #pragma mark -
