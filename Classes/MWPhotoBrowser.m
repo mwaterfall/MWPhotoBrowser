@@ -27,6 +27,7 @@
 		
         // Defaults
 		self.wantsFullScreenLayout = YES;
+		self.hidesBottomBarWhenPushed = YES;
 		currentPageIndex = 0;
 		performingLayout = NO;
 		rotating = NO;
