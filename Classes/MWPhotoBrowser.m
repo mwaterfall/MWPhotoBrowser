@@ -107,6 +107,7 @@
 	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
 	toolbar.tintColor = nil;
 	toolbar.barStyle = UIBarStyleBlackTranslucent;
+	toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:toolbar];
 	
 	// Toolbar Items
