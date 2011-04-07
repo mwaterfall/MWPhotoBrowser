@@ -218,7 +218,7 @@
 	if (photos && (index >= 0 && index < photos.count)) {
 
 		// Get image or obtain in background
-		MWPhoto *photo = [photos objectAtIndex:index];
+		id<MWPhoto> photo = [photos objectAtIndex:index];
 		if ([photo isImageAvailable]) {
 			return [photo image];
 		} else {
@@ -232,7 +232,7 @@
 #pragma mark -
 #pragma mark MWPhotoDelegate
 
-- (void)photoDidFinishLoading:(MWPhoto *)photo {
+- (void)photoDidFinishLoading:(id<MWPhoto>)photo {
 	int index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
@@ -245,7 +245,7 @@
 	}
 }
 
-- (void)photoDidFailToLoad:(MWPhoto *)photo {
+- (void)photoDidFailToLoad:(id<MWPhoto>)photo {
 	int index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
@@ -335,12 +335,12 @@
 	
 	// Release images further away than +1/-1
 	int i;
-	for (i = 0;       i < index-1;      i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	for (i = index+2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+	for (i = 0;       i < index-1;      i++) { [(id<MWPhoto>)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+	for (i = index+2; i < photos.count; i++) { [(id<MWPhoto>)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
 	
 	// Preload next & previous images
-	i = index - 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	i = index + 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+	i = index - 1; if (i >= 0 && i < photos.count) { [(id<MWPhoto>)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+	i = index + 1; if (i >= 0 && i < photos.count) { [(id<MWPhoto>)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
 	
 }
 
