@@ -17,12 +17,12 @@
 - (void)photoDidFailToLoad:(id<MWPhoto>)photo;
 @end
 
-@protocol MWPhoto
+@protocol MWPhoto <NSObject>
 - (BOOL)isImageAvailable;
 - (UIImage *)image;
-- (UIImage *)obtainImage;
 - (void)obtainImageInBackgroundAndNotify:(id<MWPhotoDelegate>)notifyDelegate;
-- (void)releasePhoto;
+@optional
+- (void)releasePhoto; // Advise model it is not onscreen
 @end
 
 // MWPhoto

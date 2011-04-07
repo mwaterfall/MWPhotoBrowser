@@ -44,7 +44,11 @@
 	// Release any cached data, images, etc that aren't in use.
 	
 	// Release images
-	[photos makeObjectsPerformSelector:@selector(releasePhoto)];
+	for (id<MWPhoto> photo in photos) {
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
 	[recycledPages removeAllObjects];
 	NSLog(@"didReceiveMemoryWarning");
 	
@@ -335,8 +339,18 @@
 	
 	// Release images further away than +1/-1
 	int i;
-	for (i = 0;       i < index-1;      i++) { [(id<MWPhoto>)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	for (i = index+2; i < photos.count; i++) { [(id<MWPhoto>)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+	for (i = 0;       i < index-1;      i++) {
+		id<MWPhoto> photo = [photos objectAtIndex:i];
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
+	for (i = index+2; i < photos.count; i++) {
+		id<MWPhoto> photo = [photos objectAtIndex:i];
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
 	
 	// Preload next & previous images
 	i = index - 1; if (i >= 0 && i < photos.count) { [(id<MWPhoto>)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
