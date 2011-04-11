@@ -60,12 +60,12 @@
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
 	currentPageIndex = 0;
-	[pagingScrollView release];
-	[visiblePages release];
-	[recycledPages release];
-	[toolbar release];
-	[previousButton release];
-	[nextButton release];
+	[pagingScrollView release], pagingScrollView = nil;
+	[visiblePages release], visiblePages = nil;
+	[recycledPages release], recycledPages = nil;
+	[toolbar release], toolbar = nil;
+	[previousButton release], previousButton = nil;
+	[nextButton release], nextButton = nil;
 }
 
 - (void)dealloc {
