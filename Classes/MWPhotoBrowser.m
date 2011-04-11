@@ -322,6 +322,7 @@
 
 - (void)configurePage:(ZoomingScrollView *)page forIndex:(int)index {
 	page.frame = [self frameForPageAtIndex:index];
+    page.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin;
 	page.index = index;
 }
 										  
