@@ -55,7 +55,7 @@
 	[super dealloc];
 }
 
-- (void)setIndex:(int)value {
+- (void)setIndex:(NSUInteger)value {
 	if (value == NSNotFound) {
 		
 		// Release image
