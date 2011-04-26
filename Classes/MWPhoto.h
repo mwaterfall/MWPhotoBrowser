@@ -8,17 +8,25 @@
 
 #import <Foundation/Foundation.h>
 
-// Class
-@class MWPhoto;
+// Protocol
+@protocol MWPhoto;
 
 // Delegate
 @protocol MWPhotoDelegate <NSObject>
-- (void)photoDidFinishLoading:(MWPhoto *)photo;
-- (void)photoDidFailToLoad:(MWPhoto *)photo;
+- (void)photoDidFinishLoading:(id<MWPhoto>)photo;
+- (void)photoDidFailToLoad:(id<MWPhoto>)photo;
+@end
+
+@protocol MWPhoto <NSObject>
+- (BOOL)isImageAvailable;
+- (UIImage *)image;
+- (void)obtainImageInBackgroundAndNotify:(id<MWPhotoDelegate>)notifyDelegate;
+@optional
+- (void)releasePhoto; // Advise model it is not onscreen
 @end
 
 // MWPhoto
-@interface MWPhoto : NSObject {
+@interface MWPhoto : NSObject <MWPhoto> {
 	
 	// Image
 	NSString *photoPath;
@@ -39,12 +47,5 @@
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithFilePath:(NSString *)path;
 - (id)initWithURL:(NSURL *)url;
-
-// Public methods
-- (BOOL)isImageAvailable;
-- (UIImage *)image;
-- (UIImage *)obtainImage;
-- (void)obtainImageInBackgroundAndNotify:(id <MWPhotoDelegate>)notifyDelegate;
-- (void)releasePhoto;
 
 @end

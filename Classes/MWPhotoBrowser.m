@@ -27,6 +27,7 @@
 		
         // Defaults
 		self.wantsFullScreenLayout = YES;
+		self.hidesBottomBarWhenPushed = YES;
 		currentPageIndex = 0;
 		performingLayout = NO;
 		rotating = NO;
@@ -43,7 +44,11 @@
 	// Release any cached data, images, etc that aren't in use.
 	
 	// Release images
-	[photos makeObjectsPerformSelector:@selector(releasePhoto)];
+	for (id<MWPhoto> photo in photos) {
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
 	[recycledPages removeAllObjects];
 	NSLog(@"didReceiveMemoryWarning");
 	
@@ -55,12 +60,12 @@
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
 	currentPageIndex = 0;
-	[pagingScrollView release];
-	[visiblePages release];
-	[recycledPages release];
-	[toolbar release];
-	[previousButton release];
-	[nextButton release];
+	[pagingScrollView release], pagingScrollView = nil;
+	[visiblePages release], visiblePages = nil;
+	[recycledPages release], recycledPages = nil;
+	[toolbar release], toolbar = nil;
+	[previousButton release], previousButton = nil;
+	[nextButton release], nextButton = nil;
 }
 
 - (void)dealloc {
@@ -71,6 +76,7 @@
 	[toolbar release];
 	[previousButton release];
 	[nextButton release];
+	[previousNavigationBarTintColor release];
     [super dealloc];
 }
 
@@ -101,14 +107,11 @@
 	recycledPages = [[NSMutableSet alloc] init];
 	[self tilePages];
 	
-	// Navigation Bar
-	self.navigationController.navigationBar.tintColor = nil;
-	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-	
 	// Toolbar
 	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
 	toolbar.tintColor = nil;
 	toolbar.barStyle = UIBarStyleBlackTranslucent;
+	toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 	[self.view addSubview:toolbar];
 	
 	// Toolbar Items
@@ -139,7 +142,16 @@
 	[self performLayout];
 	
 	// Set status bar style to black translucent
+	previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+	previousStatusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
 	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
+	
+	// Navigation Bar
+	[previousNavigationBarTintColor release];
+	previousNavigationBarTintColor = [self.navigationController.navigationBar.tintColor retain];
+	previousNavigationBarStyle = self.navigationController.navigationBar.barStyle;
+	self.navigationController.navigationBar.tintColor = nil;
+	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
 	// Navigation
 	[self updateNavigation];
@@ -156,6 +168,11 @@
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	
+	[[UIApplication sharedApplication] setStatusBarStyle:previousStatusBarStyle];
+	[[UIApplication sharedApplication] setStatusBarHidden:previousStatusBarHidden];
+	
+	self.navigationController.navigationBar.tintColor = previousNavigationBarTintColor;
+	self.navigationController.navigationBar.barStyle = previousNavigationBarStyle;
 }
 
 #pragma mark -
@@ -205,7 +222,7 @@
 	if (photos && (index >= 0 && index < photos.count)) {
 
 		// Get image or obtain in background
-		MWPhoto *photo = [photos objectAtIndex:index];
+		id<MWPhoto> photo = [photos objectAtIndex:index];
 		if ([photo isImageAvailable]) {
 			return [photo image];
 		} else {
@@ -219,7 +236,7 @@
 #pragma mark -
 #pragma mark MWPhotoDelegate
 
-- (void)photoDidFinishLoading:(MWPhoto *)photo {
+- (void)photoDidFinishLoading:(id<MWPhoto>)photo {
 	int index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
@@ -232,7 +249,7 @@
 	}
 }
 
-- (void)photoDidFailToLoad:(MWPhoto *)photo {
+- (void)photoDidFailToLoad:(id<MWPhoto>)photo {
 	int index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
@@ -305,6 +322,7 @@
 
 - (void)configurePage:(ZoomingScrollView *)page forIndex:(int)index {
 	page.frame = [self frameForPageAtIndex:index];
+    page.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin;
 	page.index = index;
 }
 										  
@@ -322,12 +340,22 @@
 	
 	// Release images further away than +1/-1
 	int i;
-	for (i = 0;       i < index-1;      i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	for (i = index+2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+	for (i = 0;       i < index-1;      i++) {
+		id<MWPhoto> photo = [photos objectAtIndex:i];
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
+	for (i = index+2; i < photos.count; i++) {
+		id<MWPhoto> photo = [photos objectAtIndex:i];
+		if ([photo respondsToSelector:@selector(releasePhoto)]) {
+			[photo releasePhoto];
+		}
+	}
 	
 	// Preload next & previous images
-	i = index - 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	i = index + 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+	i = index - 1; if (i >= 0 && i < photos.count) { [(id<MWPhoto>)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+	i = index + 1; if (i >= 0 && i < photos.count) { [(id<MWPhoto>)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
 	
 }
 

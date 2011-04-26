@@ -29,6 +29,11 @@
 	NSTimer *controlVisibilityTimer;
 	UIBarButtonItem *previousButton, *nextButton;
 
+	UIColor *previousNavigationBarTintColor;
+	UIBarStyle previousNavigationBarStyle;
+	UIStatusBarStyle previousStatusBarStyle;
+	BOOL previousStatusBarHidden;
+
 	BOOL performingLayout;
 	BOOL rotating;
 	
