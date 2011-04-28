@@ -27,6 +27,7 @@
 		
         // Defaults
 		self.wantsFullScreenLayout = YES;
+        self.hidesBottomBarWhenPushed = YES;
 		currentPageIndex = 0;
 		performingLayout = NO;
 		rotating = NO;
@@ -55,12 +56,12 @@
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
 	currentPageIndex = 0;
-	[pagingScrollView release];
-	[visiblePages release];
-	[recycledPages release];
-	[toolbar release];
-	[previousButton release];
-	[nextButton release];
+    [pagingScrollView release], pagingScrollView = nil;
+    [visiblePages release], visiblePages = nil;
+    [recycledPages release], recycledPages = nil;
+    [toolbar release], toolbar = nil;
+    [previousButton release], previousButton = nil;
+    [nextButton release], nextButton = nil;
 }
 
 - (void)dealloc {
@@ -100,10 +101,10 @@
 	visiblePages = [[NSMutableSet alloc] init];
 	recycledPages = [[NSMutableSet alloc] init];
 	[self tilePages];
-	
-	// Navigation Bar
-	self.navigationController.navigationBar.tintColor = nil;
-	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    
+    // Navigation bar
+    self.navigationController.navigationBar.tintColor = nil;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
     // Only show toolbar if there's more that 1 photo
     if (photos.count > 1) {
@@ -112,6 +113,7 @@
         toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
         toolbar.tintColor = nil;
         toolbar.barStyle = UIBarStyleBlackTranslucent;
+        toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
         [self.view addSubview:toolbar];
         
         // Toolbar Items
@@ -136,16 +138,16 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-	
+
 	// Super
 	[super viewWillAppear:animated];
 	
 	// Layout
 	[self performLayout];
-	
-	// Set status bar style to black translucent
+    
+    // Set status bar style to black translucent
 	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
-	
+    	
 	// Navigation
 	[self updateNavigation];
 	[self hideControlsAfterDelay];
@@ -157,7 +159,7 @@
 	
 	// Super
 	[super viewWillDisappear:animated];
-	
+
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	

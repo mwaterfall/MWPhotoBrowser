@@ -24,6 +24,11 @@
 #pragma mark -
 #pragma mark View lifecycle
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+}
+
 - (void)viewWillAppear:(BOOL)animated {
 
 	// Super
@@ -80,7 +85,7 @@
 	NSMutableArray *photos = [[NSMutableArray alloc] init];
 	switch (indexPath.row) {
 		case 0: 
-			//[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
+			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
 			break;
 		case 1: 
 			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]]];

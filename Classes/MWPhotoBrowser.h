@@ -29,6 +29,7 @@
 	NSTimer *controlVisibilityTimer;
 	UIBarButtonItem *previousButton, *nextButton;
 
+    // Misc
 	BOOL performingLayout;
 	BOOL rotating;
 	
