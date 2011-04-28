@@ -80,7 +80,7 @@
 	NSMutableArray *photos = [[NSMutableArray alloc] init];
 	switch (indexPath.row) {
 		case 0: 
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
+			//[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
 			break;
 		case 1: 
 			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]]];
@@ -107,10 +107,6 @@
 	// Deselect
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-}
-
-- (void)done {
-	[self dismissModalViewControllerAnimated:YES];
 }
 
 @end

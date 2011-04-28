@@ -105,26 +105,31 @@
 	self.navigationController.navigationBar.tintColor = nil;
 	self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
-	// Toolbar
-	toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-	toolbar.tintColor = nil;
-	toolbar.barStyle = UIBarStyleBlackTranslucent;
-	[self.view addSubview:toolbar];
-	
-	// Toolbar Items
-	previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
-	nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
-	UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-	NSMutableArray *items = [[NSMutableArray alloc] init];
-	[items addObject:space];
-	if (photos.count > 1) [items addObject:previousButton];
-	[items addObject:space];
-	if (photos.count > 1) [items addObject:nextButton];
-	[items addObject:space];
-	[toolbar setItems:items];
-	[items release];
-	[space release];
+    // Only show toolbar if there's more that 1 photo
+    if (photos.count > 1) {
+    
+        // Toolbar
+        toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
+        toolbar.tintColor = nil;
+        toolbar.barStyle = UIBarStyleBlackTranslucent;
+        [self.view addSubview:toolbar];
+        
+        // Toolbar Items
+        previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+        nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+        UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+        NSMutableArray *items = [[NSMutableArray alloc] init];
+        [items addObject:space];
+        if (photos.count > 1) [items addObject:previousButton];
+        [items addObject:space];
+        if (photos.count > 1) [items addObject:nextButton];
+        [items addObject:space];
+        [toolbar setItems:items];
+        [items release];
+        [space release];
 
+    }
+        
 	// Super
     [super viewDidLoad];
 	
@@ -171,7 +176,7 @@
 	toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
 	
 	// Remember index
-	int indexPriorToLayout = currentPageIndex;
+	NSUInteger indexPriorToLayout = currentPageIndex;
 	
 	// Get paging scroll view frame to determine if anything needs changing
 	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
@@ -201,8 +206,8 @@
 #pragma mark Photos
 
 // Get image if it has been loaded, otherwise nil
-- (UIImage *)imageAtIndex:(int)index {
-	if (photos && (index >= 0 && index < photos.count)) {
+- (UIImage *)imageAtIndex:(NSUInteger)index {
+	if (photos && index < photos.count) {
 
 		// Get image or obtain in background
 		MWPhoto *photo = [photos objectAtIndex:index];
@@ -220,7 +225,7 @@
 #pragma mark MWPhotoDelegate
 
 - (void)photoDidFinishLoading:(MWPhoto *)photo {
-	int index = [photos indexOfObject:photo];
+	NSUInteger index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
 			
@@ -233,7 +238,7 @@
 }
 
 - (void)photoDidFailToLoad:(MWPhoto *)photo {
-	int index = [photos indexOfObject:photo];
+	NSUInteger index = [photos indexOfObject:photo];
 	if (index != NSNotFound) {
 		if ([self isDisplayingPageForIndex:index]) {
 			
@@ -254,14 +259,16 @@
 	// Ignore padding as paging bounces encroach on that
 	// and lead to false page loads
 	CGRect visibleBounds = pagingScrollView.bounds;
-	int firstNeededPageIndex = floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	int lastNeededPageIndex  = floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
-	firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
-	lastNeededPageIndex  = MIN(lastNeededPageIndex, photos.count-1);
+	int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
+	int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+    if (iFirstIndex < 0) iFirstIndex = 0;
+    if (iFirstIndex > photos.count - 1) iFirstIndex = photos.count - 1;
+    if (iLastIndex < 0) iLastIndex = 0;
+    if (iLastIndex > photos.count - 1) iLastIndex = photos.count - 1;
 	
 	// Recycle no longer needed pages
 	for (ZoomingScrollView *page in visiblePages) {
-		if (page.index < firstNeededPageIndex || page.index > lastNeededPageIndex) {
+		if (page.index < (NSUInteger)iFirstIndex || page.index > (NSUInteger)iLastIndex) {
 			[recycledPages addObject:page];
 			/*NSLog(@"Removed page at index %i", page.index);*/
 			page.index = NSNotFound; // empty
@@ -271,7 +278,7 @@
 	[visiblePages minusSet:recycledPages];
 	
 	// Add missing pages
-	for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
+	for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
 		if (![self isDisplayingPageForIndex:index]) {
 			ZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
@@ -287,13 +294,13 @@
 	
 }
 
-- (BOOL)isDisplayingPageForIndex:(int)index {
+- (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
 	for (ZoomingScrollView *page in visiblePages)
 		if (page.index == index) return YES;
 	return NO;
 }
 
-- (ZoomingScrollView *)pageDisplayedAtIndex:(int)index {
+- (ZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index {
 	ZoomingScrollView *thePage = nil;
 	for (ZoomingScrollView *page in visiblePages) {
 		if (page.index == index) {
@@ -303,7 +310,7 @@
 	return thePage;
 }
 
-- (void)configurePage:(ZoomingScrollView *)page forIndex:(int)index {
+- (void)configurePage:(ZoomingScrollView *)page forIndex:(NSUInteger)index {
 	page.frame = [self frameForPageAtIndex:index];
 	page.index = index;
 }
@@ -318,17 +325,28 @@
 }
 
 // Handle page changes
-- (void)didStartViewingPageAtIndex:(int)index {
-	
-	// Release images further away than +1/-1
-	int i;
-	for (i = 0;       i < index-1;      i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	for (i = index+2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-	
-	// Preload next & previous images
-	i = index - 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	i = index + 1; if (i >= 0 && i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
-	
+- (void)didStartViewingPageAtIndex:(NSUInteger)index {
+    NSUInteger i;
+    if (index > 0) {
+        
+        // Release anything < index - 1
+        for (i = 0; i < index-1; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+        
+        // Preload index - 1
+        i = index - 1; 
+        if (i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+        
+    }
+    if (index < photos.count - 1) {
+        
+        // Release anything > index + 1
+        for (i = index + 2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
+    
+        // Preload index + 1
+        i = index + 1; 
+        if (i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
+        
+    }
 }
 
 #pragma mark -
@@ -359,7 +377,7 @@
     return CGSizeMake(bounds.size.width * photos.count, bounds.size.height);
 }
 
-- (CGPoint)contentOffsetForPageAtIndex:(int)index {
+- (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
 	CGFloat pageWidth = pagingScrollView.bounds.size.width;
 	CGFloat newOffset = index * pageWidth;
 	return CGPointMake(newOffset, 0);
@@ -387,12 +405,14 @@
 	
 	// Calculate current page
 	CGRect visibleBounds = pagingScrollView.bounds;
-	int index = floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds));
-	if (index < 0) index = 0;
-	if (index > photos.count-1) photos.count-1;
-	int previousCurrentPage = currentPageIndex;
+	int index = (int)(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)));
+    if (index < 0) index = 0;
+	if (index > photos.count - 1) index = photos.count - 1;
+	NSUInteger previousCurrentPage = currentPageIndex;
 	currentPageIndex = index;
-	if (currentPageIndex != previousCurrentPage) [self didStartViewingPageAtIndex:index];
+	if (currentPageIndex != previousCurrentPage) {
+        [self didStartViewingPageAtIndex:index];
+    }
 	
 }
 
@@ -424,10 +444,10 @@
 	
 }
 
-- (void)jumpToPageAtIndex:(int)index {
+- (void)jumpToPageAtIndex:(NSUInteger)index {
 	
 	// Change page
-	if (index >= 0 && index < photos.count) {
+	if (index < photos.count) {
 		CGRect pageFrame = [self frameForPageAtIndex:index];
 		pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - PADDING, 0);
 		[self updateNavigation];
@@ -538,9 +558,9 @@
 #pragma mark -
 #pragma mark Properties
 
-- (void)setInitialPageIndex:(int)index {
+- (void)setInitialPageIndex:(NSUInteger)index {
 	if (![self isViewLoaded]) {
-		if (index < 0 || index >= photos.count) {
+		if (index >= photos.count) {
 			currentPageIndex = 0;
 		} else {
 			currentPageIndex = index;

@@ -21,8 +21,8 @@
 	
 	// Paging
 	NSMutableSet *visiblePages, *recycledPages;
-	int currentPageIndex;
-	int pageIndexBeforeRotation;
+	NSUInteger currentPageIndex;
+	NSUInteger pageIndexBeforeRotation;
 	
 	// Navigation & controls
 	UIToolbar *toolbar;
@@ -38,30 +38,30 @@
 - (id)initWithPhotos:(NSArray *)photosArray;
 
 // Photos
-- (UIImage *)imageAtIndex:(int)index;
+- (UIImage *)imageAtIndex:(NSUInteger)index;
 
 // Layout
 - (void)performLayout;
 
 // Paging
 - (void)tilePages;
-- (BOOL)isDisplayingPageForIndex:(int)index;
-- (ZoomingScrollView *)pageDisplayedAtIndex:(int)index;
+- (BOOL)isDisplayingPageForIndex:(NSUInteger)index;
+- (ZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
 - (ZoomingScrollView *)dequeueRecycledPage;
-- (void)configurePage:(ZoomingScrollView *)page forIndex:(int)index;
-- (void)didStartViewingPageAtIndex:(int)index;
+- (void)configurePage:(ZoomingScrollView *)page forIndex:(NSUInteger)index;
+- (void)didStartViewingPageAtIndex:(NSUInteger)index;
 
 // Frames
 - (CGRect)frameForPagingScrollView;
 - (CGRect)frameForPageAtIndex:(NSUInteger)index;
 - (CGSize)contentSizeForPagingScrollView;
-- (CGPoint)contentOffsetForPageAtIndex:(int)index;
+- (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index;
 - (CGRect)frameForNavigationBarAtOrientation:(UIInterfaceOrientation)orientation;
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation;
 
 // Navigation
 - (void)updateNavigation;
-- (void)jumpToPageAtIndex:(int)index;
+- (void)jumpToPageAtIndex:(NSUInteger)index;
 - (void)gotoPreviousPage;
 - (void)gotoNextPage;
 
@@ -72,7 +72,7 @@
 - (void)toggleControls;
 
 // Properties
-- (void)setInitialPageIndex:(int)index;
+- (void)setInitialPageIndex:(NSUInteger)index;
 
 @end
 

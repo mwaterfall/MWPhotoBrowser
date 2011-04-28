@@ -18,7 +18,7 @@
 	MWPhotoBrowser *photoBrowser;
 	
 	// State
-	int index;
+	NSUInteger index;
 	
 	// Views
 	UIViewTap *tapView; // for background taps
@@ -28,7 +28,7 @@
 }
 
 // Properties
-@property (nonatomic) int index;
+@property (nonatomic) NSUInteger index;
 @property (nonatomic, assign) MWPhotoBrowser *photoBrowser;
 
 // Methods

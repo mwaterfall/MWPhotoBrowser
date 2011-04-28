@@ -303,7 +303,7 @@
 							<real>363</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>231 196 1440 861 0 0 1920 1178 </string>
+						<string>343 -3 1440 861 0 0 1920 1178 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -333,7 +333,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>4C0729961281E5FA0004D94D</string>
+										<string>4C4C620212821E2400D8F369</string>
 										<key>history</key>
 										<array>
 											<string>4C75D4A3126B7ABF004D0ECF</string>
@@ -355,8 +355,8 @@
 											<string>4C92310E127F5085008BB478</string>
 											<string>4C07296C1281E0810004D94D</string>
 											<string>4C0729801281E4EE0004D94D</string>
-											<string>4C07298E1281E5510004D94D</string>
-											<string>4C0729931281E5830004D94D</string>
+											<string>4C50FF1E1281E7220051C53B</string>
+											<string>4C50FF241281E7220051C53B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -370,7 +370,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1055, 815}}</string>
 								<key>RubberWindowFrame</key>
-								<string>231 196 1440 861 0 0 1920 1178 </string>
+								<string>343 -3 1440 861 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -390,7 +390,7 @@
 								<key>Frame</key>
 								<string>{{0, 820}, {1055, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>231 196 1440 861 0 0 1920 1178 </string>
+								<string>343 -3 1440 861 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -414,9 +414,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>4C07287E1281C14C0004D94D</string>
+				<string>4C4C61FE12821E2400D8F369</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>4C07287F1281C14C0004D94D</string>
+				<string>4C4C61FF12821E2400D8F369</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -554,16 +554,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>4C0728931281C1820004D94D</string>
-		<string>4C07288C1281C15F0004D94D</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>4CC82BC01266793900C05633</string>
 		<string>/Users/Michael/My Work/d3i/Projects/MWPhotoBrowser/MWPhotoBrowser.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>231 196 1440 861 0 0 1920 1178 </string>
+	<string>343 -3 1440 861 0 0 1920 1178 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -640,7 +635,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>4CC82BC01266793900C05633</string>
-				<string>4C0728801281C14C0004D94D</string>
+				<string>4C4C620012821E2400D8F369</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
