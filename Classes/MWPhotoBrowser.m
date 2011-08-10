@@ -94,7 +94,6 @@
 	pagingScrollView.showsVerticalScrollIndicator = NO;
 	pagingScrollView.backgroundColor = [UIColor blackColor];
     pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-	pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:currentPageIndex];
 	[self.view addSubview:pagingScrollView];
 	
 	// Setup pages
@@ -138,6 +137,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
+	pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:currentPageIndex];
 
 	// Super
 	[super viewWillAppear:animated];
