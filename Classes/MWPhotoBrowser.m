@@ -236,6 +236,7 @@
 			if (page) [page displayImage];
 			
 		}
+		else { [self tilePages]; }
 	}
 }
 
@@ -262,7 +263,9 @@
 	// and lead to false page loads
 	CGRect visibleBounds = pagingScrollView.bounds;
 	int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
+	iFirstIndex--;
 	int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+	iLastIndex++;
     if (iFirstIndex < 0) iFirstIndex = 0;
     if (iFirstIndex > photos.count - 1) iFirstIndex = photos.count - 1;
     if (iLastIndex < 0) iLastIndex = 0;
