@@ -236,7 +236,7 @@
 			if (page) [page displayImage];
 			
 		}
-		else { [self tilePages]; }
+		else { [self allocateNewPageWhenPhotoLoadedForPageAtIndex:index]; }
 	}
 }
 
@@ -263,9 +263,7 @@
 	// and lead to false page loads
 	CGRect visibleBounds = pagingScrollView.bounds;
 	int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	iFirstIndex--;
 	int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
-	iLastIndex++;
     if (iFirstIndex < 0) iFirstIndex = 0;
     if (iFirstIndex > photos.count - 1) iFirstIndex = photos.count - 1;
     if (iLastIndex < 0) iLastIndex = 0;
@@ -298,6 +296,18 @@
 	}
 	
 }
+
+- (void)allocateNewPageWhenPhotoLoadedForPageAtIndex:(int)ind {  ///new version of tilepages
+	ZoomingScrollView *page = [self dequeueRecycledPage];
+	if (!page) {
+		page = [[[ZoomingScrollView alloc] init] autorelease];
+		page.photoBrowser = self;
+	}
+	[self configurePage:page forIndex:ind];
+	[visiblePages addObject:page];
+	[pagingScrollView addSubview:page];
+}
+
 
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
 	for (ZoomingScrollView *page in visiblePages)
