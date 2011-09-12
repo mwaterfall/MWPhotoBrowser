@@ -236,6 +236,7 @@
 			if (page) [page displayImage];
 			
 		}
+		else { [self allocateNewPageWhenPhotoLoadedForPageAtIndex:index]; }
 	}
 }
 
@@ -295,6 +296,18 @@
 	}
 	
 }
+
+- (void)allocateNewPageWhenPhotoLoadedForPageAtIndex:(int)ind {  ///new version of tilepages
+	ZoomingScrollView *page = [self dequeueRecycledPage];
+	if (!page) {
+		page = [[[ZoomingScrollView alloc] init] autorelease];
+		page.photoBrowser = self;
+	}
+	[self configurePage:page forIndex:ind];
+	[visiblePages addObject:page];
+	[pagingScrollView addSubview:page];
+}
+
 
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
 	for (ZoomingScrollView *page in visiblePages)

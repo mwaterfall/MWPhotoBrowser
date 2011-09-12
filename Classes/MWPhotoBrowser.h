@@ -46,6 +46,7 @@
 
 // Paging
 - (void)tilePages;
+- (void)allocateNewPageWhenPhotoLoadedForPageAtIndex:(int)ind;
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index;
 - (ZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
 - (ZoomingScrollView *)dequeueRecycledPage;
