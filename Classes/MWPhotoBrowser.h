@@ -28,12 +28,22 @@
 	UIToolbar *toolbar;
 	NSTimer *controlVisibilityTimer;
 	UIBarButtonItem *previousButton, *nextButton;
+    
+    // Appearance
+    UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
+    UIColor *previousNavBarTintColor;
+    UIBarStyle previousNavBarStyle;
+    UIStatusBarStyle previousStatusBarStyle;
 
     // Misc
 	BOOL performingLayout;
 	BOOL rotating;
 	
 }
+
+// Properties
+@property (nonatomic, retain) UIColor *previousNavBarTintColor;
+@property (nonatomic, retain) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;

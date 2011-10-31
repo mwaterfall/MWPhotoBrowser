@@ -19,6 +19,9 @@
 // MWPhotoBrowser
 @implementation MWPhotoBrowser
 
+@synthesize previousNavBarTintColor;
+@synthesize navigationBarBackgroundImageDefault, navigationBarBackgroundImageLandscapePhone;
+
 - (id)initWithPhotos:(NSArray *)photosArray {
 	if ((self = [super init])) {
 		
@@ -26,7 +29,9 @@
 		photos = [photosArray retain];
 		
         // Defaults
-		self.wantsFullScreenLayout = YES;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            self.wantsFullScreenLayout = YES;
+        }
         self.hidesBottomBarWhenPushed = YES;
 		currentPageIndex = 0;
 		performingLayout = NO;
@@ -65,6 +70,9 @@
 }
 
 - (void)dealloc {
+    [previousNavBarTintColor release];
+    [navigationBarBackgroundImageDefault release];
+    [navigationBarBackgroundImageLandscapePhone release];
 	[photos release];
 	[pagingScrollView release];
 	[visiblePages release];
@@ -101,17 +109,17 @@
 	visiblePages = [[NSMutableSet alloc] init];
 	recycledPages = [[NSMutableSet alloc] init];
 	[self tilePages];
-    
-    // Navigation bar
-    self.navigationController.navigationBar.tintColor = nil;
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
     // Only show toolbar if there's more that 1 photo
     if (photos.count > 1) {
-    
+        
         // Toolbar
         toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
         toolbar.tintColor = nil;
+        if ([[UIToolbar class] respondsToSelector:@selector(appearance)]) {
+            [toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+            [toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsLandscapePhone];
+        }
         toolbar.barStyle = UIBarStyleBlackTranslucent;
         toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
         [self.view addSubview:toolbar];
@@ -129,25 +137,40 @@
         [toolbar setItems:items];
         [items release];
         [space release];
-
-    }
         
+    }
+    
 	// Super
     [super viewDidLoad];
 	
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-
+    
 	// Super
 	[super viewWillAppear:animated];
 	
 	// Layout
 	[self performLayout];
     
-    // Set status bar style to black translucent
-	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
-    	
+    // Status bar appearance
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
+    }
+    
+    // Navigation bar appearance
+    self.previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
+    self.navigationController.navigationBar.tintColor = nil;
+    previousNavBarStyle = self.navigationController.navigationBar.barStyle;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
+        self.navigationBarBackgroundImageDefault = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault];
+        self.navigationBarBackgroundImageLandscapePhone = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsLandscapePhone];
+        [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+        [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
+    }
+    
 	// Navigation
 	[self updateNavigation];
 	[self hideControlsAfterDelay];
@@ -159,7 +182,23 @@
 	
 	// Super
 	[super viewWillDisappear:animated];
-
+    
+    // Status bar appearance
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [[UIApplication sharedApplication] setStatusBarStyle:previousStatusBarStyle animated:animated];
+    }
+    
+    // Reset navigation bar appearance
+    // Only if we're not the root of our own nav controller
+    if ([self.navigationController.viewControllers objectAtIndex:0] != self) {
+        self.navigationController.navigationBar.tintColor = previousNavBarTintColor;
+        self.navigationController.navigationBar.barStyle = previousNavBarStyle;
+        if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
+            [self.navigationController.navigationBar setBackgroundImage:navigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
+            [self.navigationController.navigationBar setBackgroundImage:navigationBarBackgroundImageLandscapePhone forBarMetrics:UIBarMetricsLandscapePhone];
+        }
+    }
+    
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	
@@ -182,7 +221,7 @@
 	
 	// Get paging scroll view frame to determine if anything needs changing
 	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
-		
+    
 	// Frame needs changing
 	pagingScrollView.frame = pagingScrollViewFrame;
 	
@@ -201,7 +240,7 @@
 	// Reset
 	currentPageIndex = indexPriorToLayout;
 	performingLayout = NO;
-
+    
 }
 
 #pragma mark -
@@ -210,7 +249,7 @@
 // Get image if it has been loaded, otherwise nil
 - (UIImage *)imageAtIndex:(NSUInteger)index {
 	if (photos && index < photos.count) {
-
+        
 		// Get image or obtain in background
 		MWPhoto *photo = [photos objectAtIndex:index];
 		if ([photo isImageAvailable]) {
@@ -316,7 +355,7 @@
 	page.frame = [self frameForPageAtIndex:index];
 	page.index = index;
 }
-										  
+
 - (ZoomingScrollView *)dequeueRecycledPage {
 	ZoomingScrollView *page = [recycledPages anyObject];
 	if (page) {
@@ -343,7 +382,7 @@
         
         // Release anything > index + 1
         for (i = index + 2; i < photos.count; i++) { [(MWPhoto *)[photos objectAtIndex:i] releasePhoto]; /*NSLog(@"Release image at index %i", i);*/ }
-    
+        
         // Preload index + 1
         i = index + 1; 
         if (i < photos.count) { [(MWPhoto *)[photos objectAtIndex:i] obtainImageInBackgroundAndNotify:self]; /*NSLog(@"Pre-loading image at index %i", i);*/ }
@@ -432,7 +471,7 @@
 #pragma mark Navigation
 
 - (void)updateNavigation {
-
+    
 	// Title
 	if (photos.count > 1) {
 		self.title = [NSString stringWithFormat:@"%i of %i", currentPageIndex+1, photos.count];		
@@ -535,7 +574,7 @@
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-
+    
 	// Remember page index before rotation
 	pageIndexBeforeRotation = currentPageIndex;
 	rotating = YES;

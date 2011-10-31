@@ -37,6 +37,14 @@ If desired, you can choose which photo is displayed first:
 4. Import `MWPhotoBrowser.h` into your source as required.
 
 
+## Outstanding issues and improvements
+
+- Use delegate pattern.
+- Issue with jumping to last photo when in landscape.
+- Photo titles.
+- Improve background downloading and queuing of photos.
+
+
 ## Licence
 
 Copyright (c) 2010 Michael Waterfall

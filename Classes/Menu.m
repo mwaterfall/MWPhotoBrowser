@@ -24,21 +24,13 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-
-	// Super
-    [super viewWillAppear:animated];
-	
-	// Set bar styles
-	self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
-	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-	
-}
+//- (void)viewDidLoad {
+//    [super viewDidLoad];
+//}
+//
+//- (void)viewWillAppear:(BOOL)animated {
+//    [super viewWillAppear:animated];
+//}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
@@ -104,7 +96,7 @@
 	
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
-	//[browser setInitialPageIndex:0]; // Can be changed if desired
+	[browser setInitialPageIndex:3]; // Can be changed if desired
 	[self.navigationController pushViewController:browser animated:YES];
 	[browser release];
 	[photos release];
