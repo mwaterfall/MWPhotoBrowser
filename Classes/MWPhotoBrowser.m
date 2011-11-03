@@ -103,6 +103,7 @@
 	[self tilePages];
     
     // Navigation bar
+    previousNavigationBarStyle = self.navigationController.navigationBar.barStyle;
     self.navigationController.navigationBar.tintColor = nil;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 	
@@ -146,6 +147,7 @@
 	[self performLayout];
     
     // Set status bar style to black translucent
+    previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
 	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
     	
 	// Navigation
@@ -163,6 +165,9 @@
 	// Cancel any hiding timers
 	[self cancelControlHiding];
 	
+    // Return the previous settings
+    self.navigationController.navigationBar.barStyle = previousNavigationBarStyle;
+    [[UIApplication sharedApplication] setStatusBarStyle:previousStatusBarStyle animated:YES];
 }
 
 #pragma mark -
