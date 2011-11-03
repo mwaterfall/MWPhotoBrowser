@@ -28,6 +28,8 @@
 	UIToolbar *toolbar;
 	NSTimer *controlVisibilityTimer;
 	UIBarButtonItem *previousButton, *nextButton;
+    UIBarStyle previousNavigationBarStyle;
+    UIStatusBarStyle previousStatusBarStyle;
 
     // Misc
 	BOOL performingLayout;

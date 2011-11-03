@@ -33,11 +33,6 @@
 
 	// Super
     [super viewWillAppear:animated];
-	
-	// Set bar styles
-	self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
-	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-	
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
