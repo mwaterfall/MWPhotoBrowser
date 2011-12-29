@@ -179,6 +179,10 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    
+	// Controls
+    _disappearing = YES;
+    [self setControlsHidden:NO animated:NO];
 	
 	// Super
 	[super viewWillDisappear:animated];
@@ -199,8 +203,7 @@
         }
     }
     
-	// Cancel any hiding timers
-	[self cancelControlHiding];
+    
 	
 }
 
@@ -459,7 +462,7 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// Hide controls when dragging begins
-	[self setControlsHidden:YES];
+	[self setControlsHidden:YES animated:YES];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -505,7 +508,10 @@
 #pragma mark -
 #pragma mark Control Hiding / Showing
 
-- (void)setControlsHidden:(BOOL)hidden {
+- (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated {
+    
+    // Cancel any timers
+    [self cancelControlHiding];
 	
 	// Get status bar height if visible
 	CGFloat statusBarHeight = 0;
@@ -516,9 +522,9 @@
 	
 	// Status Bar
 	if ([UIApplication instancesRespondToSelector:@selector(setStatusBarHidden:withAnimation:)]) {
-		[[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:UIStatusBarAnimationFade];
+		[[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
 	} else {
-		[[UIApplication sharedApplication] setStatusBarHidden:hidden animated:YES];
+		[[UIApplication sharedApplication] setStatusBarHidden:hidden animated:animated];
 	}
 	
 	// Get status bar height if visible
@@ -533,11 +539,13 @@
 	self.navigationController.navigationBar.frame = navBarFrame;
 	
 	// Bars
-	[UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.35];
+    if (animated) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.35];
+    }
 	[self.navigationController.navigationBar setAlpha:hidden ? 0 : 1];
 	[toolbar setAlpha:hidden ? 0 : 1];
-	[UIView commitAnimations];
+	if (animated) [UIView commitAnimations];
 	
 	// Control hiding timer
 	// Will cancel existing timer but only begin hiding if
@@ -557,14 +565,14 @@
 
 // Enable/disable control visiblity timer
 - (void)hideControlsAfterDelay {
-	[self cancelControlHiding];
-	if (![UIApplication sharedApplication].isStatusBarHidden) {
+	if (!_disappearing && ![UIApplication sharedApplication].isStatusBarHidden) {
+        [self cancelControlHiding];
 		controlVisibilityTimer = [[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO] retain];
 	}
 }
 
-- (void)hideControls { [self setControlsHidden:YES]; }
-- (void)toggleControls { [self setControlsHidden:![UIApplication sharedApplication].isStatusBarHidden]; }
+- (void)hideControls { [self setControlsHidden:YES animated:YES]; }
+- (void)toggleControls { [self setControlsHidden:![UIApplication sharedApplication].isStatusBarHidden animated:YES]; }
 
 #pragma mark -
 #pragma mark Rotation

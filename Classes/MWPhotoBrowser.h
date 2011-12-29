@@ -38,6 +38,7 @@
     // Misc
 	BOOL performingLayout;
 	BOOL rotating;
+    BOOL _disappearing;
 	
 }
 
@@ -79,7 +80,7 @@
 // Controls
 - (void)cancelControlHiding;
 - (void)hideControlsAfterDelay;
-- (void)setControlsHidden:(BOOL)hidden;
+- (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated;
 - (void)toggleControls;
 
 // Properties
