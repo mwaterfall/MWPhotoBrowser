@@ -7,9 +7,10 @@
 //
 
 #import "Menu.h"
-#import "MWPhotoBrowser.h"
 
 @implementation Menu
+
+@synthesize photos = _photos;
 
 #pragma mark -
 #pragma mark Initialization
@@ -17,20 +18,31 @@
 - (id)initWithStyle:(UITableViewStyle)style {
     if ((self = [super initWithStyle:style])) {
 		self.title = @"MWPhotoBrowser";
+        
+        _segmentedControl = [[UISegmentedControl alloc] initWithItems:[[NSArray alloc] initWithObjects:@"Push", @"Modal", nil]];
+        _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
+        _segmentedControl.selectedSegmentIndex = 0;
+        [_segmentedControl addTarget:self action:@selector(segmentChange) forControlEvents:UIControlEventValueChanged];
+        
+        UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithCustomView:_segmentedControl] autorelease];
+        self.navigationItem.rightBarButtonItem = item;
+        
     }
     return self;
 }
 
+- (void)segmentChange {
+    [self.tableView reloadData];
+}
+
+- (void)dealloc {
+    [_segmentedControl release];
+    [_photos release];
+    [super dealloc];
+}
+
 #pragma mark -
 #pragma mark View lifecycle
-
-//- (void)viewDidLoad {
-//    [super viewDidLoad];
-//}
-//
-//- (void)viewWillAppear:(BOOL)animated {
-//    [super viewWillAppear:animated];
-//}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
@@ -54,9 +66,9 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    
+    cell.accessoryType = _segmentedControl.selectedSegmentIndex == 0 ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
+
     // Configure
 	switch (indexPath.row) {
 		case 0: cell.textLabel.text = @"Single photo from a file"; break;
@@ -93,17 +105,45 @@
 			break;
 		default: break;
 	}
+    self.photos = photos;
 	
 	// Create browser
-	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos];
-	[browser setInitialPageIndex:3]; // Can be changed if desired
-	[self.navigationController pushViewController:browser animated:YES];
+	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+//	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos]; Depreciated
+//	[browser setInitialPageIndex:2]; // Can be changed if desired
+    
+    // Show
+    if (_segmentedControl.selectedSegmentIndex == 0) {
+        // Push
+        [self.navigationController pushViewController:browser animated:YES];
+    } else {
+        // Modal
+        UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:browser];
+        nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self presentModalViewController:nc animated:YES];
+        [nc release];
+    }
+    
+    // Release
 	[browser release];
 	[photos release];
 	
 	// Deselect
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
+}
+
+#pragma mark - MWPhotoBrowserDelegate
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return _photos.count;
+}
+
+- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index < _photos.count) {
+        return [_photos objectAtIndex:index];
+    }
+    return nil;
 }
 
 @end

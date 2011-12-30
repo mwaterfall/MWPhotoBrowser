@@ -9,82 +9,70 @@
 #import <UIKit/UIKit.h>
 #import "MWPhoto.h"
 
-@class ZoomingScrollView;
+// Debug Logging
+#if 0 // Set to 1 to enable debug logging
+#define MWLog(x, ...) NSLog(x, ## __VA_ARGS__);
+#else
+#define MWLog(x, ...)
+#endif
+
+@protocol MWPhotoBrowserDelegate;
 
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, MWPhotoDelegate> {
-	
-	// Photos
-	NSArray *photos;
+
+	// Data
+    id <MWPhotoBrowserDelegate> _delegate;
+    NSUInteger _photoCount;
+    NSMutableArray *_photos;
+	NSArray *_depreciatedPhotoData; // Depreciated
 	
 	// Views
-	UIScrollView *pagingScrollView;
+	UIScrollView *_pagingScrollView;
 	
 	// Paging
-	NSMutableSet *visiblePages, *recycledPages;
-	NSUInteger currentPageIndex;
-	NSUInteger pageIndexBeforeRotation;
+	NSMutableSet *_visiblePages, *_recycledPages;
+	NSUInteger _currentPageIndex;
+	NSUInteger _pageIndexBeforeRotation;
 	
 	// Navigation & controls
-	UIToolbar *toolbar;
-	NSTimer *controlVisibilityTimer;
-	UIBarButtonItem *previousButton, *nextButton;
+	UIToolbar *_toolbar;
+	NSTimer *_controlVisibilityTimer;
+	UIBarButtonItem *_previousButton, *_nextButton;
     
     // Appearance
-    UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
-    UIColor *previousNavBarTintColor;
-    UIBarStyle previousNavBarStyle;
-    UIStatusBarStyle previousStatusBarStyle;
+    UIImage *_navigationBarBackgroundImageDefault, 
+            *_navigationBarBackgroundImageLandscapePhone;
+    UIColor *_previousNavBarTintColor;
+    UIBarStyle _previousNavBarStyle;
+    UIStatusBarStyle _previousStatusBarStyle;
 
     // Misc
-	BOOL performingLayout;
-	BOOL rotating;
+	BOOL _performingLayout;
+	BOOL _rotating;
     BOOL _disappearing;
-	
+    BOOL _viewIsVisible;
+    BOOL _loadAdjacentWhenCurrentPhotoHasLoaded;
+    
 }
 
 // Properties
-@property (nonatomic, retain) UIColor *previousNavBarTintColor;
-@property (nonatomic, retain) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
+@property (nonatomic, assign) id <MWPhotoBrowserDelegate> delegate;
 
 // Init
-- (id)initWithPhotos:(NSArray *)photosArray;
+- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
+- (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
 
-// Photos
-- (UIImage *)imageAtIndex:(NSUInteger)index;
+// Reloads the photo browser and refetches data
+- (void)reloadData;
 
-// Layout
-- (void)performLayout;
-
-// Paging
-- (void)tilePages;
-- (BOOL)isDisplayingPageForIndex:(NSUInteger)index;
-- (ZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
-- (ZoomingScrollView *)dequeueRecycledPage;
-- (void)configurePage:(ZoomingScrollView *)page forIndex:(NSUInteger)index;
-- (void)didStartViewingPageAtIndex:(NSUInteger)index;
-
-// Frames
-- (CGRect)frameForPagingScrollView;
-- (CGRect)frameForPageAtIndex:(NSUInteger)index;
-- (CGSize)contentSizeForPagingScrollView;
-- (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index;
-- (CGRect)frameForNavigationBarAtOrientation:(UIInterfaceOrientation)orientation;
-- (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation;
-
-// Navigation
-- (void)updateNavigation;
-- (void)jumpToPageAtIndex:(NSUInteger)index;
-- (void)gotoPreviousPage;
-- (void)gotoNextPage;
-
-// Controls
-- (void)cancelControlHiding;
-- (void)hideControlsAfterDelay;
-- (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated;
-- (void)toggleControls;
-
-// Properties
+// Set page that photo browser starts on
 - (void)setInitialPageIndex:(NSUInteger)index;
 
 @end
 
+// Delgate
+@protocol MWPhotoBrowserDelegate <NSObject>
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
+- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
+@optional
+@end

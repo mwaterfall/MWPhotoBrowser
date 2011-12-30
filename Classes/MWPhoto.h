@@ -7,26 +7,27 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SDWebImageDecoder.h"
+#import "SDWebImageManager.h"
 
-// Class
 @class MWPhoto;
 
-// Delegate
 @protocol MWPhotoDelegate <NSObject>
 - (void)photoDidFinishLoading:(MWPhoto *)photo;
 - (void)photoDidFailToLoad:(MWPhoto *)photo;
 @end
 
-// MWPhoto
-@interface MWPhoto : NSObject {
+@interface MWPhoto : NSObject <SDWebImageManagerDelegate, SDWebImageDecoderDelegate> {
 	
-	// Image
-	NSString *photoPath;
-	NSURL *photoURL;
-	UIImage *photoImage;
-	
-	// Flags
-	BOOL workingInBackground;
+	// Image Sources
+	NSString *_photoPath;
+	NSURL *_photoURL;
+    
+    // Image
+    UIImage *_underlyingImage;
+    
+    // Delegate
+    id <MWPhotoDelegate> _photoLoadingDelegate;
 	
 }
 
@@ -41,10 +42,9 @@
 - (id)initWithURL:(NSURL *)url;
 
 // Public methods
-- (BOOL)isImageAvailable;
-- (UIImage *)image;
-- (UIImage *)obtainImage;
-- (void)obtainImageInBackgroundAndNotify:(id <MWPhotoDelegate>)notifyDelegate;
-- (void)releasePhoto;
+- (BOOL)isImageAvailable; // Checks if underlying image is available 
+- (UIImage *)image; // Access underlying image 
+- (void)loadImageAndNotify:(id<MWPhotoDelegate>)delegate; // Load image from source (file or web and notifies delegate
+- (void)releasePhoto; // Release underlying (large decompressed) image
 
 @end

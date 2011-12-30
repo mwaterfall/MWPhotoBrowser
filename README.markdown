@@ -39,10 +39,10 @@ If desired, you can choose which photo is displayed first:
 
 ## Outstanding issues and improvements
 
-- Use delegate pattern.
-- Issue with jumping to last photo when in landscape.
-- Photo titles.
-- Improve background downloading and queuing of photos.
+- Photo captions.
+- Check memory usage and for leaks.
+- Create static library which can be added to projects easier.
+- Test with larger images 3-4MB and check performance.
 
 
 ## Licence

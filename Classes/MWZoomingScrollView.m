@@ -6,36 +6,54 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
-#import "ZoomingScrollView.h"
+#import "MWZoomingScrollView.h"
 #import "MWPhotoBrowser.h"
+#import "MWPhoto.h"
 
-@implementation ZoomingScrollView
+// Declare private methods of browser
+@interface MWPhotoBrowser ()
+- (UIImage *)imageForPhoto:(MWPhoto *)photo;
+- (void)cancelControlHiding;
+- (void)hideControlsAfterDelay;
+@end
 
-@synthesize index, photoBrowser;
+// Private methods and properties
+@interface MWZoomingScrollView ()
+@property (nonatomic, assign) MWPhotoBrowser *photoBrowser;
+- (void)handleSingleTap:(CGPoint)touchPoint;
+- (void)handleDoubleTap:(CGPoint)touchPoint;
+@end
 
-- (id)initWithFrame:(CGRect)frame {
-	if ((self = [super initWithFrame:frame])) {
-		
+@implementation MWZoomingScrollView
+
+@synthesize photoBrowser = _photoBrowser, photo = _photo;
+
+- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
+    if ((self = [super init])) {
+        
+        // Delegate
+        self.photoBrowser = browser;
+        
 		// Tap view for background
-		tapView = [[UIViewTap alloc] initWithFrame:frame];
-		tapView.tapDelegate = self;
-		tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		tapView.backgroundColor = [UIColor blackColor];
-		[self addSubview:tapView];
+		_tapView = [[UIViewTap alloc] initWithFrame:self.bounds];
+		_tapView.tapDelegate = self;
+		_tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		_tapView.backgroundColor = [UIColor blackColor];
+		[self addSubview:_tapView];
 		
 		// Image view
-		photoImageView = [[UIImageViewTap alloc] initWithFrame:CGRectZero];
-		photoImageView.tapDelegate = self;
-		photoImageView.contentMode = UIViewContentModeCenter;
-		photoImageView.backgroundColor = [UIColor blackColor];
-		[self addSubview:photoImageView];
+		_photoImageView = [[UIImageViewTap alloc] initWithFrame:CGRectZero];
+		_photoImageView.tapDelegate = self;
+		_photoImageView.contentMode = UIViewContentModeCenter;
+		_photoImageView.backgroundColor = [UIColor blackColor];
+		[self addSubview:_photoImageView];
 		
 		// Spinner
-		spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		spinner.hidesWhenStopped = YES;
-		spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
-									UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-		[self addSubview:spinner];
+		_spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		_spinner.hidesWhenStopped = YES;
+		_spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
+		[self addSubview:_spinner];
 		
 		// Setup
 		self.backgroundColor = [UIColor blackColor];
@@ -44,41 +62,38 @@
 		self.showsVerticalScrollIndicator = NO;
 		self.decelerationRate = UIScrollViewDecelerationRateFast;
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		
-	}
-	return self;
+        
+    }
+    return self;
 }
 
 - (void)dealloc {
-	[tapView release];
-	[photoImageView release];
-	[spinner release];
+	[_tapView release];
+	[_photoImageView release];
+	[_spinner release];
+    [_photo release];
 	[super dealloc];
 }
 
-- (void)setIndex:(NSUInteger)value {
-	if (value == NSNotFound) {
-		
-		// Release image
-		photoImageView.image = nil;
-		
-	} else {
-		
-		// Reset for new page at index
-		index = value;
-		
-		// Display image
-		[self displayImage];
-		
-	}
+- (void)setPhoto:(MWPhoto *)photo {
+    _photoImageView.image = nil; // Release image
+    if (_photo != photo) {
+        [_photo release];
+        _photo = [photo retain];
+    }
+    [self displayImage];
 }
 
-#pragma mark -
-#pragma mark Image
+- (void)prepareForReuse {
+    [_photo releasePhoto];
+    self.photo = nil;
+}
+
+#pragma mark - Image
 
 // Get and display image
 - (void)displayImage {
-	if (index != NSNotFound && photoImageView.image == nil) {
+	if (_photo && _photoImageView.image == nil) {
 		
 		// Reset
 		self.maximumZoomScale = 1;
@@ -86,22 +101,22 @@
 		self.zoomScale = 1;
 		self.contentSize = CGSizeMake(0, 0);
 		
-		// Get image
-		UIImage *img = [self.photoBrowser imageAtIndex:index];
+		// Get image from browser as it handles ordering of fetching
+		UIImage *img = [self.photoBrowser imageForPhoto:_photo];
 		if (img) {
 			
 			// Hide spinner
-			[spinner stopAnimating];
+			[_spinner stopAnimating];
 			
 			// Set image
-			photoImageView.image = img;
-			photoImageView.hidden = NO;
+			_photoImageView.image = img;
+			_photoImageView.hidden = NO;
 			
 			// Setup photo frame
 			CGRect photoImageViewFrame;
 			photoImageViewFrame.origin = CGPointZero;
 			photoImageViewFrame.size = img.size;
-			photoImageView.frame = photoImageViewFrame;
+			_photoImageView.frame = photoImageViewFrame;
 			self.contentSize = photoImageViewFrame.size;
 
 			// Set zoom to minimum zoom
@@ -110,8 +125,8 @@
 		} else {
 			
 			// Hide image view
-			photoImageView.hidden = YES;
-			[spinner startAnimating];
+			_photoImageView.hidden = YES;
+			[_spinner startAnimating];
 			
 		}
 		[self setNeedsLayout];
@@ -120,11 +135,10 @@
 
 // Image failed so just show black!
 - (void)displayImageFailure {
-	[spinner stopAnimating];
+	[_spinner stopAnimating];
 }
 
-#pragma mark -
-#pragma mark Setup Content
+#pragma mark - Setup
 
 - (void)setMaxMinZoomScalesForCurrentBounds {
 	
@@ -134,11 +148,11 @@
 	self.zoomScale = 1;
 	
 	// Bail
-	if (photoImageView.image == nil) return;
+	if (_photoImageView.image == nil) return;
 	
 	// Sizes
     CGSize boundsSize = self.bounds.size;
-    CGSize imageSize = photoImageView.frame.size;
+    CGSize imageSize = _photoImageView.frame.size;
     
     // Calculate Min
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
@@ -165,28 +179,27 @@
 	self.zoomScale = minScale;
 	
 	// Reset position
-	photoImageView.frame = CGRectMake(0, 0, photoImageView.frame.size.width, photoImageView.frame.size.height);
+	_photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
 	[self setNeedsLayout];
 
 }
 
-#pragma mark -
-#pragma mark UIView Layout
+#pragma mark - Layout
 
 - (void)layoutSubviews {
 	
 	// Update tap view frame
-	tapView.frame = self.bounds;
+	_tapView.frame = self.bounds;
 	
 	// Spinner
-	if (!spinner.hidden) spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
+	if (!_spinner.hidden) _spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
 													  floorf(self.bounds.size.height/2.0));
 	// Super
 	[super layoutSubviews];
 	
     // Center the image as it becomes smaller than the size of the screen
     CGSize boundsSize = self.bounds.size;
-    CGRect frameToCenter = photoImageView.frame;
+    CGRect frameToCenter = _photoImageView.frame;
     
     // Horizontally
     if (frameToCenter.size.width < boundsSize.width) {
@@ -203,42 +216,39 @@
 	}
     
 	// Center
-	if (!CGRectEqualToRect(photoImageView.frame, frameToCenter))
-		photoImageView.frame = frameToCenter;
+	if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter))
+		_photoImageView.frame = frameToCenter;
 	
 }
 
-#pragma mark -
-#pragma mark UIScrollViewDelegate
+#pragma mark - UIScrollViewDelegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-	return photoImageView;
+	return _photoImageView;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-	[photoBrowser cancelControlHiding];
+	[_photoBrowser cancelControlHiding];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
-	[photoBrowser cancelControlHiding];
+	[_photoBrowser cancelControlHiding];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-	[photoBrowser hideControlsAfterDelay];
+	[_photoBrowser hideControlsAfterDelay];
 }
 
-#pragma mark -
-#pragma mark Tap Detection
+#pragma mark - Tap Detection
 
 - (void)handleSingleTap:(CGPoint)touchPoint {
-    [photoBrowser toggleControls];
-//	[photoBrowser performSelector:@selector(toggleControls) withObject:nil afterDelay:0.2];
+	[_photoBrowser performSelector:@selector(toggleControls) withObject:nil afterDelay:0.2];
 }
 
 - (void)handleDoubleTap:(CGPoint)touchPoint {
 	
 	// Cancel any single tap handling
-	[NSObject cancelPreviousPerformRequestsWithTarget:photoBrowser];
+	[NSObject cancelPreviousPerformRequestsWithTarget:_photoBrowser];
 	
 	// Zoom
 	if (self.zoomScale == self.maximumZoomScale) {
@@ -254,16 +264,24 @@
 	}
 	
 	// Delay controls
-	[photoBrowser hideControlsAfterDelay];
+	[_photoBrowser hideControlsAfterDelay];
 	
 }
 
 // Image View
-- (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch { [self handleSingleTap:[touch locationInView:imageView]]; }
-- (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch { [self handleDoubleTap:[touch locationInView:imageView]]; }
+- (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch { 
+    [self handleSingleTap:[touch locationInView:imageView]];
+}
+- (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch {
+    [self handleDoubleTap:[touch locationInView:imageView]];
+}
 
 // Background View
-- (void)view:(UIView *)view singleTapDetected:(UITouch *)touch { [self handleSingleTap:[touch locationInView:view]]; }
-- (void)view:(UIView *)view doubleTapDetected:(UITouch *)touch { [self handleDoubleTap:[touch locationInView:view]]; }
+- (void)view:(UIView *)view singleTapDetected:(UITouch *)touch {
+    [self handleSingleTap:[touch locationInView:view]];
+}
+- (void)view:(UIView *)view doubleTapDetected:(UITouch *)touch {
+    [self handleDoubleTap:[touch locationInView:view]];
+}
 
 @end

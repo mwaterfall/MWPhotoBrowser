@@ -7,26 +7,21 @@
 //
 
 #import "MWPhoto.h"
-#import "UIImage+Decompress.h"
+#import "MWPhotoBrowser.h"
 
 // Private
 @interface MWPhoto ()
-
-// Properties
-@property (retain) UIImage *photoImage;
-@property () BOOL workingInBackground;
-
-// Private Methods
-- (void)doBackgroundWork:(id <MWPhotoDelegate>)delegate;
-
+@property (retain) UIImage *underlyingImage;
+@property (retain) id <MWPhotoDelegate> photoLoadingDelegate;
+- (void)imageDidFinishLoading;
 @end
-
 
 // MWPhoto
 @implementation MWPhoto
 
 // Properties
-@synthesize photoImage, workingInBackground;
+@synthesize underlyingImage = _underlyingImage, 
+photoLoadingDelegate = _photoLoadingDelegate;
 
 #pragma mark Class Methods
 
@@ -46,123 +41,146 @@
 
 - (id)initWithImage:(UIImage *)image {
 	if ((self = [super init])) {
-		self.photoImage = image;
+		self.underlyingImage = image;
 	}
 	return self;
 }
 
 - (id)initWithFilePath:(NSString *)path {
 	if ((self = [super init])) {
-		photoPath = [path copy];
+		_photoPath = [path copy];
 	}
 	return self;
 }
 
 - (id)initWithURL:(NSURL *)url {
 	if ((self = [super init])) {
-		photoURL = [url copy];
+		_photoURL = [url copy];
 	}
 	return self;
 }
 
 - (void)dealloc {
-	[photoPath release];
-	[photoURL release];
-	[photoImage release];
+    [[SDWebImageManager sharedManager] cancelForDelegate:self];
+	[_photoPath release];
+	[_photoURL release];
+	[_underlyingImage release];
+    [_photoLoadingDelegate release];
 	[super dealloc];
 }
 
 #pragma mark Photo
 
+// Release if we can get it again from path or url
+- (void)releasePhoto {
+    [[SDWebImageManager sharedManager] cancelForDelegate:self];
+	if (self.underlyingImage && (_photoPath || _photoURL)) {
+		self.underlyingImage = nil;
+	}
+}
+
 // Return whether the image available
 // It is available if the UIImage has been loaded and
 // loading from file or URL is not required
 - (BOOL)isImageAvailable {
-	return (self.photoImage != nil);
+	return (self.underlyingImage != nil);
 }
 
-// Return image
 - (UIImage *)image {
-	return self.photoImage;
+	return self.underlyingImage;
 }
 
-// Get and return the image from existing image, file path or url
-- (UIImage *)obtainImage {
-	if (!self.photoImage) {
-		
-		// Load
-		UIImage *img = nil;
-		if (photoPath) { 
-			
-			// Read image from file
-			NSError *error = nil;
-			NSData *data = [NSData dataWithContentsOfFile:photoPath options:NSDataReadingUncached error:&error];
-			if (!error) {
-				img = [[UIImage alloc] initWithData:data];
-			} else {
-				NSLog(@"Photo from file error: %@", error);
-			}
-			
-		} else if (photoURL) { 
-			
-			// Read image from URL and return
-			NSURLRequest *request = [[NSURLRequest alloc] initWithURL:photoURL];
-			NSError *error = nil;
-			NSURLResponse *response = nil;
-			NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-			[request release];
-			if (data) {
-				img = [[UIImage alloc] initWithData:data];
-			} else {
-				NSLog(@"Photo from URL error: %@", error);
-			}
-			
-		}
-
-		// Force the loading and caching of raw image data for speed
-		[img decompress];		
-		
-		// Store
-		self.photoImage = img;
-		[img release];
-		
-	}
-	return [[self.photoImage retain] autorelease];
+// Called on main
+- (void)loadImageAndNotify:(id<MWPhotoDelegate>)delegate {
+    if (_photoLoadingDelegate) return;
+    if (self.underlyingImage) {
+        // Done
+        [delegate photoDidFinishLoading:self];
+    } else {
+        if (_photoPath) {
+            // Load async from file
+            self.photoLoadingDelegate = delegate;
+            [self performSelectorInBackground:@selector(loadImageFromFileAsync) withObject:nil];
+        } else if (_photoURL) {
+            self.photoLoadingDelegate = delegate;
+            // Load async from web (using SDWebImage)
+            SDWebImageManager *manager = [SDWebImageManager sharedManager];
+            UIImage *cachedImage = [manager imageWithURL:_photoURL];
+            if (cachedImage) {
+                // Use the cached image immediatly
+                self.underlyingImage = cachedImage;
+                [self imageDidFinishLoading];
+            } else {
+                // Start an async download
+                [manager downloadWithURL:_photoURL delegate:self];
+            }
+        } else {
+            // Failed
+            [delegate photoDidFailToLoad:self];
+        }
+    }
 }
 
-// Release if we can get it again from path or url
-- (void)releasePhoto {
-	if (self.photoImage && (photoPath || photoURL)) {
-		self.photoImage = nil;
-	}
+// Called in background
+// Load image in background from local file
+- (void)loadImageFromFileAsync {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @try {
+        NSError *error = nil;
+        NSData *data = [NSData dataWithContentsOfFile:_photoPath options:NSDataReadingUncached error:&error];
+        if (!error) {
+            self.underlyingImage = [[UIImage alloc] initWithData:data];
+        } else {
+            self.underlyingImage = nil;
+            MWLog(@"Photo from file error: %@", error);
+        }
+        [self performSelectorOnMainThread:@selector(imageDidFinishLoading) withObject:nil waitUntilDone:NO];
+    } @catch (NSException *exception) {
+    } @finally {
+        [pool drain];
+    }
 }
 
-// Obtain image in background and notify the browser when it has loaded
-- (void)obtainImageInBackgroundAndNotify:(id <MWPhotoDelegate>)delegate {
-	if (self.workingInBackground == YES) return; // Already fetching
-	self.workingInBackground = YES;
-	[self performSelectorInBackground:@selector(doBackgroundWork:) withObject:delegate];
+// Called on main
+- (void)imageDidFinishLoading {
+    if (self.underlyingImage) {
+        // Decode image to avoid lagging when UIKit lazy loads
+        // Happens async
+        [[SDWebImageDecoder sharedImageDecoder] decodeImage:self.underlyingImage withDelegate:self userInfo:nil];
+    } else {
+        // Failed
+        [_photoLoadingDelegate photoDidFailToLoad:self];
+        self.photoLoadingDelegate = nil;
+    }
 }
 
-// Run on background thread
-// Download image and notify delegate
-- (void)doBackgroundWork:(id <MWPhotoDelegate>)delegate {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+#pragma mark - SDWebImage Delegate
 
-	// Load image
-	UIImage *img = [self obtainImage];
-	
-	// Notify delegate of success or fail
-	if (img) {
-		[(NSObject *)delegate performSelectorOnMainThread:@selector(photoDidFinishLoading:) withObject:self waitUntilDone:NO];
-	} else {
-		[(NSObject *)delegate performSelectorOnMainThread:@selector(photoDidFailToLoad:) withObject:self waitUntilDone:NO];		
-	}
+// Called on main
+- (void)webImageManager:(SDWebImageManager *)imageManager didFinishWithImage:(UIImage *)image {
+    self.underlyingImage = image;
+    [self imageDidFinishLoading];
+}
 
-	// Finish
-	self.workingInBackground = NO;
-	
-	[pool release];
+// Called on main
+- (void)webImageManager:(SDWebImageManager *)imageManager didFailWithError:(NSError *)error {
+    self.underlyingImage = nil;
+    MWLog(@"SDWebImage failed to download image: %@", error);
+    [self imageDidFinishLoading];
+}
+
+// Called on main
+- (void)imageDecoder:(SDWebImageDecoder *)decoder didFinishDecodingImage:(UIImage *)image userInfo:(NSDictionary *)userInfo {
+    if (image) {
+        // Complete
+        self.underlyingImage = image;
+        [_photoLoadingDelegate photoDidFinishLoading:self];
+    } else {
+        // Fail
+        self.underlyingImage = nil;
+        [_photoLoadingDelegate photoDidFailToLoad:self];
+    }
+    self.photoLoadingDelegate = nil;
 }
 
 @end
