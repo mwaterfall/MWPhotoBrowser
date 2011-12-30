@@ -46,6 +46,7 @@
 - (CGSize)contentSizeForPagingScrollView;
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index;
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation;
+- (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index;
 
 // Navigation
 - (void)updateNavigation;
@@ -58,6 +59,7 @@
 - (void)hideControlsAfterDelay;
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated;
 - (void)toggleControls;
+- (BOOL)areControlsHidden;
 
 // Data
 - (NSUInteger)numberOfPhotos;
@@ -342,7 +344,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	
 	// Adjust frames and configuration of each visible page
 	for (MWZoomingScrollView *page in _visiblePages) {
-		page.frame = [self frameForPageAtIndex:PAGE_INDEX(page)];
+        NSUInteger index = PAGE_INDEX(page);
+		page.frame = [self frameForPageAtIndex:index];
+        page.captionView.frame = [self frameForCaptionView:page.captionView atIndex:index];
 		[page setMaxMinZoomScalesForCurrentBounds];
 	}
 	
@@ -439,6 +443,18 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     return photo;
 }
 
+- (MWCaptionView *)captionViewForPhotoAtIndex:(NSUInteger)index {
+    MWCaptionView *captionView = nil;
+    if ([_delegate respondsToSelector:@selector(photoBrowser:captionViewForPhotoAtIndex:)]) {
+        captionView = [_delegate photoBrowser:self captionViewForPhotoAtIndex:index];
+    } else {
+        MWPhoto *photo = [self photoAtIndex:index];
+        if (photo.caption) captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];
+    }
+    captionView.alpha = [self areControlsHidden] ? 0 : 1; // Initial alpha
+    return captionView;
+}
+
 - (UIImage *)imageForPhoto:(MWPhoto *)photo {
 	if (photo) {
 		// Get image or obtain in background
@@ -521,18 +537,20 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         pageIndex = PAGE_INDEX(page);
 		if (pageIndex < (NSUInteger)iFirstIndex || pageIndex > (NSUInteger)iLastIndex) {
 			[_recycledPages addObject:page];
-            [page prepareForReuse]; // Cleanup
-			MWLog(@"Removed page at index %i", PAGE_INDEX(page));
+            [page prepareForReuse];
 			[page removeFromSuperview];
+			MWLog(@"Removed page at index %i", PAGE_INDEX(page));
 		}
 	}
 	[_visiblePages minusSet:_recycledPages];
-    // Only keep 2 recycled pages
-    while (_recycledPages.count > 2) [_recycledPages removeObject:[_recycledPages anyObject]];
+    while (_recycledPages.count > 2) // Only keep 2 recycled pages
+        [_recycledPages removeObject:[_recycledPages anyObject]];
 	
 	// Add missing pages
 	for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
 		if (![self isDisplayingPageForIndex:index]) {
+            
+            // Add new page
 			MWZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
 				page = [[[MWZoomingScrollView alloc] initWithPhotoBrowser:self] autorelease];
@@ -540,7 +558,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 			[self configurePage:page forIndex:index];
 			[_visiblePages addObject:page];
 			[_pagingScrollView addSubview:page];
-			MWLog(@"Added page at index %i", PAGE_INDEX(page));
+			MWLog(@"Added page at index %i", index);
+            
+            // Add caption
+            MWCaptionView *captionView = [self captionViewForPhotoAtIndex:index];
+            captionView.frame = [self frameForCaptionView:captionView atIndex:index];
+            [_pagingScrollView addSubview:captionView];
+            page.captionView = captionView;
+
 		}
 	}
 	
@@ -668,6 +693,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	return CGRectMake(0, self.view.bounds.size.height - height, self.view.bounds.size.width, height);
 }
 
+- (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
+    CGRect pageFrame = [self frameForPageAtIndex:index];
+    captionView.frame = CGRectMake(0, 0, pageFrame.size.width, 44); // set initial frame
+    CGSize captionSize = [captionView sizeThatFits:CGSizeMake(pageFrame.size.width, 0)];
+    CGRect captionFrame = CGRectMake(pageFrame.origin.x, pageFrame.size.height - captionSize.height - (_toolbar.superview?_toolbar.frame.size.height:0), pageFrame.size.width, captionSize.height);
+    return captionFrame;
+}
+
 #pragma mark - UIScrollView Delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -766,14 +799,22 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	CGRect navBarFrame = self.navigationController.navigationBar.frame;
 	navBarFrame.origin.y = statusBarHeight;
 	self.navigationController.navigationBar.frame = navBarFrame;
+    
+    // Captions
+    NSMutableSet *captionViews = [[[NSMutableSet alloc] initWithCapacity:_visiblePages.count] autorelease];
+    for (MWZoomingScrollView *page in _visiblePages) {
+        if (page.captionView) [captionViews addObject:page.captionView];
+    }
 	
-	// Bars
+	// Animate
     if (animated) {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.35];
     }
-	[self.navigationController.navigationBar setAlpha:hidden ? 0 : 1];
-	[_toolbar setAlpha:hidden ? 0 : 1];
+    CGFloat alpha = hidden ? 0 : 1;
+	[self.navigationController.navigationBar setAlpha:alpha];
+	[_toolbar setAlpha:alpha];
+    for (UIView *v in captionViews) v.alpha = alpha;
 	if (animated) [UIView commitAnimations];
 	
 	// Control hiding timer
@@ -794,14 +835,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 // Enable/disable control visiblity timer
 - (void)hideControlsAfterDelay {
-	if (!_disappearing && ![UIApplication sharedApplication].isStatusBarHidden) {
+	if (!_disappearing && ![self areControlsHidden]) {
         [self cancelControlHiding];
 		_controlVisibilityTimer = [[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO] retain];
 	}
 }
 
+- (BOOL)areControlsHidden { return [UIApplication sharedApplication].isStatusBarHidden; }
 - (void)hideControls { [self setControlsHidden:YES animated:YES]; }
-- (void)toggleControls { [self setControlsHidden:![UIApplication sharedApplication].isStatusBarHidden animated:YES]; }
+- (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES]; }
 
 #pragma mark - Properties
 

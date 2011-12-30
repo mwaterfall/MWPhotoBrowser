@@ -39,10 +39,11 @@ If desired, you can choose which photo is displayed first:
 
 ## Outstanding issues and improvements
 
-- Photo captions.
+- Action button
+- Modify README to describe new features.
+- Test with larger images 3-4MB and check performance.
 - Check memory usage and for leaks.
 - Create static library which can be added to projects easier.
-- Test with larger images 3-4MB and check performance.
 
 
 ## Licence

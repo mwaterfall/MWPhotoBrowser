@@ -87,16 +87,28 @@
 	
 	// Browser
 	NSMutableArray *photos = [[NSMutableArray alloc] init];
+    MWPhoto *photo;
 	switch (indexPath.row) {
 		case 0: 
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
+            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
+            photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
+			[photos addObject:photo];
 			break;
-		case 1: 
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]]];
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]]];
-			[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo4l" ofType:@"jpg"]]];
+		case 1: {
+            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]];
+            photo.caption = @"Grotto of the Madonna";
+			[photos addObject:photo];
+            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
+            photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
+			[photos addObject:photo];
+            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]];
+            photo.caption = @"York Floods";
+			[photos addObject:photo];
+            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo4l" ofType:@"jpg"]];
+            photo.caption = @"Campervan";
+			[photos addObject:photo];
 			break;
+        }
 		case 2: 
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
@@ -145,6 +157,13 @@
     }
     return nil;
 }
+
+//- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
+//    MWCaptionView *captionView = nil;
+//    MWPhoto *photo = [_photos objectAtIndex:index];
+//    captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];
+//    return captionView;
+//}
 
 @end
 

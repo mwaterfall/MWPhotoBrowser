@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MWPhoto.h"
+#import "MWCaptionView.h"
 
 // Debug Logging
 #if 0 // Set to 1 to enable debug logging
@@ -75,4 +76,5 @@
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
 @optional
+- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
 @end

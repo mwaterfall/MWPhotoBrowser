@@ -26,10 +26,16 @@
     // Image
     UIImage *_underlyingImage;
     
+    // Other
+    NSString *_caption;
+    
     // Delegate
     id <MWPhotoDelegate> _photoLoadingDelegate;
 	
 }
+
+// Properties
+@property (nonatomic, retain) NSString *caption;
 
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;

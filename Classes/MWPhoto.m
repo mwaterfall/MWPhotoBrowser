@@ -21,7 +21,8 @@
 
 // Properties
 @synthesize underlyingImage = _underlyingImage, 
-photoLoadingDelegate = _photoLoadingDelegate;
+photoLoadingDelegate = _photoLoadingDelegate,
+caption = _caption;
 
 #pragma mark Class Methods
 
@@ -61,6 +62,7 @@ photoLoadingDelegate = _photoLoadingDelegate;
 }
 
 - (void)dealloc {
+    [_caption release];
     [[SDWebImageManager sharedManager] cancelForDelegate:self];
 	[_photoPath release];
 	[_photoURL release];

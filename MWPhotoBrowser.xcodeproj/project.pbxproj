@@ -21,6 +21,7 @@
 		4C15BF4914ACDD64004F9CA6 /* SDWebImagePrefetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C15BF4014ACDD64004F9CA6 /* SDWebImagePrefetcher.m */; };
 		4C15BF4A14ACDD64004F9CA6 /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C15BF4214ACDD64004F9CA6 /* UIButton+WebCache.m */; };
 		4C15BF4B14ACDD64004F9CA6 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C15BF4414ACDD64004F9CA6 /* UIImageView+WebCache.m */; };
+		4C15BF5214AE300F004F9CA6 /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C15BF5114AE300F004F9CA6 /* MWCaptionView.m */; };
 		4C4156C61277301E00C96767 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C4156C51277301E00C96767 /* MainWindow-iPad.xib */; };
 		4C48EFD2126F90B100F85546 /* UIViewTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C48EFD1126F90B100F85546 /* UIViewTap.m */; };
 		4C667B2D1270AFCE0008B630 /* Menu.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C667B2C1270AFCE0008B630 /* Menu.m */; };
@@ -71,6 +72,8 @@
 		4C15BF4214ACDD64004F9CA6 /* UIButton+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIButton+WebCache.m"; path = "SDWebImage/UIButton+WebCache.m"; sourceTree = SOURCE_ROOT; };
 		4C15BF4314ACDD64004F9CA6 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImageView+WebCache.h"; path = "SDWebImage/UIImageView+WebCache.h"; sourceTree = SOURCE_ROOT; };
 		4C15BF4414ACDD64004F9CA6 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+WebCache.m"; path = "SDWebImage/UIImageView+WebCache.m"; sourceTree = SOURCE_ROOT; };
+		4C15BF5014AE300F004F9CA6 /* MWCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCaptionView.h; sourceTree = "<group>"; };
+		4C15BF5114AE300F004F9CA6 /* MWCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWCaptionView.m; sourceTree = "<group>"; };
 		4C4156C51277301E00C96767 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Resources-iPad/MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		4C48EFD0126F90B100F85546 /* UIViewTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewTap.h; sourceTree = "<group>"; };
 		4C48EFD1126F90B100F85546 /* UIViewTap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewTap.m; sourceTree = "<group>"; };
@@ -237,6 +240,8 @@
 				4C75D46E126B659A004D0ECF /* MWPhoto.m */,
 				4CC82BE41266804500C05633 /* MWZoomingScrollView.h */,
 				4CC82BE51266804500C05633 /* MWZoomingScrollView.m */,
+				4C15BF5014AE300F004F9CA6 /* MWCaptionView.h */,
+				4C15BF5114AE300F004F9CA6 /* MWCaptionView.m */,
 			);
 			name = MWPhotoBrowser;
 			sourceTree = "<group>";
@@ -343,6 +348,7 @@
 				4C15BF4914ACDD64004F9CA6 /* SDWebImagePrefetcher.m in Sources */,
 				4C15BF4A14ACDD64004F9CA6 /* UIButton+WebCache.m in Sources */,
 				4C15BF4B14ACDD64004F9CA6 /* UIImageView+WebCache.m in Sources */,
+				4C15BF5214AE300F004F9CA6 /* MWCaptionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
