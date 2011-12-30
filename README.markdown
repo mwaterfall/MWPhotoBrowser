@@ -39,11 +39,10 @@ If desired, you can choose which photo is displayed first:
 
 ## Outstanding issues and improvements
 
-- Action button
-- Modify README to describe new features.
+- Analyse, check memory usage and for leaks.
 - Test with larger images 3-4MB and check performance.
-- Check memory usage and for leaks.
 - Create static library which can be added to projects easier.
+- Modify README to describe new features (iOS 3.2+).
 
 
 ## Licence

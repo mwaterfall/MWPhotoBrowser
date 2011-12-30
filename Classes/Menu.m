@@ -121,8 +121,8 @@
 	
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-//	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithPhotos:photos]; Depreciated
-//	[browser setInitialPageIndex:2]; // Can be changed if desired
+    browser.displayActionButton = YES;
+//	[browser setInitialPageIndex:2];
     
     // Show
     if (_segmentedControl.selectedSegmentIndex == 0) {

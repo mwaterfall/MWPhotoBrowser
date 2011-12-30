@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "MWPhoto.h"
 #import "MWCaptionView.h"
 
@@ -19,7 +20,7 @@
 
 @protocol MWPhotoBrowserDelegate;
 
-@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, MWPhotoDelegate> {
+@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, MWPhotoDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate> {
 
 	// Data
     id <MWPhotoBrowserDelegate> _delegate;
@@ -38,7 +39,8 @@
 	// Navigation & controls
 	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
-	UIBarButtonItem *_previousButton, *_nextButton;
+	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
+    UIActionSheet *_actionsSheet;
     
     // Appearance
     UIImage *_navigationBarBackgroundImageDefault, 
@@ -48,16 +50,18 @@
     UIStatusBarStyle _previousStatusBarStyle;
 
     // Misc
+    BOOL _displayActionButton;
 	BOOL _performingLayout;
 	BOOL _rotating;
-    BOOL _disappearing;
-    BOOL _viewIsVisible;
+    BOOL _viewIsActive; // active as in it's in the view heirarchy
+    BOOL _didSavePreviousStateOfNavBar;
     BOOL _loadAdjacentWhenCurrentPhotoHasLoaded;
     
 }
 
 // Properties
 @property (nonatomic, assign) id <MWPhotoBrowserDelegate> delegate;
+@property (nonatomic) BOOL displayActionButton;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
