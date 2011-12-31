@@ -1,5 +1,0 @@
-Tasks:
-	- Cache downloaded images to disk during viewing session. Possibly use SDWebImage (https://github.com/rs/SDWebImage)
-	- Move to a delegate pattern instead of passing MWPhoto objects before presenting view.
-	- Possibly use UIToolbar from UINavigationController
-Changes:

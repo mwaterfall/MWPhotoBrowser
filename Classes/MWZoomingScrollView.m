@@ -35,14 +35,14 @@
         self.photoBrowser = browser;
         
 		// Tap view for background
-		_tapView = [[UIViewTap alloc] initWithFrame:self.bounds];
+		_tapView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
 		_tapView.tapDelegate = self;
 		_tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		_tapView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_tapView];
 		
 		// Image view
-		_photoImageView = [[UIImageViewTap alloc] initWithFrame:CGRectZero];
+		_photoImageView = [[MWTapDetectingImageView alloc] initWithFrame:CGRectZero];
 		_photoImageView.tapDelegate = self;
 		_photoImageView.contentMode = UIViewContentModeCenter;
 		_photoImageView.backgroundColor = [UIColor blackColor];
@@ -78,6 +78,7 @@
 - (void)setPhoto:(MWPhoto *)photo {
     _photoImageView.image = nil; // Release image
     if (_photo != photo) {
+        [_photo setPhotoLoadingDelegate:nil];
         [_photo release];
         _photo = [photo retain];
     }
@@ -85,7 +86,7 @@
 }
 
 - (void)prepareForReuse {
-    [_photo releasePhoto];
+    self.photo.photoLoadingDelegate = nil;
     self.photo = nil;
     [_captionView removeFromSuperview];
     self.captionView = nil;

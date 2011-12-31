@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "UIImageViewTap.h"
-#import "UIViewTap.h"
+#import "MWTapDetectingImageView.h"
+#import "MWTapDetectingView.h"
 
 @class MWPhotoBrowser, MWPhoto, MWCaptionView;
 
-@interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, UIImageViewTapDelegate, UIViewTapDelegate> {
+@interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, MWTapDetectingImageViewDelegate, MWTapDetectingViewDelegate> {
 	
 	MWPhotoBrowser *_photoBrowser;
     MWPhoto *_photo;
@@ -21,8 +21,8 @@
     // handling in photo browser
     MWCaptionView *_captionView;
     
-	UIViewTap *_tapView; // for background taps
-	UIImageViewTap *_photoImageView;
+	MWTapDetectingView *_tapView; // for background taps
+	MWTapDetectingImageView *_photoImageView;
 	UIActivityIndicatorView *_spinner;
 	
 }

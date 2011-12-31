@@ -36,6 +36,7 @@
 
 // Properties
 @property (nonatomic, retain) NSString *caption;
+@property (nonatomic, retain) id <MWPhotoDelegate> photoLoadingDelegate;
 
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;

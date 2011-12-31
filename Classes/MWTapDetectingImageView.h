@@ -8,18 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol UIImageViewTapDelegate;
+@protocol MWTapDetectingImageViewDelegate;
 
-@interface UIImageViewTap : UIImageView {
-	id <UIImageViewTapDelegate> tapDelegate;
+@interface MWTapDetectingImageView : UIImageView {
+	id <MWTapDetectingImageViewDelegate> tapDelegate;
 }
-@property (nonatomic, assign) id <UIImageViewTapDelegate> tapDelegate;
+@property (nonatomic, assign) id <MWTapDetectingImageViewDelegate> tapDelegate;
 - (void)handleSingleTap:(UITouch *)touch;
 - (void)handleDoubleTap:(UITouch *)touch;
 - (void)handleTripleTap:(UITouch *)touch;
 @end
 
-@protocol UIImageViewTapDelegate <NSObject>
+@protocol MWTapDetectingImageViewDelegate <NSObject>
 @optional
 - (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch;
 - (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch;

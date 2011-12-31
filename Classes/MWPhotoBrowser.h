@@ -19,6 +19,7 @@
 #endif
 
 @protocol MWPhotoBrowserDelegate;
+@class MBProgressHUD;
 
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, MWPhotoDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate> {
 
@@ -41,6 +42,7 @@
 	NSTimer *_controlVisibilityTimer;
 	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
     UIActionSheet *_actionsSheet;
+    MBProgressHUD *_progressHUD;
     
     // Appearance
     UIImage *_navigationBarBackgroundImageDefault, 

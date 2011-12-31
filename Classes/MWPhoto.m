@@ -12,7 +12,6 @@
 // Private
 @interface MWPhoto ()
 @property (retain) UIImage *underlyingImage;
-@property (retain) id <MWPhotoDelegate> photoLoadingDelegate;
 - (void)imageDidFinishLoading;
 @end
 
@@ -75,6 +74,7 @@ caption = _caption;
 
 // Release if we can get it again from path or url
 - (void)releasePhoto {
+    self.photoLoadingDelegate = nil;
     [[SDWebImageManager sharedManager] cancelForDelegate:self];
 	if (self.underlyingImage && (_photoPath || _photoURL)) {
 		self.underlyingImage = nil;
@@ -131,7 +131,7 @@ caption = _caption;
         NSError *error = nil;
         NSData *data = [NSData dataWithContentsOfFile:_photoPath options:NSDataReadingUncached error:&error];
         if (!error) {
-            self.underlyingImage = [[UIImage alloc] initWithData:data];
+            self.underlyingImage = [[[UIImage alloc] initWithData:data] autorelease];
         } else {
             self.underlyingImage = nil;
             MWLog(@"Photo from file error: %@", error);

@@ -19,9 +19,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
     // Override point for customization after application launch.
-	Menu *vc = [[Menu alloc] init];
-	UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
-	[window addSubview:nc.view];
+	Menu *menu = [[Menu alloc] init];
+	rootVC = [[UINavigationController alloc] initWithRootViewController:menu];
+    [menu release];
+	[window addSubview:rootVC.view];
     [window makeKeyAndVisible];
     return YES;
 	
@@ -75,6 +76,7 @@
 }
 
 - (void)dealloc {
+    [rootVC release];
     [window release];
     [super dealloc];
 }

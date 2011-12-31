@@ -19,13 +19,14 @@
     if ((self = [super initWithStyle:style])) {
 		self.title = @"MWPhotoBrowser";
         
-        _segmentedControl = [[UISegmentedControl alloc] initWithItems:[[NSArray alloc] initWithObjects:@"Push", @"Modal", nil]];
+        _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Push", @"Modal", nil]];
         _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
         _segmentedControl.selectedSegmentIndex = 0;
         [_segmentedControl addTarget:self action:@selector(segmentChange) forControlEvents:UIControlEventValueChanged];
         
         UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithCustomView:_segmentedControl] autorelease];
         self.navigationItem.rightBarButtonItem = item;
+        self.navigationItem.backBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:nil action:nil] autorelease];
         
     }
     return self;
@@ -71,9 +72,9 @@
 
     // Configure
 	switch (indexPath.row) {
-		case 0: cell.textLabel.text = @"Single photo from a file"; break;
-		case 1: cell.textLabel.text = @"Multiple photos from files"; break;
-		case 2: cell.textLabel.text = @"Multiple photos from Flickr"; break;
+		case 0: cell.textLabel.text = @"Single local photo"; break;
+		case 1: cell.textLabel.text = @"Local photos"; break;
+		case 2: cell.textLabel.text = @"Photos from Flickr"; break;
 		default: break;
 	}
     return cell;
@@ -110,10 +111,10 @@
 			break;
         }
 		case 2: 
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
+			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"]]];
+			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"]]];
+			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"]]];
+			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"]]];
 			break;
 		default: break;
 	}
@@ -152,17 +153,15 @@
 }
 
 - (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-    if (index < _photos.count) {
+    if (index < _photos.count)
         return [_photos objectAtIndex:index];
-    }
     return nil;
 }
 
 //- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-//    MWCaptionView *captionView = nil;
-//    MWPhoto *photo = [_photos objectAtIndex:index];
-//    captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];
-//    return captionView;
+//    MWPhoto *photo = [self.photos objectAtIndex:index];
+//    MWCaptionView *captionView = [[MWCaptionView alloc] initWithPhoto:photo];
+//    return [captionView autorelease];
 //}
 
 @end

@@ -6,9 +6,9 @@
 //  Copyright 2009 d3i. All rights reserved.
 //
 
-#import "UIViewTap.h"
+#import "MWTapDetectingView.h"
 
-@implementation UIViewTap
+@implementation MWTapDetectingView
 
 @synthesize tapDelegate;
 

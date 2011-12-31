@@ -10,6 +10,7 @@
 
 @interface MWPhotoBrowserAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
+    UIViewController *rootVC;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
