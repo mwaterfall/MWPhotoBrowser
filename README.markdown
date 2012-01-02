@@ -77,19 +77,35 @@ Example delegate method for custom caption view:
     }
 
 
-## Adding to your project
+## Adding to your project (Xcode 4)
 
-1. Open `MWPhotoBrowser.xcodeproj`.
-2. Drag the `MWPhotoBrowser` and `Libraries` groups into your project, ensuring you check **"Copy items into destination group's folder"**.
-3. Ensure your project links to `MessageUI.framework` (Target -> Build Phases -> Link Binary With Libraries -> Add...).
-4. Import `MWPhotoBrowser.h` into your source as required.
+### Method 1: Static Library
 
-***Note: A static library option will be available soon for improved integration into your projects.***
+1. Get the latest source from GitHub by either [downloading as a zip file](https://github.com/mwaterfall/MWPhotoBrowser/zipball/master) or by cloning the repository at `git://github.com/mwaterfall/MWPhotoBrowser.git` and store the code wherever you wish.
+2. Ensure your project is in a workspace. If not, choose File -> Save as Workspace...
+3. Add the MWPhotoBrowser project to the top level of your workspace.
+4. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
+5. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
+6. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths"  is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored.
+
+You should now be able to include `MWPhotoBrowser.h` into your project and start using it.
+
+Setting these things up in Xcode 4 can be a bit tricky so if you run into any problems you may wish to read through a few bits of information:
+
+- [Developing a Static Library and Incorporating It in Your Application](http://developer.apple.com/library/ios/#documentation/Xcode/Conceptual/ios_development_workflow/910-A-Developing_a_Static_Library_and_Incorporating_It_in_Your_Application/archiving_an_application_that_uses_a_static_library.html)
+- [Using Open Source Static Libraries in Xcode 4](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library)
+- [How to embed static library into Xcode 4 project](https://docs.google.com/document/pub?id=14XR5zcZb2Kz2s6A4AbzB00NLkrW9bWxMMprVsUao-hY)
+
+### Method 2: Including Source Directly Into Your Project
+
+Another method is to simply add the files to your Xcode project, copying them to your project's directory if required. Ensure that all the code within `MWPhotoBrowser/Classes`, `MWPhotoBrowser/Libraries` and the `MWPhotoBrowser.bundle` is included in your project. 
+
+If your project uses ARC then you will have to disable ARC for each of the files in MWPhotoBrowser. Here's how you do it: http://stackoverflow.com/a/6658549/106244
 
 
 ## Outstanding issues and improvements
 
-- Create static library which can be added to projects easier, and handle compatibility with ARC enabled projects.
+*Nothing outstanding*
 
 
 ## Notes and Accreditation

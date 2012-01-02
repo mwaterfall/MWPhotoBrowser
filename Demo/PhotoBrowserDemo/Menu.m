@@ -152,14 +152,14 @@
     return _photos.count;
 }
 
-- (id<MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (index < _photos.count)
         return [_photos objectAtIndex:index];
     return nil;
 }
 
 //- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-//    (id<MWPhoto>)photo = [self.photos objectAtIndex:index];
+//    MWPhoto *photo = [self.photos objectAtIndex:index];
 //    MWCaptionView *captionView = [[MWCaptionView alloc] initWithPhoto:photo];
 //    return [captionView autorelease];
 //}
