@@ -12,7 +12,7 @@
 
 // Declare private methods of browser
 @interface MWPhotoBrowser ()
-- (UIImage *)imageForPhoto:(MWPhoto *)photo;
+- (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
 - (void)cancelControlHiding;
 - (void)hideControlsAfterDelay;
 @end
@@ -75,10 +75,9 @@
 	[super dealloc];
 }
 
-- (void)setPhoto:(MWPhoto *)photo {
+- (void)setPhoto:(id<MWPhoto>)photo {
     _photoImageView.image = nil; // Release image
     if (_photo != photo) {
-        [_photo setPhotoLoadingDelegate:nil];
         [_photo release];
         _photo = [photo retain];
     }
@@ -86,7 +85,6 @@
 }
 
 - (void)prepareForReuse {
-    self.photo.photoLoadingDelegate = nil;
     self.photo = nil;
     [_captionView removeFromSuperview];
     self.captionView = nil;

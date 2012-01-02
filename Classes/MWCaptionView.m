@@ -11,9 +11,16 @@
 
 static const CGFloat labelPadding = 10;
 
+// Private
+@interface MWCaptionView () {
+    id<MWPhoto> _photo;
+    UILabel *_label;    
+}
+@end
+
 @implementation MWCaptionView
 
-- (id)initWithPhoto:(MWPhoto *)photo {
+- (id)initWithPhoto:(id<MWPhoto>)photo {
     self = [super initWithFrame:CGRectMake(0, 0, 320, 44)]; // Random initial frame
     if (self) {
         _photo = [photo retain];
@@ -40,7 +47,6 @@ static const CGFloat labelPadding = 10;
                                                        self.bounds.size.height)];
     _label.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     _label.opaque = NO;
-    _label.text = _photo.caption ? _photo.caption : @"[No Title]";
     _label.backgroundColor = [UIColor clearColor];
     _label.textAlignment = UITextAlignmentCenter;
     _label.lineBreakMode = UILineBreakModeWordWrap;
@@ -48,6 +54,12 @@ static const CGFloat labelPadding = 10;
     _label.textColor = [UIColor whiteColor];
     _label.shadowColor = [UIColor blackColor];
     _label.shadowOffset = CGSizeMake(1, 1);
+    
+    // Caption
+    if ([_photo respondsToSelector:@selector(caption)]) {
+        _label.text = [_photo caption] ? [_photo caption] : @"[No Title]";
+    }
+    
     [self addSubview:_label];
 }
 

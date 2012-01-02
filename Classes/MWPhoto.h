@@ -7,36 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MWPhotoProtocol.h"
 #import "SDWebImageDecoder.h"
 #import "SDWebImageManager.h"
 
-@class MWPhoto;
-
-@protocol MWPhotoDelegate <NSObject>
-- (void)photoDidFinishLoading:(MWPhoto *)photo;
-- (void)photoDidFailToLoad:(MWPhoto *)photo;
-@end
-
-@interface MWPhoto : NSObject <SDWebImageManagerDelegate, SDWebImageDecoderDelegate> {
-	
-	// Image Sources
-	NSString *_photoPath;
-	NSURL *_photoURL;
-    
-    // Image
-    UIImage *_underlyingImage;
-    
-    // Other
-    NSString *_caption;
-    
-    // Delegate
-    id <MWPhotoDelegate> _photoLoadingDelegate;
-	
-}
+// This class models a photo/image and it's caption
+// If you want to handle photos, caching, decompression
+// yourself then you can simply ensure your custom data model
+// conforms to MWPhotoProtocol
+@interface MWPhoto : NSObject <MWPhoto, SDWebImageManagerDelegate, SDWebImageDecoderDelegate>
 
 // Properties
 @property (nonatomic, retain) NSString *caption;
-@property (nonatomic, retain) id <MWPhotoDelegate> photoLoadingDelegate;
 
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;
@@ -48,10 +30,5 @@
 - (id)initWithFilePath:(NSString *)path;
 - (id)initWithURL:(NSURL *)url;
 
-// Public methods
-- (BOOL)isImageAvailable; // Checks if underlying image is available 
-- (UIImage *)image; // Access underlying image 
-- (void)loadImageAndNotify:(id<MWPhotoDelegate>)delegate; // Load image from source (file or web and notifies delegate
-- (void)releasePhoto; // Release underlying (large decompressed) image
-
 @end
+

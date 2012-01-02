@@ -7,16 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MWPhotoProtocol.h"
 
-@class MWPhoto;
-
-@interface MWCaptionView : UIView {
-    MWPhoto *_photo;
-    UILabel *_label;
-}
+@interface MWCaptionView : UIView
 
 // Init
-- (id)initWithPhoto:(MWPhoto *)photo;
+- (id)initWithPhoto:(id<MWPhoto>)photo;
 
 // To create your own custom caption view, subclass this view
 // and override the following two methods (as well as any other

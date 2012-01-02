@@ -22,7 +22,45 @@
 #define PAGE_INDEX_TAG_OFFSET   1000
 #define PAGE_INDEX(page)        ([(page) tag] - PAGE_INDEX_TAG_OFFSET)
 
-@interface MWPhotoBrowser ()
+// Private
+@interface MWPhotoBrowser () {
+    
+	// Data
+    id <MWPhotoBrowserDelegate> _delegate;
+    NSUInteger _photoCount;
+    NSMutableArray *_photos;
+	NSArray *_depreciatedPhotoData; // Depreciated
+	
+	// Views
+	UIScrollView *_pagingScrollView;
+	
+	// Paging
+	NSMutableSet *_visiblePages, *_recycledPages;
+	NSUInteger _currentPageIndex;
+	NSUInteger _pageIndexBeforeRotation;
+	
+	// Navigation & controls
+	UIToolbar *_toolbar;
+	NSTimer *_controlVisibilityTimer;
+	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
+    UIActionSheet *_actionsSheet;
+    MBProgressHUD *_progressHUD;
+    
+    // Appearance
+    UIImage *_navigationBarBackgroundImageDefault, 
+    *_navigationBarBackgroundImageLandscapePhone;
+    UIColor *_previousNavBarTintColor;
+    UIBarStyle _previousNavBarStyle;
+    UIStatusBarStyle _previousStatusBarStyle;
+    
+    // Misc
+    BOOL _displayActionButton;
+	BOOL _performingLayout;
+	BOOL _rotating;
+    BOOL _viewIsActive; // active as in it's in the view heirarchy
+    BOOL _didSavePreviousStateOfNavBar;
+    
+}
 
 // Private Properties
 @property (nonatomic, retain) UIColor *previousNavBarTintColor;
@@ -44,7 +82,7 @@
 - (void)tilePages;
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index;
 - (MWZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
-- (MWZoomingScrollView *)pageDisplayingPhoto:(MWPhoto *)photo;
+- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo;
 - (MWZoomingScrollView *)dequeueRecycledPage;
 - (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index;
 - (void)didStartViewingPageAtIndex:(NSUInteger)index;
@@ -72,9 +110,9 @@
 
 // Data
 - (NSUInteger)numberOfPhotos;
-- (MWPhoto *)photoAtIndex:(NSUInteger)index;
-- (UIImage *)imageForPhoto:(MWPhoto *)photo;
-- (void)loadAdjacentPhotosIfNecessary:(MWPhoto *)photo;
+- (id<MWPhoto>)photoAtIndex:(NSUInteger)index;
+- (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
+- (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo;
 - (void)releaseAllUnderlyingPhotos;
 
 // Actions
@@ -92,7 +130,7 @@
 // MWPhotoBrowser
 @implementation MWPhotoBrowser
 
-@synthesize delegate = _delegate;
+// Properties
 @synthesize previousNavBarTintColor = _previousNavBarTintColor;
 @synthesize navigationBarBackgroundImageDefault = _navigationBarBackgroundImageDefault,
 navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandscapePhone;
@@ -115,9 +153,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         _visiblePages = [[NSMutableSet alloc] init];
         _recycledPages = [[NSMutableSet alloc] init];
         _photos = [[NSMutableArray alloc] init];
-        _loadAdjacentWhenCurrentPhotoHasLoaded = NO;
         _displayActionButton = NO;
         _didSavePreviousStateOfNavBar = NO;
+        
+        // Listen for MWPhoto notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMWPhotoLoadingDidEndNotification:)
+                                                     name:MWPHOTO_LOADING_DID_END_NOTIFICATION
+                                                   object:nil];
         
     }
     return self;
@@ -125,7 +168,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate {
     if ((self = [self init])) {
-        self.delegate = delegate;
+        _delegate = delegate;
 	}
 	return self;
 }
@@ -138,6 +181,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_previousNavBarTintColor release];
     [_navigationBarBackgroundImageDefault release];
     [_navigationBarBackgroundImageLandscapePhone release];
@@ -157,7 +201,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)releaseAllUnderlyingPhotos {
-    for (id p in _photos) { if (p != [NSNull null]) [p releasePhoto]; } // Release photos
+    for (id p in _photos) { if (p != [NSNull null]) [p unloadUnderlyingImage]; } // Release photos
 }
 
 - (void)didReceiveMemoryWarning {
@@ -476,8 +520,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     return _photoCount;
 }
 
-- (MWPhoto *)photoAtIndex:(NSUInteger)index {
-    MWPhoto *photo = nil;
+- (id<MWPhoto>)photoAtIndex:(NSUInteger)index {
+    id <MWPhoto> photo = nil;
     if (index < _photos.count) {
         if ([_photos objectAtIndex:index] == [NSNull null]) {
             if ([_delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:)]) {
@@ -498,26 +542,28 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if ([_delegate respondsToSelector:@selector(photoBrowser:captionViewForPhotoAtIndex:)]) {
         captionView = [_delegate photoBrowser:self captionViewForPhotoAtIndex:index];
     } else {
-        MWPhoto *photo = [self photoAtIndex:index];
-        if (photo.caption) captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];
+        id <MWPhoto> photo = [self photoAtIndex:index];
+        if ([photo respondsToSelector:@selector(caption)]) {
+            if ([photo caption]) captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];            
+        }
     }
     captionView.alpha = [self areControlsHidden] ? 0 : 1; // Initial alpha
     return captionView;
 }
 
-- (UIImage *)imageForPhoto:(MWPhoto *)photo {
+- (UIImage *)imageForPhoto:(id<MWPhoto>)photo {
 	if (photo) {
 		// Get image or obtain in background
-		if ([photo isImageAvailable]) {
-			return [photo image];
+		if ([photo underlyingImage]) {
+			return [photo underlyingImage];
 		} else {
-            [photo loadImageAndNotify:self];
+            [photo loadUnderlyingImageAndNotify];
 		}
 	}
 	return nil;
 }
 
-- (void)loadAdjacentPhotosIfNecessary:(MWPhoto *)photo {
+- (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo {
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
         // If page is current page then initiate loading of previous and next pages
@@ -525,17 +571,17 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         if (_currentPageIndex == pageIndex) {
             if (pageIndex > 0) {
                 // Preload index - 1
-                MWPhoto *photo = [self photoAtIndex:pageIndex-1];
-                if (![photo isImageAvailable]) {
-                    [photo loadImageAndNotify:self];
+                id <MWPhoto> photo = [self photoAtIndex:pageIndex-1];
+                if (![photo underlyingImage]) {
+                    [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %i", pageIndex-1);
                 }
             }
             if (pageIndex < [self numberOfPhotos] - 1) {
                 // Preload index + 1
-                MWPhoto *photo = [self photoAtIndex:pageIndex+1];
-                if (![photo isImageAvailable]) {
-                    [photo loadImageAndNotify:self];
+                id <MWPhoto> photo = [self photoAtIndex:pageIndex+1];
+                if (![photo underlyingImage]) {
+                    [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %i", pageIndex+1);
                 }
             }
@@ -543,26 +589,20 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     }
 }
 
-#pragma mark - MWPhotoDelegate
+#pragma mark - MWPhoto Loading Notification
 
-- (void)photoDidFinishLoading:(MWPhoto *)photo {
-    if (photo) {
-        MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
-        if (page) {
+- (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
+    id <MWPhoto> photo = [notification object];
+    MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
+    if (page) {
+        if ([photo underlyingImage]) {
+            // Successful load
             [page displayImage];
-            if (_loadAdjacentWhenCurrentPhotoHasLoaded) {
-                [self loadAdjacentPhotosIfNecessary:photo];
-                _loadAdjacentWhenCurrentPhotoHasLoaded = NO;
-            }
+            [self loadAdjacentPhotosIfNecessary:photo];
+        } else {
+            // Failed to load
+            [page displayImageFailure];
         }
-    }
-}
-
-- (void)photoDidFailToLoad:(MWPhoto *)photo {
-    _loadAdjacentWhenCurrentPhotoHasLoaded = NO;
-    if (photo) {
-        MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
-        if (page) [page displayImageFailure];
     }
 }
 
@@ -637,7 +677,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	return thePage;
 }
 
-- (MWZoomingScrollView *)pageDisplayingPhoto:(MWPhoto *)photo {
+- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo {
 	MWZoomingScrollView *thePage = nil;
 	for (MWZoomingScrollView *page in _visiblePages) {
 		if (page.photo == photo) {
@@ -672,7 +712,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         for (i = 0; i < index-1; i++) { 
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
-                [photo releasePhoto];
+                [photo unloadUnderlyingImage];
                 [_photos replaceObjectAtIndex:i withObject:[NSNull null]];
                 MWLog(@"Released underlying image at index %i", i);
             }
@@ -683,22 +723,19 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         for (i = index + 2; i < _photos.count; i++) {
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
-                [photo releasePhoto];
+                [photo unloadUnderlyingImage];
                 [_photos replaceObjectAtIndex:i withObject:[NSNull null]];
                 MWLog(@"Released underlying image at index %i", i);
             }
         }
     }
     
-    // Load adjacent images if needed
-    _loadAdjacentWhenCurrentPhotoHasLoaded = NO;
-    MWPhoto *currentPhoto = [self photoAtIndex:index];
-    if ([currentPhoto isImageAvailable]) {
+    // Load adjacent images if needed and the photo is already
+    // loaded. Also called after photo has been loaded in background
+    id <MWPhoto> currentPhoto = [self photoAtIndex:index];
+    if ([currentPhoto underlyingImage]) {
         // photo loaded so load ajacent now
         [self loadAdjacentPhotosIfNecessary:currentPhoto];
-    } else {
-        // Photo not loaded so load adjacent when it is
-        _loadAdjacentWhenCurrentPhotoHasLoaded = YES;
     }
     
 }
@@ -919,8 +956,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         // Dismiss
         [_actionsSheet dismissWithClickedButtonIndex:_actionsSheet.cancelButtonIndex animated:YES];
     } else {
-        MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-        if ([self numberOfPhotos] > 0 && [photo isImageAvailable]) {
+        id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+        if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
             
             // Keep controls hidden
             [self setControlsHidden:NO animated:YES permanent:YES];
@@ -1006,16 +1043,16 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Actions
 
 - (void)savePhoto {
-    MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo isImageAvailable]) {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    if ([photo underlyingImage]) {
         [self showProgressHUDWithMessage:@"Saving..."];
         [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
     }
 }
 
-- (void)actuallySavePhoto:(MWPhoto *)photo {
-    if ([photo isImageAvailable]) {
-        UIImageWriteToSavedPhotosAlbum(photo.image, self, 
+- (void)actuallySavePhoto:(id<MWPhoto>)photo {
+    if ([photo underlyingImage]) {
+        UIImageWriteToSavedPhotosAlbum([photo underlyingImage], self, 
                                        @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
 }
@@ -1026,16 +1063,16 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)copyPhoto {
-    MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo isImageAvailable]) {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    if ([photo underlyingImage]) {
         [self showProgressHUDWithMessage:@"Copying..."];
         [self performSelector:@selector(actuallyCopyPhoto:) withObject:photo afterDelay:0];
     }
 }
 
-- (void)actuallyCopyPhoto:(MWPhoto *)photo {
-    if ([photo isImageAvailable]) {
-        [[UIPasteboard generalPasteboard] setData:UIImagePNGRepresentation(photo.image)
+- (void)actuallyCopyPhoto:(id<MWPhoto>)photo {
+    if ([photo underlyingImage]) {
+        [[UIPasteboard generalPasteboard] setData:UIImagePNGRepresentation([photo underlyingImage])
                                 forPasteboardType:@"public.png"];
         [self showProgressHUDCompleteMessage:@"Copied"];
         [self hideControlsAfterDelay]; // Continue as normal...
@@ -1043,19 +1080,19 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)emailPhoto {
-    MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo isImageAvailable]) {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    if ([photo underlyingImage]) {
         [self showProgressHUDWithMessage:@"Preparing..."];
         [self performSelector:@selector(actuallyEmailPhoto:) withObject:photo afterDelay:0];
     }
 }
 
-- (void)actuallyEmailPhoto:(MWPhoto *)photo {
-    if ([photo isImageAvailable]) {
+- (void)actuallyEmailPhoto:(id<MWPhoto>)photo {
+    if ([photo underlyingImage]) {
         MFMailComposeViewController *emailer = [[MFMailComposeViewController alloc] init];
         emailer.mailComposeDelegate = self;
         [emailer setSubject:@"Photo"];
-        [emailer addAttachmentData:UIImagePNGRepresentation(photo.image) mimeType:@"png" fileName:@"Photo.png"];
+        [emailer addAttachmentData:UIImagePNGRepresentation([photo underlyingImage]) mimeType:@"png" fileName:@"Photo.png"];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
         }

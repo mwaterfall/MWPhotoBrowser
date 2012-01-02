@@ -10,9 +10,28 @@
 #import "MWPhotoBrowser.h"
 
 // Private
-@interface MWPhoto ()
-@property (retain) UIImage *underlyingImage;
-- (void)imageDidFinishLoading;
+@interface MWPhoto () {
+
+    // Image Sources
+    NSString *_photoPath;
+    NSURL *_photoURL;
+
+    // Image
+    UIImage *_underlyingImage;
+
+    // Other
+    NSString *_caption;
+    BOOL _loadingInProgress;
+        
+}
+
+// Properties
+@property (nonatomic, retain) UIImage *underlyingImage;
+
+// Methods
+- (void)imageDidFinishLoadingSoDecompress;
+- (void)imageLoadingComplete;
+
 @end
 
 // MWPhoto
@@ -20,7 +39,6 @@
 
 // Properties
 @synthesize underlyingImage = _underlyingImage, 
-photoLoadingDelegate = _photoLoadingDelegate,
 caption = _caption;
 
 #pragma mark Class Methods
@@ -66,62 +84,55 @@ caption = _caption;
 	[_photoPath release];
 	[_photoURL release];
 	[_underlyingImage release];
-    [_photoLoadingDelegate release];
 	[super dealloc];
 }
 
-#pragma mark Photo
+#pragma mark MWPhoto Protocol Methods
 
-// Release if we can get it again from path or url
-- (void)releasePhoto {
-    self.photoLoadingDelegate = nil;
-    [[SDWebImageManager sharedManager] cancelForDelegate:self];
-	if (self.underlyingImage && (_photoPath || _photoURL)) {
-		self.underlyingImage = nil;
-	}
+- (UIImage *)underlyingImage {
+    return _underlyingImage;
 }
 
-// Return whether the image available
-// It is available if the UIImage has been loaded and
-// loading from file or URL is not required
-- (BOOL)isImageAvailable {
-	return (self.underlyingImage != nil);
-}
-
-- (UIImage *)image {
-	return self.underlyingImage;
-}
-
-// Called on main
-- (void)loadImageAndNotify:(id<MWPhotoDelegate>)delegate {
-    if (_photoLoadingDelegate) return;
+- (void)loadUnderlyingImageAndNotify {
+    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
+    _loadingInProgress = YES;
     if (self.underlyingImage) {
-        // Done
-        [delegate photoDidFinishLoading:self];
+        // Image already loaded
+        [self imageLoadingComplete];
     } else {
         if (_photoPath) {
             // Load async from file
-            self.photoLoadingDelegate = delegate;
             [self performSelectorInBackground:@selector(loadImageFromFileAsync) withObject:nil];
         } else if (_photoURL) {
-            self.photoLoadingDelegate = delegate;
             // Load async from web (using SDWebImage)
             SDWebImageManager *manager = [SDWebImageManager sharedManager];
             UIImage *cachedImage = [manager imageWithURL:_photoURL];
             if (cachedImage) {
                 // Use the cached image immediatly
                 self.underlyingImage = cachedImage;
-                [self imageDidFinishLoading];
+                [self imageDidFinishLoadingSoDecompress];
             } else {
                 // Start an async download
                 [manager downloadWithURL:_photoURL delegate:self];
             }
         } else {
-            // Failed
-            [delegate photoDidFailToLoad:self];
+            // Failed - no source
+            self.underlyingImage = nil;
+            [self imageLoadingComplete];
         }
     }
 }
+
+// Release if we can get it again from path or url
+- (void)unloadUnderlyingImage {
+    _loadingInProgress = NO;
+    [[SDWebImageManager sharedManager] cancelForDelegate:self];
+	if (self.underlyingImage && (_photoPath || _photoURL)) {
+		self.underlyingImage = nil;
+	}
+}
+
+#pragma mark - Async Loading
 
 // Called in background
 // Load image in background from local file
@@ -136,24 +147,31 @@ caption = _caption;
             self.underlyingImage = nil;
             MWLog(@"Photo from file error: %@", error);
         }
-        [self performSelectorOnMainThread:@selector(imageDidFinishLoading) withObject:nil waitUntilDone:NO];
     } @catch (NSException *exception) {
     } @finally {
+        [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
         [pool drain];
     }
 }
 
 // Called on main
-- (void)imageDidFinishLoading {
+- (void)imageDidFinishLoadingSoDecompress {
+    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
     if (self.underlyingImage) {
-        // Decode image to avoid lagging when UIKit lazy loads
-        // Happens async
+        // Decode image async to avoid lagging when UIKit lazy loads
         [[SDWebImageDecoder sharedImageDecoder] decodeImage:self.underlyingImage withDelegate:self userInfo:nil];
     } else {
         // Failed
-        [_photoLoadingDelegate photoDidFailToLoad:self];
-        self.photoLoadingDelegate = nil;
+        [self imageLoadingComplete];
     }
+}
+
+- (void)imageLoadingComplete {
+    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
+    // Complete so notify
+    _loadingInProgress = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_LOADING_DID_END_NOTIFICATION
+                                                        object:self];
 }
 
 #pragma mark - SDWebImage Delegate
@@ -161,28 +179,21 @@ caption = _caption;
 // Called on main
 - (void)webImageManager:(SDWebImageManager *)imageManager didFinishWithImage:(UIImage *)image {
     self.underlyingImage = image;
-    [self imageDidFinishLoading];
+    [self imageDidFinishLoadingSoDecompress];
 }
 
 // Called on main
 - (void)webImageManager:(SDWebImageManager *)imageManager didFailWithError:(NSError *)error {
     self.underlyingImage = nil;
     MWLog(@"SDWebImage failed to download image: %@", error);
-    [self imageDidFinishLoading];
+    [self imageDidFinishLoadingSoDecompress];
 }
 
 // Called on main
 - (void)imageDecoder:(SDWebImageDecoder *)decoder didFinishDecodingImage:(UIImage *)image userInfo:(NSDictionary *)userInfo {
-    if (image) {
-        // Complete
-        self.underlyingImage = image;
-        [_photoLoadingDelegate photoDidFinishLoading:self];
-    } else {
-        // Fail
-        self.underlyingImage = nil;
-        [_photoLoadingDelegate photoDidFailToLoad:self];
-    }
-    self.photoLoadingDelegate = nil;
+    // Finished compression so we're complete
+    self.underlyingImage = image;
+    [self imageLoadingComplete];
 }
 
 @end

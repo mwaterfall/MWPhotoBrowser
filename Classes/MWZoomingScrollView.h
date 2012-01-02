@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MWPhotoProtocol.h"
 #import "MWTapDetectingImageView.h"
 #import "MWTapDetectingView.h"
 
@@ -15,7 +16,7 @@
 @interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, MWTapDetectingImageViewDelegate, MWTapDetectingViewDelegate> {
 	
 	MWPhotoBrowser *_photoBrowser;
-    MWPhoto *_photo;
+    id<MWPhoto> _photo;
 	
     // This view references the related caption view for simplified
     // handling in photo browser
@@ -28,7 +29,7 @@
 }
 
 @property (nonatomic, retain) MWCaptionView *captionView;
-@property (nonatomic, retain) MWPhoto *photo;
+@property (nonatomic, retain) id<MWPhoto> photo;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;
 - (void)displayImage;
