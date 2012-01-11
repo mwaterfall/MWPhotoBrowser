@@ -164,7 +164,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
                                                  selector:@selector(handleMWPhotoLoadingDidEndNotification:)
                                                      name:MWPHOTO_LOADING_DID_END_NOTIFICATION
                                                    object:nil];
-        
     }
     return self;
 }
@@ -358,7 +357,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if (SYSTEM_VERSION_LESS_THAN(@"5")) [self viewWillLayoutSubviews];
     
     // Status bar
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
     }
@@ -394,7 +393,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self setControlsHidden:NO animated:NO permanent:YES];
     
     // Status bar
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
     
@@ -897,30 +896,35 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Cancel any timers
     [self cancelControlHiding];
 	
-	// Get status bar height if visible
-	CGFloat statusBarHeight = 0;
-	if (![UIApplication sharedApplication].statusBarHidden) {
-		CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-		statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
-	}
-	
-	// Status Bar
-	if ([UIApplication instancesRespondToSelector:@selector(setStatusBarHidden:withAnimation:)]) {
-		[[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
-	} else {
-		[[UIApplication sharedApplication] setStatusBarHidden:hidden animated:animated];
-	}
-	
-	// Get status bar height if visible
-	if (![UIApplication sharedApplication].statusBarHidden) {
-		CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-		statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
-	}
-	
-	// Set navigation bar frame
-	CGRect navBarFrame = self.navigationController.navigationBar.frame;
-	navBarFrame.origin.y = statusBarHeight;
-	self.navigationController.navigationBar.frame = navBarFrame;
+	// Status bar and nav bar positioning
+    if (self.wantsFullScreenLayout) {
+        
+        // Get status bar height if visible
+        CGFloat statusBarHeight = 0;
+        if (![UIApplication sharedApplication].statusBarHidden) {
+            CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+            statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
+        }
+        
+        // Status Bar
+        if ([UIApplication instancesRespondToSelector:@selector(setStatusBarHidden:withAnimation:)]) {
+            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
+        } else {
+            [[UIApplication sharedApplication] setStatusBarHidden:hidden animated:animated];
+        }
+        
+        // Get status bar height if visible
+        if (![UIApplication sharedApplication].statusBarHidden) {
+            CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+            statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
+        }
+        
+        // Set navigation bar frame
+        CGRect navBarFrame = self.navigationController.navigationBar.frame;
+        navBarFrame.origin.y = statusBarHeight;
+        self.navigationController.navigationBar.frame = navBarFrame;
+        
+    }
     
     // Captions
     NSMutableSet *captionViews = [[[NSMutableSet alloc] initWithCapacity:_visiblePages.count] autorelease];
@@ -963,7 +967,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	}
 }
 
-- (BOOL)areControlsHidden { return [UIApplication sharedApplication].isStatusBarHidden; }
+- (BOOL)areControlsHidden { return (_toolbar.alpha == 0); /* [UIApplication sharedApplication].isStatusBarHidden; */ }
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
 - (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
 

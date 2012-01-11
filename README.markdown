@@ -30,7 +30,8 @@ See the code snippet below for an example of how to implement the photo browser.
     // Create & present browser
     MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     // Set options
-    browser.displayActionButton = YES; // Show action button to save, copy or email photos
+    browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+    browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
     [browser setInitialPageIndex:1]; // Example: allows second image to be presented first
     // Present
     [self.navigationController pushViewController:browser animated:YES];
@@ -48,6 +49,8 @@ Then respond to the required delegate methods:
     }
 
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
+
+If you don't want to view the photo browser full screen (for example if you are using view controller containment in iOS 5) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
 
 
 ### Photo Captions
