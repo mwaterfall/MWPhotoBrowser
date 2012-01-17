@@ -297,7 +297,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
-        UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)] autorelease];
+        UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)] autorelease];
         // Set appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
             [doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -860,7 +860,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     
 	// Title
 	if ([self numberOfPhotos] > 1) {
-		self.title = [NSString stringWithFormat:@"%i of %i", _currentPageIndex+1, [self numberOfPhotos]];		
+		self.title = [NSString stringWithFormat:@"%i %@ %i", _currentPageIndex+1, NSLocalizedString(@"of", nil), [self numberOfPhotos]];		
 	} else {
 		self.title = nil;
 	}
@@ -1003,12 +1003,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             // Sheet
             if ([MFMailComposeViewController canSendMail]) {
                 self.actionsSheet = [[[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"Save", @"Copy", @"Email", nil] autorelease];
+                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil)  destructiveButtonTitle:nil
+                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil] autorelease];
             } else {
                 self.actionsSheet = [[[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"Save", @"Copy", nil] autorelease];
+                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
+                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil] autorelease];
             }
             _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
             if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
@@ -1083,7 +1083,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)savePhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:@"Saving..."];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@.." , NSLocalizedString(@"Saving", nil)]];
         [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1096,14 +1096,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    [self showProgressHUDCompleteMessage:error?@"Failed":@"Saved"];
+    [self showProgressHUDCompleteMessage:error?NSLocalizedString(@"Failed", nil) : NSLocalizedString(@"Saved", nil)];
     [self hideControlsAfterDelay]; // Continue as normal...
 }
 
 - (void)copyPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:@"Copying..."];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@.." , NSLocalizedString(@"Copying", nil)]];
         [self performSelector:@selector(actuallyCopyPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1112,7 +1112,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if ([photo underlyingImage]) {
         [[UIPasteboard generalPasteboard] setData:UIImagePNGRepresentation([photo underlyingImage])
                                 forPasteboardType:@"public.png"];
-        [self showProgressHUDCompleteMessage:@"Copied"];
+        [self showProgressHUDCompleteMessage:NSLocalizedString(@"Copied", nil)];
         [self hideControlsAfterDelay]; // Continue as normal...
     }
 }
@@ -1120,7 +1120,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)emailPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:@"Preparing..."];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@.." , NSLocalizedString(@"Preparing", nil)]];
         [self performSelector:@selector(actuallyEmailPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1129,7 +1129,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if ([photo underlyingImage]) {
         MFMailComposeViewController *emailer = [[MFMailComposeViewController alloc] init];
         emailer.mailComposeDelegate = self;
-        [emailer setSubject:@"Photo"];
+        [emailer setSubject:NSLocalizedString(@"Photo", nil)];
         [emailer addAttachmentData:UIImagePNGRepresentation([photo underlyingImage]) mimeType:@"png" fileName:@"Photo.png"];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
@@ -1144,7 +1144,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     if (result == MFMailComposeResultFailed) {
-		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Email" message:@"Email failed to send. Please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] autorelease];
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Email", nil) message:NSLocalizedString(@"Email failed to send. Please try again.", nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil] autorelease];
 		[alert show];
     }
 	[self dismissModalViewControllerAnimated:YES];
