@@ -1027,12 +1027,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if (actionSheet == _actionsSheet) {           
         // Actions 
         self.actionsSheet = nil;
-        if (buttonIndex == actionSheet.firstOtherButtonIndex) {
-            [self savePhoto]; return;
-        } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 1) {
-            [self copyPhoto]; return;	
-        } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 2) {
-            [self emailPhoto]; return;
+        if (buttonIndex != actionSheet.cancelButtonIndex) {
+            if (buttonIndex == actionSheet.firstOtherButtonIndex) {
+                [self savePhoto]; return;
+            } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 1) {
+                [self copyPhoto]; return;	
+            } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 2) {
+                [self emailPhoto]; return;
+            }
         }
     }
     [self hideControlsAfterDelay]; // Continue as normal...

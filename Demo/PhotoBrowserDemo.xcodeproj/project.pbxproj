@@ -11,7 +11,6 @@
 		4C6F979214AF734900F8389A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979114AF734900F8389A /* UIKit.framework */; };
 		4C6F979414AF734900F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979314AF734900F8389A /* Foundation.framework */; };
 		4C6F979614AF734900F8389A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979514AF734900F8389A /* CoreGraphics.framework */; };
-		4C6F979C14AF734900F8389A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C6F979A14AF734900F8389A /* InfoPlist.strings */; };
 		4C6F979E14AF734900F8389A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F979D14AF734900F8389A /* main.m */; };
 		4C6F97A214AF734900F8389A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F97A114AF734900F8389A /* AppDelegate.m */; };
 		4C6F97B314AF737E00F8389A /* Menu.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F97B214AF737E00F8389A /* Menu.m */; };
@@ -52,7 +51,6 @@
 		4C6F979314AF734900F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F979514AF734900F8389A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		4C6F979914AF734900F8389A /* PhotoBrowserDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PhotoBrowserDemo-Info.plist"; sourceTree = "<group>"; };
-		4C6F979B14AF734900F8389A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4C6F979D14AF734900F8389A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4C6F979F14AF734900F8389A /* PhotoBrowserDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PhotoBrowserDemo-Prefix.pch"; sourceTree = "<group>"; };
 		4C6F97A014AF734900F8389A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -135,7 +133,6 @@
 			isa = PBXGroup;
 			children = (
 				4C6F979914AF734900F8389A /* PhotoBrowserDemo-Info.plist */,
-				4C6F979A14AF734900F8389A /* InfoPlist.strings */,
 				4C6F979D14AF734900F8389A /* main.m */,
 				4C6F979F14AF734900F8389A /* PhotoBrowserDemo-Prefix.pch */,
 			);
@@ -242,7 +239,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C6F979C14AF734900F8389A /* InfoPlist.strings in Resources */,
 				4C6F97D314AF760500F8389A /* photo1l.jpg in Resources */,
 				4C6F97D414AF760500F8389A /* photo1m.jpg in Resources */,
 				4C6F97D514AF760500F8389A /* photo2l.jpg in Resources */,
@@ -286,14 +282,6 @@
 				0E85B24D14C6F40500EA35BF /* en */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		4C6F979A14AF734900F8389A /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4C6F979B14AF734900F8389A /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -349,6 +337,10 @@
 		4C6F97AF14AF734900F8389A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
@@ -363,6 +355,10 @@
 		4C6F97B014AF734900F8389A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
