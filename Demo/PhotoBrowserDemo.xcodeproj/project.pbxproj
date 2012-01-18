@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E85B24C14C6F40500EA35BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E85B24E14C6F40500EA35BF /* Localizable.strings */; };
 		4C6F979214AF734900F8389A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979114AF734900F8389A /* UIKit.framework */; };
 		4C6F979414AF734900F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979314AF734900F8389A /* Foundation.framework */; };
 		4C6F979614AF734900F8389A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979514AF734900F8389A /* CoreGraphics.framework */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E85B24D14C6F40500EA35BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4C6F978D14AF734900F8389A /* PhotoBrowserDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoBrowserDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F979114AF734900F8389A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4C6F979314AF734900F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -121,6 +123,7 @@
 				4C6F97A114AF734900F8389A /* AppDelegate.m */,
 				4C6F97B114AF737E00F8389A /* Menu.h */,
 				4C6F97B214AF737E00F8389A /* Menu.m */,
+				0E85B24E14C6F40500EA35BF /* Localizable.strings */,
 				4C6F97CA14AF75D300F8389A /* Photos */,
 				4CB08BF314B1FF7300730E9F /* MWPhotoBrowser */,
 				4C6F979814AF734900F8389A /* Supporting Files */,
@@ -206,6 +209,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				fr,
 			);
 			mainGroup = 4C6F978214AF734800F8389A;
 			productRefGroup = 4C6F978E14AF734900F8389A /* Products */;
@@ -248,6 +252,7 @@
 				4C6F97D914AF760500F8389A /* photo4l.jpg in Resources */,
 				4C6F97DA14AF760500F8389A /* photo4m.jpg in Resources */,
 				4CD92B1314B20FA2002200C1 /* MWPhotoBrowser.bundle in Resources */,
+				0E85B24C14C6F40500EA35BF /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +280,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		0E85B24E14C6F40500EA35BF /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E85B24D14C6F40500EA35BF /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		4C6F979A14AF734900F8389A /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
