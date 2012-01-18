@@ -137,6 +137,7 @@
 @synthesize navigationBarBackgroundImageDefault = _navigationBarBackgroundImageDefault,
 navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandscapePhone;
 @synthesize displayActionButton = _displayActionButton, actionsSheet = _actionsSheet;
+@synthesize doneBarButtonPosition = _doneBarButtonPosition;
 @synthesize progressHUD = _progressHUD;
 @synthesize previousViewControllerBackButton = _previousViewControllerBackButton;
 
@@ -157,6 +158,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         _recycledPages = [[NSMutableSet alloc] init];
         _photos = [[NSMutableArray alloc] init];
         _displayActionButton = NO;
+        _doneBarButtonPosition = MWPhotoBrowserDoneBarButtonPositionRight;
         _didSavePreviousStateOfNavBar = NO;
         
         // Listen for MWPhoto notifications
@@ -307,7 +309,16 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             [doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
             [doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         }
-        self.navigationItem.rightBarButtonItem = doneButton;
+        
+        switch (self.doneBarButtonPosition) {
+            case MWPhotoBrowserDoneBarButtonPositionLeft:
+                self.navigationItem.leftBarButtonItem = doneButton;
+                break;
+            case MWPhotoBrowserDoneBarButtonPositionRight:
+                self.navigationItem.rightBarButtonItem = doneButton;
+                break;
+        }
+        
     } else {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
