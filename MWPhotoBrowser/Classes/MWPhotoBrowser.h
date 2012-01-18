@@ -28,11 +28,20 @@
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
 @end
 
+// MWPhotoBrowser Enumerations
+
+enum {
+    MWPhotoBrowserDoneBarButtonPositionLeft    = 1,
+    MWPhotoBrowserDoneBarButtonPositionRight   = 2
+};
+typedef NSUInteger MWPhotoBrowserDoneBarButtonPosition;
+
 // MWPhotoBrowser
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate> 
 
 // Properties
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic, assign) MWPhotoBrowserDoneBarButtonPosition doneBarButtonPosition;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
