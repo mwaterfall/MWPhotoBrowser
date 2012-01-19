@@ -1045,7 +1045,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (MBProgressHUD *)progressHUD {
     if (!_progressHUD) {
         _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
-        _progressHUD.minSize = CGSizeMake(110, 110);
+        _progressHUD.minSize = CGSizeMake(120, 120);
         _progressHUD.minShowTime = 1;
         // The sample image is based on the
         // work by: http://www.pixelpressicons.com
