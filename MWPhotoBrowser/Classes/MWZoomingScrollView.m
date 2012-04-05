@@ -117,9 +117,18 @@
 			CGRect photoImageViewFrame;
 			photoImageViewFrame.origin = CGPointZero;
 			photoImageViewFrame.size = img.size;
+            
+            // if photo is smaller than frame, then adjust photo to aspect fit within frame
+            if( photoImageViewFrame.size.height < self.frame.size.height && photoImageViewFrame.size.width < self.frame.size.width ){
+                photoImageViewFrame.size = CGSizeMake(self.frame.size.width, self.frame.size.height);
+                _photoImageView.contentMode = UIViewContentModeScaleAspectFit;
+            } else {
+                _photoImageView.contentMode = UIViewContentModeCenter;
+            }
+            
 			_photoImageView.frame = photoImageViewFrame;
 			self.contentSize = photoImageViewFrame.size;
-
+            
 			// Set zoom to minimum zoom
 			[self setMaxMinZoomScalesForCurrentBounds];
 			
@@ -182,7 +191,7 @@
 	// Reset position
 	_photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
 	[self setNeedsLayout];
-
+    
 }
 
 #pragma mark - Layout
@@ -194,7 +203,7 @@
 	
 	// Spinner
 	if (!_spinner.hidden) _spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
-													  floorf(self.bounds.size.height/2.0));
+                                                        floorf(self.bounds.size.height/2.0));
 	// Super
 	[super layoutSubviews];
 	
