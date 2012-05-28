@@ -90,6 +90,7 @@ Example delegate method for custom caption view:
 4. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
 5. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
 6. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths"  is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored.
+7. In "Summary" add `MessageUI.framework` to "Linked Frameworks and Libraries".
 
 You should now be able to include `MWPhotoBrowser.h` into your project and start using it.
 
