@@ -72,6 +72,7 @@
 	[_photoImageView release];
 	[_spinner release];
     [_photo release];
+    [_captionView release];
 	[super dealloc];
 }
 

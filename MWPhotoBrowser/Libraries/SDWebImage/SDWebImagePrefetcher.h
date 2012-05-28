@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "SDWebImageManagerDelegate.h"
+#import "SDWebImageManager.h"
 
+/**
+ * Prefetch some URLs in the cache for future use. Images are downloaded in low priority.
+ */
 @interface SDWebImagePrefetcher : NSObject <SDWebImageManagerDelegate>
 {
     NSArray *_prefetchURLs;
@@ -23,6 +27,15 @@
  */
 @property (nonatomic, assign) NSUInteger maxConcurrentDownloads;
 
+/**
+ * SDWebImageOptions for prefetcher. Defaults to SDWebImageLowPriority.
+ */
+@property (nonatomic, assign) SDWebImageOptions options;
+
+
+/**
+ * Return the global image prefetcher instance.
+ */
 + (SDWebImagePrefetcher *)sharedImagePrefetcher;
 
 /**
@@ -30,7 +43,7 @@
  * currently one image is downloaded at a time,
  * and skips images for failed downloads and proceed to the next image in the list
  *
- * @param NSArray list of URLs to prefetch
+ * @param urls list of URLs to prefetch
  */
 - (void)prefetchURLs:(NSArray *)urls;
 

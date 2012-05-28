@@ -106,15 +106,7 @@ caption = _caption;
         } else if (_photoURL) {
             // Load async from web (using SDWebImage)
             SDWebImageManager *manager = [SDWebImageManager sharedManager];
-            UIImage *cachedImage = [manager imageWithURL:_photoURL];
-            if (cachedImage) {
-                // Use the cached image immediatly
-                self.underlyingImage = cachedImage;
-                [self imageDidFinishLoadingSoDecompress];
-            } else {
-                // Start an async download
-                [manager downloadWithURL:_photoURL delegate:self];
-            }
+            [manager downloadWithURL:_photoURL delegate:self];
         } else {
             // Failed - no source
             self.underlyingImage = nil;

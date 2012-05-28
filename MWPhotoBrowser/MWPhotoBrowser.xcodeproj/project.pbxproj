@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0EA380301573EA35003F4582 /* MKAnnotationView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EA3802E1573EA35003F4582 /* MKAnnotationView+WebCache.h */; };
+		0EA380311573EA35003F4582 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EA3802F1573EA35003F4582 /* MKAnnotationView+WebCache.m */; };
+		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -45,6 +48,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0EA3802E1573EA35003F4582 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MKAnnotationView+WebCache.h"; path = "Libraries/SDWebImage/MKAnnotationView+WebCache.h"; sourceTree = SOURCE_ROOT; };
+		0EA3802F1573EA35003F4582 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MKAnnotationView+WebCache.m"; path = "Libraries/SDWebImage/MKAnnotationView+WebCache.m"; sourceTree = SOURCE_ROOT; };
+		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F96CB14AF704100F8389A /* MWPhotoBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWPhotoBrowser-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -90,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */,
 				4C6F97C714AF74E200F8389A /* MessageUI.framework in Frameworks */,
 				4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */,
 			);
@@ -119,6 +126,7 @@
 		4C6F96C614AF704100F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0EA380321573EA4B003F4582 /* ImageIO.framework */,
 				4C6F97C614AF74E200F8389A /* MessageUI.framework */,
 				4C6F96C714AF704100F8389A /* Foundation.framework */,
 			);
@@ -159,14 +167,16 @@
 			isa = PBXGroup;
 			children = (
 				4C6F96F214AF70FA00F8389A /* MBProgressHUD (2afc4dd) */,
-				4C6F96F114AF70F500F8389A /* SDWebImage (8318b29) */,
+				4C6F96F114AF70F500F8389A /* SDWebImage (b782388) */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
 		};
-		4C6F96F114AF70F500F8389A /* SDWebImage (8318b29) */ = {
+		4C6F96F114AF70F500F8389A /* SDWebImage (b782388) */ = {
 			isa = PBXGroup;
 			children = (
+				0EA3802E1573EA35003F4582 /* MKAnnotationView+WebCache.h */,
+				0EA3802F1573EA35003F4582 /* MKAnnotationView+WebCache.m */,
 				4C6F96F814AF711300F8389A /* SDImageCache.h */,
 				4C6F96F914AF711300F8389A /* SDImageCache.m */,
 				4C6F96FA14AF711300F8389A /* SDImageCacheDelegate.h */,
@@ -186,7 +196,7 @@
 				4C6F970814AF711300F8389A /* UIImageView+WebCache.h */,
 				4C6F970914AF711300F8389A /* UIImageView+WebCache.m */,
 			);
-			name = "SDWebImage (8318b29)";
+			name = "SDWebImage (b782388)";
 			sourceTree = "<group>";
 		};
 		4C6F96F214AF70FA00F8389A /* MBProgressHUD (2afc4dd) */ = {
@@ -233,6 +243,7 @@
 				4C6F971814AF711300F8389A /* UIButton+WebCache.h in Headers */,
 				4C6F971A14AF711300F8389A /* UIImageView+WebCache.h in Headers */,
 				4CB08BA314B1F38700730E9F /* MWPhotoProtocol.h in Headers */,
+				0EA380301573EA35003F4582 /* MKAnnotationView+WebCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +311,7 @@
 				4C6F971714AF711300F8389A /* SDWebImagePrefetcher.m in Sources */,
 				4C6F971914AF711300F8389A /* UIButton+WebCache.m in Sources */,
 				4C6F971B14AF711300F8389A /* UIImageView+WebCache.m in Sources */,
+				0EA380311573EA35003F4582 /* MKAnnotationView+WebCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

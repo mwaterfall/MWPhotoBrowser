@@ -1,48 +1,20 @@
-/*
- * This file is part of the SDWebImage package.
- * (c) Olivier Poitrey <rs@dailymotion.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+//
+//  MKAnnotationView+WebCache.h
+//  SDWebImage
+//
+//  Created by Olivier Poitrey on 14/03/12.
+//  Copyright (c) 2012 Dailymotion. All rights reserved.
+//
 
+#import "MapKit/MapKit.h"
 #import "SDWebImageCompat.h"
 #import "SDWebImageManagerDelegate.h"
 #import "SDWebImageManager.h"
 
 /**
- * Integrates SDWebImage async downloading and caching of remote images with UIImageView.
- *
- * Usage with a UITableViewCell sub-class:
- *
- * 	#import <SDWebImage/UIImageView+WebCache.h>
- * 	
- * 	...
- * 	
- * 	- (UITableViewCell *)tableView:(UITableView *)tableView
- * 	         cellForRowAtIndexPath:(NSIndexPath *)indexPath
- * 	{
- * 	    static NSString *MyIdentifier = @"MyIdentifier";
- * 	
- * 	    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
- * 	
- * 	    if (cell == nil)
- * 	    {
- * 	        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
- * 	                                       reuseIdentifier:MyIdentifier] autorelease];
- * 	    }
- * 	
- * 	    // Here we use the provided setImageWithURL: method to load the web image
- * 	    // Ensure you use a placeholder image otherwise cells will be initialized with no image
- * 	    [cell.imageView setImageWithURL:[NSURL URLWithString:@"http://example.com/image.jpg"]
- * 	                   placeholderImage:[UIImage imageNamed:@"placeholder"]];
- * 	
- * 	    cell.textLabel.text = @"My Text";
- * 	    return cell;
- * 	}
- * 	
+ * Integrates SDWebImage async downloading and caching of remote images with MKAnnotationView.
  */
-@interface UIImageView (WebCache) <SDWebImageManagerDelegate>
+@interface MKAnnotationView (WebCache) <SDWebImageManagerDelegate>
 
 /**
  * Set the imageView `image` with an `url`.

@@ -19,6 +19,7 @@ static SDWebImagePrefetcher *instance;
 
 @synthesize prefetchURLs;
 @synthesize maxConcurrentDownloads;
+@synthesize options;
 
 + (SDWebImagePrefetcher *)sharedImagePrefetcher
 {
@@ -26,6 +27,7 @@ static SDWebImagePrefetcher *instance;
     {
         instance = [[SDWebImagePrefetcher alloc] init];
         instance.maxConcurrentDownloads = 3;
+        instance.options = (SDWebImageLowPriority);
     }
 
     return instance;
@@ -35,7 +37,7 @@ static SDWebImagePrefetcher *instance;
 {
     if (index >= [self.prefetchURLs count]) return;
     _requestedCount++;
-    [imageManager downloadWithURL:[self.prefetchURLs objectAtIndex:index] delegate:self options:SDWebImageLowPriority];
+    [imageManager downloadWithURL:[self.prefetchURLs objectAtIndex:index] delegate:self options:self.options];
 }
 
 - (void)reportStatus
@@ -51,9 +53,9 @@ static SDWebImagePrefetcher *instance;
     self.prefetchURLs = urls;
 
     // Starts prefetching from the very first image on the list with the max allowed concurrency
-    int listCount = [self.prefetchURLs count];
+    NSUInteger listCount = [self.prefetchURLs count];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
-    for (int i = 0; i < self.maxConcurrentDownloads && _requestedCount < listCount; i++)
+    for (NSUInteger i = 0; i < self.maxConcurrentDownloads && _requestedCount < listCount; i++)
     {
         [self startPrefetchingAtIndex:i withManager:manager];
     }
@@ -106,7 +108,7 @@ static SDWebImagePrefetcher *instance;
 - (void)dealloc
 {
     self.prefetchURLs = nil;
-    [super dealloc];
+    SDWISuperDealoc;
 }
 
 @end

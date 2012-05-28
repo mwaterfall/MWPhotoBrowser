@@ -9,10 +9,20 @@
 #import "SDWebImageManager.h"
 #import "SDImageCache.h"
 #import "SDWebImageDownloader.h"
+#import <objc/message.h>
+
+#if NS_BLOCKS_AVAILABLE
+typedef void(^SuccessBlock)(UIImage *image);
+typedef void(^FailureBlock)(NSError *error);
+#endif
 
 static SDWebImageManager *instance;
 
 @implementation SDWebImageManager
+
+#if NS_BLOCKS_AVAILABLE
+@synthesize cacheKeyFilter;
+#endif
 
 - (id)init
 {
@@ -30,13 +40,13 @@ static SDWebImageManager *instance;
 
 - (void)dealloc
 {
-    [downloadDelegates release], downloadDelegates = nil;
-    [downloaders release], downloaders = nil;
-    [cacheDelegates release], cacheDelegates = nil;
-    [cacheURLs release], cacheURLs = nil;
-    [downloaderForURL release], downloaderForURL = nil;
-    [failedURLs release], failedURLs = nil;
-    [super dealloc];
+    SDWISafeRelease(downloadDelegates);
+    SDWISafeRelease(downloaders);
+    SDWISafeRelease(cacheDelegates);
+    SDWISafeRelease(cacheURLs);
+    SDWISafeRelease(downloaderForURL);
+    SDWISafeRelease(failedURLs);
+    SDWISuperDealoc;
 }
 
 
@@ -50,15 +60,31 @@ static SDWebImageManager *instance;
     return instance;
 }
 
-/**
+- (NSString *)cacheKeyForURL:(NSURL *)url
+{
+#if NS_BLOCKS_AVAILABLE
+    if (self.cacheKeyFilter)
+    {
+        return self.cacheKeyFilter(url);
+    }
+    else
+    {
+        return [url absoluteString];
+    }
+#else
+    return [url absoluteString];
+#endif
+}
+
+/*
  * @deprecated
  */
 - (UIImage *)imageWithURL:(NSURL *)url
 {
-    return [[SDImageCache sharedImageCache] imageFromKey:[url absoluteString]];
+    return [[SDImageCache sharedImageCache] imageFromKey:[self cacheKeyForURL:url]];
 }
 
-/**
+/*
  * @deprecated
  */
 - (void)downloadWithURL:(NSURL *)url delegate:(id<SDWebImageManagerDelegate>)delegate retryFailed:(BOOL)retryFailed
@@ -66,7 +92,7 @@ static SDWebImageManager *instance;
     [self downloadWithURL:url delegate:delegate options:(retryFailed ? SDWebImageRetryFailed : 0)];
 }
 
-/**
+/*
  * @deprecated
  */
 - (void)downloadWithURL:(NSURL *)url delegate:(id<SDWebImageManagerDelegate>)delegate retryFailed:(BOOL)retryFailed lowPriority:(BOOL)lowPriority
@@ -84,6 +110,11 @@ static SDWebImageManager *instance;
 
 - (void)downloadWithURL:(NSURL *)url delegate:(id<SDWebImageManagerDelegate>)delegate options:(SDWebImageOptions)options
 {
+    [self downloadWithURL:url delegate:delegate options:options userInfo:nil];
+}
+
+- (void)downloadWithURL:(NSURL *)url delegate:(id<SDWebImageManagerDelegate>)delegate options:(SDWebImageOptions)options userInfo:(NSDictionary *)userInfo
+{
     // Very common mistake is to send the URL using NSString object instead of NSURL. For some strange reason, XCode won't
     // throw any warning for this type mismatch. Here we failsafe this error by allowing URLs to be passed as NSString.
     if ([url isKindOfClass:NSString.class])
@@ -99,9 +130,55 @@ static SDWebImageManager *instance;
     // Check the on-disk cache async so we don't block the main thread
     [cacheDelegates addObject:delegate];
     [cacheURLs addObject:url];
-    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:delegate, @"delegate", url, @"url", [NSNumber numberWithInt:options], @"options", nil];
-    [[SDImageCache sharedImageCache] queryDiskCacheForKey:[url absoluteString] delegate:self userInfo:info];
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          delegate, @"delegate",
+                          url, @"url",
+                          [NSNumber numberWithInt:options], @"options",
+                          userInfo ? userInfo : [NSNull null], @"userInfo",
+                          nil];
+    [[SDImageCache sharedImageCache] queryDiskCacheForKey:[self cacheKeyForURL:url] delegate:self userInfo:info];
 }
+
+#if NS_BLOCKS_AVAILABLE
+- (void)downloadWithURL:(NSURL *)url delegate:(id)delegate options:(SDWebImageOptions)options success:(void (^)(UIImage *image))success failure:(void (^)(NSError *error))failure
+{
+    [self downloadWithURL:url delegate:delegate options:options userInfo:nil success:success failure:failure];
+}
+
+- (void)downloadWithURL:(NSURL *)url delegate:(id)delegate options:(SDWebImageOptions)options userInfo:(NSDictionary *)userInfo success:(void (^)(UIImage *image))success failure:(void (^)(NSError *error))failure
+{
+    // repeated logic from above due to requirement for backwards compatability for iOS versions without blocks
+    
+    // Very common mistake is to send the URL using NSString object instead of NSURL. For some strange reason, XCode won't
+    // throw any warning for this type mismatch. Here we failsafe this error by allowing URLs to be passed as NSString.
+    if ([url isKindOfClass:NSString.class])
+    {
+        url = [NSURL URLWithString:(NSString *)url];
+    }
+    
+    if (!url || !delegate || (!(options & SDWebImageRetryFailed) && [failedURLs containsObject:url]))
+    {
+        return;
+    }
+    
+    // Check the on-disk cache async so we don't block the main thread
+    [cacheDelegates addObject:delegate];
+    [cacheURLs addObject:url];
+    SuccessBlock successCopy = [success copy];
+    FailureBlock failureCopy = [failure copy];
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          delegate, @"delegate",
+                          url, @"url",
+                          [NSNumber numberWithInt:options], @"options",
+                          userInfo ? userInfo : [NSNull null], @"userInfo",
+                          successCopy, @"success",
+                          failureCopy, @"failure",
+                          nil];
+    SDWIRelease(successCopy);
+    SDWIRelease(failureCopy);
+    [[SDImageCache sharedImageCache] queryDiskCacheForKey:[self cacheKeyForURL:url] delegate:self userInfo:info];
+}
+#endif
 
 - (void)cancelForDelegate:(id<SDWebImageManagerDelegate>)delegate
 {
@@ -114,7 +191,7 @@ static SDWebImageManager *instance;
 
     while ((idx = [downloadDelegates indexOfObjectIdenticalTo:delegate]) != NSNotFound)
     {
-        SDWebImageDownloader *downloader = [[downloaders objectAtIndex:idx] retain];
+        SDWebImageDownloader *downloader = SDWIReturnRetained([downloaders objectAtIndex:idx]);
 
         [downloadDelegates removeObjectAtIndex:idx];
         [downloaders removeObjectAtIndex:idx];
@@ -126,7 +203,7 @@ static SDWebImageManager *instance;
             [downloaderForURL removeObjectForKey:downloader.url];
         }
 
-        [downloader release];
+        SDWIRelease(downloader);
     }
 }
 
@@ -162,6 +239,26 @@ static SDWebImageManager *instance;
     {
         [delegate performSelector:@selector(webImageManager:didFinishWithImage:) withObject:self withObject:image];
     }
+    if ([delegate respondsToSelector:@selector(webImageManager:didFinishWithImage:forURL:)])
+    {
+        objc_msgSend(delegate, @selector(webImageManager:didFinishWithImage:forURL:), self, image, url);
+    }
+    if ([delegate respondsToSelector:@selector(webImageManager:didFinishWithImage:forURL:userInfo:)])
+    {
+        NSDictionary *userInfo = [info objectForKey:@"userInfo"];
+        if ([userInfo isKindOfClass:NSNull.class])
+        {
+            userInfo = nil;
+        }
+        objc_msgSend(delegate, @selector(webImageManager:didFinishWithImage:forURL:userInfo:), self, image, url, userInfo);
+    }
+#if NS_BLOCKS_AVAILABLE
+    if ([info objectForKey:@"success"])
+    {
+        SuccessBlock success = [info objectForKey:@"success"];
+        success(image);
+    }
+#endif
 
     [cacheDelegates removeObjectAtIndex:idx];
     [cacheURLs removeObjectAtIndex:idx];
@@ -194,8 +291,14 @@ static SDWebImageManager *instance;
     else
     {
         // Reuse shared downloader
-        downloader.userInfo = info;
+        downloader.userInfo = info; // TOFIX: here we overload previous userInfo
         downloader.lowPriority = (options & SDWebImageLowPriority);
+    }
+
+    if ((options & SDWebImageProgressiveDownload) && !downloader.progressive)
+    {
+        // Turn progressive download support on demand
+        downloader.progressive = YES;
     }
 
     [downloadDelegates addObject:delegate];
@@ -204,9 +307,39 @@ static SDWebImageManager *instance;
 
 #pragma mark SDWebImageDownloaderDelegate
 
+- (void)imageDownloader:(SDWebImageDownloader *)downloader didUpdatePartialImage:(UIImage *)image
+{
+    // Notify all the downloadDelegates with this downloader
+    for (NSInteger idx = (NSInteger)[downloaders count] - 1; idx >= 0; idx--)
+    {
+        NSUInteger uidx = (NSUInteger)idx;
+        SDWebImageDownloader *aDownloader = [downloaders objectAtIndex:uidx];
+        if (aDownloader == downloader)
+        {
+            id<SDWebImageManagerDelegate> delegate = [downloadDelegates objectAtIndex:uidx];
+            SDWIRetain(delegate);
+            SDWIAutorelease(delegate);
+
+            if ([delegate respondsToSelector:@selector(webImageManager:didProgressWithPartialImage:forURL:)])
+            {
+                objc_msgSend(delegate, @selector(webImageManager:didProgressWithPartialImage:forURL:), self, image, downloader.url);
+            }
+            if ([delegate respondsToSelector:@selector(webImageManager:didProgressWithPartialImage:forURL:userInfo:)])
+            {
+                NSDictionary *userInfo = [downloader.userInfo objectForKey:@"userInfo"];
+                if ([userInfo isKindOfClass:NSNull.class])
+                {
+                    userInfo = nil;
+                }
+                objc_msgSend(delegate, @selector(webImageManager:didProgressWithPartialImage:forURL:userInfo:), self, image, downloader.url, userInfo);
+            }
+        }
+    }
+}
+
 - (void)imageDownloader:(SDWebImageDownloader *)downloader didFinishWithImage:(UIImage *)image
 {
-    [downloader retain];
+    SDWIRetain(downloader);
     SDWebImageOptions options = [[downloader.userInfo objectForKey:@"options"] intValue];
 
     // Notify all the downloadDelegates with this downloader
@@ -216,7 +349,9 @@ static SDWebImageManager *instance;
         SDWebImageDownloader *aDownloader = [downloaders objectAtIndex:uidx];
         if (aDownloader == downloader)
         {
-            id<SDWebImageManagerDelegate> delegate = [[[downloadDelegates objectAtIndex:uidx] retain] autorelease];
+            id<SDWebImageManagerDelegate> delegate = [downloadDelegates objectAtIndex:uidx];
+            SDWIRetain(delegate);
+            SDWIAutorelease(delegate);
 
             if (image)
             {
@@ -224,6 +359,26 @@ static SDWebImageManager *instance;
                 {
                     [delegate performSelector:@selector(webImageManager:didFinishWithImage:) withObject:self withObject:image];
                 }
+                if ([delegate respondsToSelector:@selector(webImageManager:didFinishWithImage:forURL:)])
+                {
+                    objc_msgSend(delegate, @selector(webImageManager:didFinishWithImage:forURL:), self, image, downloader.url);
+                }
+                if ([delegate respondsToSelector:@selector(webImageManager:didFinishWithImage:forURL:userInfo:)])
+                {
+                    NSDictionary *userInfo = [downloader.userInfo objectForKey:@"userInfo"];
+                    if ([userInfo isKindOfClass:NSNull.class])
+                    {
+                        userInfo = nil;
+                    }
+                    objc_msgSend(delegate, @selector(webImageManager:didFinishWithImage:forURL:userInfo:), self, image, downloader.url, userInfo);
+                }
+#if NS_BLOCKS_AVAILABLE
+                if ([downloader.userInfo objectForKey:@"success"])
+                {
+                    SuccessBlock success = [downloader.userInfo objectForKey:@"success"];
+                    success(image);
+                }
+#endif
             }
             else
             {
@@ -231,6 +386,26 @@ static SDWebImageManager *instance;
                 {
                     [delegate performSelector:@selector(webImageManager:didFailWithError:) withObject:self withObject:nil];
                 }
+                if ([delegate respondsToSelector:@selector(webImageManager:didFailWithError:forURL:)])
+                {
+                    objc_msgSend(delegate, @selector(webImageManager:didFailWithError:forURL:), self, nil, downloader.url);
+                }
+                if ([delegate respondsToSelector:@selector(webImageManager:didFailWithError:forURL:userInfo:)])
+                {
+                    NSDictionary *userInfo = [downloader.userInfo objectForKey:@"userInfo"];
+                    if ([userInfo isKindOfClass:NSNull.class])
+                    {
+                        userInfo = nil;
+                    }
+                    objc_msgSend(delegate, @selector(webImageManager:didFailWithError:forURL:userInfo:), self, nil, downloader.url, userInfo);
+                }
+#if NS_BLOCKS_AVAILABLE
+                if ([downloader.userInfo objectForKey:@"failure"])
+                {
+                    FailureBlock failure = [downloader.userInfo objectForKey:@"failure"];
+                    failure(nil);
+                }
+#endif
             }
 
             [downloaders removeObjectAtIndex:uidx];
@@ -243,7 +418,7 @@ static SDWebImageManager *instance;
         // Store the image in the cache
         [[SDImageCache sharedImageCache] storeImage:image
                                           imageData:downloader.imageData
-                                             forKey:[downloader.url absoluteString]
+                                             forKey:[self cacheKeyForURL:downloader.url]
                                              toDisk:!(options & SDWebImageCacheMemoryOnly)];
     }
     else if (!(options & SDWebImageRetryFailed))
@@ -256,12 +431,12 @@ static SDWebImageManager *instance;
 
     // Release the downloader
     [downloaderForURL removeObjectForKey:downloader.url];
-    [downloader release];
+    SDWIRelease(downloader);
 }
 
 - (void)imageDownloader:(SDWebImageDownloader *)downloader didFailWithError:(NSError *)error;
 {
-    [downloader retain];
+    SDWIRetain(downloader);
 
     // Notify all the downloadDelegates with this downloader
     for (NSInteger idx = (NSInteger)[downloaders count] - 1; idx >= 0; idx--)
@@ -270,12 +445,34 @@ static SDWebImageManager *instance;
         SDWebImageDownloader *aDownloader = [downloaders objectAtIndex:uidx];
         if (aDownloader == downloader)
         {
-            id<SDWebImageManagerDelegate> delegate = [[[downloadDelegates objectAtIndex:uidx] retain] autorelease];
+            id<SDWebImageManagerDelegate> delegate = [downloadDelegates objectAtIndex:uidx];
+            SDWIRetain(delegate);
+            SDWIAutorelease(delegate);
 
             if ([delegate respondsToSelector:@selector(webImageManager:didFailWithError:)])
             {
                 [delegate performSelector:@selector(webImageManager:didFailWithError:) withObject:self withObject:error];
             }
+            if ([delegate respondsToSelector:@selector(webImageManager:didFailWithError:forURL:)])
+            {
+                objc_msgSend(delegate, @selector(webImageManager:didFailWithError:forURL:), self, error, downloader.url);
+            }
+            if ([delegate respondsToSelector:@selector(webImageManager:didFailWithError:forURL:userInfo:)])
+            {
+                NSDictionary *userInfo = [downloader.userInfo objectForKey:@"userInfo"];
+                if ([userInfo isKindOfClass:NSNull.class])
+                {
+                    userInfo = nil;
+                }
+                objc_msgSend(delegate, @selector(webImageManager:didFailWithError:forURL:userInfo:), self, error, downloader.url, userInfo);
+            }
+#if NS_BLOCKS_AVAILABLE
+            if ([downloader.userInfo objectForKey:@"failure"])
+            {
+                FailureBlock failure = [downloader.userInfo objectForKey:@"failure"];
+                failure(error);
+            }
+#endif
 
             [downloaders removeObjectAtIndex:uidx];
             [downloadDelegates removeObjectAtIndex:uidx];
@@ -284,7 +481,7 @@ static SDWebImageManager *instance;
 
     // Release the downloader
     [downloaderForURL removeObjectForKey:downloader.url];
-    [downloader release];
+    SDWIRelease(downloader);
 }
 
 @end

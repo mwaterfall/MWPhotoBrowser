@@ -85,11 +85,11 @@ Example delegate method for custom caption view:
 ### Method 1: Static Library
 
 1. Get the latest source from GitHub by either [downloading as a zip file](https://github.com/mwaterfall/MWPhotoBrowser/zipball/master) or by cloning the repository at `git://github.com/mwaterfall/MWPhotoBrowser.git` and store the code wherever you wish.
-2. Ensure your project is in a workspace. If not, choose File -> Save as Workspace...
-3. Add the MWPhotoBrowser project to the top level of your workspace.
-4. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
-5. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
-6. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths"  is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored.
+2. Right-click on the your project in the navigator, click "Add Files to 'Your Project'", and browse to and select "MWPhotoBrowser.xcodeproj"
+3. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
+4. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
+5. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths" is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored. In the file layout of the MWPhotoBrowser project, a simple ../** works as the demo project folder and MWPhotoBrowser project folder are adjacent to one another. Please let me know if you encounter any issue with this.
+6. In "Summary" add `MessageUI.framework` and `ImageIO.framework` to "Linked Frameworks and Libraries".
 
 You should now be able to include `MWPhotoBrowser.h` into your project and start using it.
 
