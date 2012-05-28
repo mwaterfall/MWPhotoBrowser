@@ -166,7 +166,7 @@
 		4C6F96F014AF70E800F8389A /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4C6F96F214AF70FA00F8389A /* MBProgressHUD (2afc4dd) */,
+				4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */,
 				4C6F96F114AF70F500F8389A /* SDWebImage (b782388) */,
 			);
 			name = Libraries;
@@ -199,13 +199,13 @@
 			name = "SDWebImage (b782388)";
 			sourceTree = "<group>";
 		};
-		4C6F96F214AF70FA00F8389A /* MBProgressHUD (2afc4dd) */ = {
+		4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */ = {
 			isa = PBXGroup;
 			children = (
 				4C6F96F414AF710800F8389A /* MBProgressHUD.h */,
 				4C6F96F514AF710800F8389A /* MBProgressHUD.m */,
 			);
-			name = "MBProgressHUD (2afc4dd)";
+			name = "MBProgressHUD (3d5c3cc)";
 			sourceTree = "<group>";
 		};
 		4C6F97E114AF7CCE00F8389A /* Supporting Files */ = {

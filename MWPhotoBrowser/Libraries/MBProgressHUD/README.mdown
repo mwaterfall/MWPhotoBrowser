@@ -1,15 +1,26 @@
 MBProgressHUD
 =============
 
-MBProgressHUD is an iPhone drop-in class that displays a translucent HUD with a progress indicator and some optional labels while work is being done in a background thread. The HUD is meant as a replacement for the undocumented, private UIKit UIProgressHUD with some additional features. 
-
-MBProgressHUD is iOS4 and iPad compatible and released under the MIT license (see MBProgressHUD.h).
+MBProgressHUD is an iOS drop-in class that displays a translucent HUD with an indicator and/or labels while work is being done in a background thread. The HUD is meant as a replacement for the undocumented, private UIKit UIProgressHUD with some additional features. 
 
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/1-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/1.png)
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/2-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/2.png)
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/3-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/3.png)
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/4-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/4.png)
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/5-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/5.png)
+[![](http://dl.dropbox.com/u/378729/MBProgressHUD/6-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/6.png)
+[![](http://dl.dropbox.com/u/378729/MBProgressHUD/7-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/7.png)
+
+Requirements
+============
+
+MBProgressHUD works on any iOS version and is compatible with both ARC and non-ARC projects. It depends on the following Apple frameworks:
+
+* Foundation.framework
+* UIKit.framework
+* CoreGraphics.framework
+
+You will need LLVM 3.0 or later in order to build MBProgressHUD. 
 
 Adding MBProgressHUD to your project
 ====================================
@@ -28,17 +39,59 @@ If you have a git tracked project, you can add MBProgressHUD as a submodule to y
 3. Open your project in Xcode, than drag and drop `MBProgressHUD.h` and `MBProgressHUD.m` to your classes group (in the Groups & Files view). 
 4. Don't select Copy items and select a suitable Reference type (relative to project should work fine most of the time). 
 
+You can also add MBProgressHUD as a static library to your workspace. See [this article](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library) for details. 
+
 Usage
 =====
 
-Extensive documentation is provided in the header file (MBProgressHUD.h). In additiona a full Xcode demo project is included in the Demo directory. 
+The main guideline you need to follow when dealing with MBProgressHUD while running long-running tasks is keeping the main thread work-free, so the UI can be updated promptly. The recommended way of using MBProgressHUD is therefore to set it up on the main thread and than spinning the task, that you want to perform, off onto a new thread. 
+
+```Objective-C
+[MBProgressHUD showHUDAddedTo:self.view animated:YES];
+dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+	// Do something...
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[MBProgressHUD hideHUDForView:self.view animated:YES];
+	});
+});
+```
+
+If you need to configure the HUD you can do this by using the MBProgressHUD reference that showHUDAddedTo:animated: returns. 
+
+```Objective-C
+MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+hud.mode = MBProgressHUDModeAnnularDeterminate;
+hud.labelText = @"Loading";
+[self doSomethingInBackgroundWithProgressCallback:^(float progress) {
+	hud.progress = progress;
+} completionCallback:^{
+	[MBProgressHUD hideHUDForView:self.view animated:YES];
+}];
+```
+
+UI updates should always be done on the main thread. Some MBProgressHUD setters are hoverer considered "thread safe" and can be called from background threads. Those also include `setMode:`, `setCustomView:`, `setLabelText:`, `setLabelFont:`, `setDetailsLabelText:`, `setDetailsLabelFont:` and `setProgress:`.
+
+If you need to run your long-running task in the main thread, you should perform it with a slight delay, so UIKit will have enough time to update the UI (i.e., draw the HUD) before you block the main thread with your task.
+
+```Objective-C
+[MBProgressHUD showHUDAddedTo:self.view animated:YES];
+dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC);
+dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+	// Do something...
+	[MBProgressHUD hideHUDForView:self.view animated:YES];
+});
+```
+
+You should be aware that any HUD updates issued inside the above block won't be displayed until the block completes.
+
+For more examples, including how to use MBProgressHUD with asynchronous operations such as NSURLConnection, take a look at the bundled demo project. Extensive API documentation is provided in the header file (MBProgressHUD.h).
 
 License
 =======
 
 This code is distributed under the terms and conditions of the MIT license. 
 
-Copyright (c) 2011 Matej Bukovinski
+Copyright (c) 2009-2012 Matej Bukovinski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -46,9 +99,20 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 Change-log
 ==========
+
+**Version 0.5** @ 22.03.12
+
+- Major source code modernization and cleanup (KVO, layout code, instance vars, etc.).
+- New annular determinate mode.
+- New text only mode. 
+- Added a static library project and Xcode 4 workspace. 
+- Added methods to find and return HUD(s) on a view.
+- Various bug fixes.
+- Various demo project enhancements (hi-res rescues, new samples). 
+
+IMPORTANT: Requires LLVM 3+.
 
 **Version 0.41** @ 03.01.12
 
@@ -86,7 +150,7 @@ Change-log
 **Version 0.2** @ 21.7.09
 
 - Added determinate progress mode and switching capabilities between determinate and indeterminate modes. 
-- Various bugfixes. 
+- Various bug-fixes.
 
 **Version 0.11** @ 2.6.09.
 
