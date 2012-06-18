@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
-		1F4CDC67158E4DF50004A6D3 /* libSDWebImageARC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F4CDC62158E4DDD0004A6D3 /* libSDWebImageARC.a */; };
-		1F4CDC6A158E4E030004A6D3 /* libMBProgressHUD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F4CDC56158E4DD70004A6D3 /* libMBProgressHUD.a */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -74,8 +72,10 @@
 
 /* Begin PBXFileReference section */
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		1F4CDC3C158E4D1F0004A6D3 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSDWebImage.a; path = "../../SDWebImage/build/Release-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
+		1F4CDC3C158E4D1F0004A6D3 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDWebImage.a; path = "../../SDWebImage/build/Release-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
 		1F4CDC4E158E4DD70004A6D3 /* MBProgressHUD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MBProgressHUD.xcodeproj; path = ../MBProgressHUD/MBProgressHUD.xcodeproj; sourceTree = "<group>"; };
+		1FE023BC158E5A0F003BC376 /* libMBProgressHUD.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libMBProgressHUD.a; path = "../../MBProgressHUD/build/Release-iphoneos/libMBProgressHUD.a"; sourceTree = "<group>"; };
+		1FE023BE158E5A13003BC376 /* libSDWebImageARC.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSDWebImageARC.a; path = "../../SDWebImage/build/Release-iphoneos/libSDWebImageARC.a"; sourceTree = "<group>"; };
 		1FFB6E82158E4C9100706C7A /* SDWebImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDWebImage.xcodeproj; path = ../SDWebImage/SDWebImage.xcodeproj; sourceTree = "<group>"; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -102,8 +102,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4CDC6A158E4E030004A6D3 /* libMBProgressHUD.a in Frameworks */,
-				1F4CDC67158E4DF50004A6D3 /* libSDWebImageARC.a in Frameworks */,
 				0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */,
 				4C6F97C714AF74E200F8389A /* MessageUI.framework in Frameworks */,
 				4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */,
@@ -134,6 +132,8 @@
 		4C6F96B914AF704100F8389A = {
 			isa = PBXGroup;
 			children = (
+				1FE023BE158E5A13003BC376 /* libSDWebImageARC.a */,
+				1FE023BC158E5A0F003BC376 /* libMBProgressHUD.a */,
 				1F4CDC3C158E4D1F0004A6D3 /* libSDWebImage.a */,
 				4C6F96C914AF704100F8389A /* MWPhotoBrowser */,
 				4C6F97E114AF7CCE00F8389A /* Supporting Files */,
@@ -366,7 +366,9 @@
 				HEADER_SEARCH_PATHS = (
 					"../SDWebImage/**",
 					"../MBProgressHUD/**",
+					"$(BUILT_PRODUCTS_DIR)/**",
 				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -434,7 +436,9 @@
 				HEADER_SEARCH_PATHS = (
 					"../SDWebImage/**",
 					"../MBProgressHUD/**",
+					"$(BUILT_PRODUCTS_DIR)/**",
 				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -454,7 +458,9 @@
 				HEADER_SEARCH_PATHS = (
 					"../SDWebImage/**",
 					"../MBProgressHUD/**",
+					"$(BUILT_PRODUCTS_DIR)/**",
 				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
