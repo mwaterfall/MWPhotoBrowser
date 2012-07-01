@@ -19,7 +19,7 @@
 
 // Private methods and properties
 @interface MWZoomingScrollView ()
-@property (nonatomic, assign) MWPhotoBrowser *photoBrowser;
+@property (nonatomic, weak) MWPhotoBrowser *photoBrowser;
 - (void)handleSingleTap:(CGPoint)touchPoint;
 - (void)handleDoubleTap:(CGPoint)touchPoint;
 @end
@@ -67,20 +67,11 @@
     return self;
 }
 
-- (void)dealloc {
-	[_tapView release];
-	[_photoImageView release];
-	[_spinner release];
-    [_photo release];
-    [_captionView release];
-	[super dealloc];
-}
 
 - (void)setPhoto:(id<MWPhoto>)photo {
     _photoImageView.image = nil; // Release image
     if (_photo != photo) {
-        [_photo release];
-        _photo = [photo retain];
+        _photo = photo;
     }
     [self displayImage];
 }

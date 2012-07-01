@@ -60,9 +60,9 @@
 }
 
 // Private Properties
-@property (nonatomic, retain) UIColor *previousNavBarTintColor;
-@property (nonatomic, retain) UIBarButtonItem *previousViewControllerBackButton;
-@property (nonatomic, retain) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
+@property (nonatomic, strong) UIColor *previousNavBarTintColor;
+@property (nonatomic, strong) UIBarButtonItem *previousViewControllerBackButton;
+@property (nonatomic, strong) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
 
 // Private Methods
 
@@ -158,7 +158,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
-        [self init];
+        if (!(self = [self init])) return nil;
     }
 
     return self;
@@ -173,29 +173,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (id)initWithPhotos:(NSArray *)photosArray {
 	if ((self = [self init])) {
-		_depreciatedPhotoData = [photosArray retain];
+		_depreciatedPhotoData = photosArray;
 	}
 	return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_previousNavBarTintColor release];
-    [_navigationBarBackgroundImageDefault release];
-    [_navigationBarBackgroundImageLandscapePhone release];
-    [_previousViewControllerBackButton release];
-	[_pagingScrollView release];
-	[_visiblePages release];
-	[_recycledPages release];
-	[_toolbar release];
-	[_previousButton release];
-	[_nextButton release];
-    [_actionButton release];
-  	[_depreciatedPhotoData release];
     [self releaseAllUnderlyingPhotos];
     [[SDImageCache sharedImageCache] clearMemory]; // clear memory
-    [_photos release];
-    [super dealloc];
 }
 
 - (void)releaseAllUnderlyingPhotos {
@@ -274,9 +260,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     }
     
     // Toolbar items & navigation
-    UIBarButtonItem *fixedLeftSpace = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil] autorelease];
+    UIBarButtonItem *fixedLeftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
     fixedLeftSpace.width = 32; // To balance action button
-    UIBarButtonItem *flexSpace = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil] autorelease];
+    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSMutableArray *items = [[NSMutableArray alloc] init];
     if (_displayActionButton) [items addObject:fixedLeftSpace];
     [items addObject:flexSpace];
@@ -286,13 +272,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [items addObject:flexSpace];
     if (_displayActionButton) [items addObject:_actionButton];
     [_toolbar setItems:items];
-    [items release];
 	[self updateNavigation];
     
     // Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
-        UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)] autorelease];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
         // Set appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
             [doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -307,7 +292,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
-        UIBarButtonItem *newBackButton = [[[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil] autorelease];
+        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
         // Appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
             [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -331,12 +316,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
 	_currentPageIndex = 0;
-    [_pagingScrollView release], _pagingScrollView = nil;
-    [_visiblePages release], _visiblePages = nil;
-    [_recycledPages release], _recycledPages = nil;
-    [_toolbar release], _toolbar = nil;
-    [_previousButton release], _previousButton = nil;
-    [_nextButton release], _nextButton = nil;
+    _pagingScrollView = nil;
+    _visiblePages = nil;
+    _recycledPages = nil;
+    _toolbar = nil;
+    _previousButton = nil;
+    _nextButton = nil;
     [super viewDidUnload];
 }
 
@@ -571,7 +556,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     } else {
         id <MWPhoto> photo = [self photoAtIndex:index];
         if ([photo respondsToSelector:@selector(caption)]) {
-            if ([photo caption]) captionView = [[[MWCaptionView alloc] initWithPhoto:photo] autorelease];
+            if ([photo caption]) captionView = [[MWCaptionView alloc] initWithPhoto:photo];
         }
     }
     captionView.alpha = [self areControlsHidden] ? 0 : 1; // Initial alpha
@@ -670,7 +655,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             // Add new page
 			MWZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
-				page = [[[MWZoomingScrollView alloc] initWithPhotoBrowser:self] autorelease];
+				page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self];
 			}
 			[self configurePage:page forIndex:index];
 			[_visiblePages addObject:page];
@@ -723,7 +708,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (MWZoomingScrollView *)dequeueRecycledPage {
 	MWZoomingScrollView *page = [_recycledPages anyObject];
 	if (page) {
-		[[page retain] autorelease];
 		[_recycledPages removeObject:page];
 	}
 	return page;
@@ -921,7 +905,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     }
     
     // Captions
-    NSMutableSet *captionViews = [[[NSMutableSet alloc] initWithCapacity:_visiblePages.count] autorelease];
+    NSMutableSet *captionViews = [[NSMutableSet alloc] initWithCapacity:_visiblePages.count];
     for (MWZoomingScrollView *page in _visiblePages) {
         if (page.captionView) [captionViews addObject:page.captionView];
     }
@@ -948,7 +932,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	// If a timer exists then cancel and release
 	if (_controlVisibilityTimer) {
 		[_controlVisibilityTimer invalidate];
-		[_controlVisibilityTimer release];
 		_controlVisibilityTimer = nil;
 	}
 }
@@ -957,7 +940,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)hideControlsAfterDelay {
 	if (![self areControlsHidden]) {
         [self cancelControlHiding];
-		_controlVisibilityTimer = [[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO] retain];
+		_controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
 	}
 }
 

@@ -30,11 +30,11 @@
 
 // MWPhotoBrowser
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate> {
-    id <MWPhotoBrowserDelegate> _delegate;
+    __weak id <MWPhotoBrowserDelegate> _delegate;
 }
 
 // Properties
-@property (nonatomic, assign) id <MWPhotoBrowserDelegate> delegate;
+@property (nonatomic, weak) id <MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL displayActionButton;
 
 // Init
