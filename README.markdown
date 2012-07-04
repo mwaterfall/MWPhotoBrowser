@@ -82,7 +82,10 @@ Example delegate method for custom caption view:
 ### Sharing Content
 
 MWPhotoBrowser is now integrated with [ShareKit](https://github.com/ShareKit/ShareKit) for Twitter and Facebook sharing. If you have SHKFacebook and SHKTwitter classes avaliable in your project, a facebook and twitter button will appear on share section.
-Don't know how to configure ShareKit? [Try they wiki](https://github.com/ShareKit/ShareKit/wiki/Configuration)
+
+Don't know how to install Sharekit? [Try their wiki - Installing ShareKit](https://github.com/ShareKit/ShareKit/wiki/Installing-sharekit)
+
+Don't know how to configure ShareKit? [Try their wiki - Configuration](https://github.com/ShareKit/ShareKit/wiki/Configuration)
 
 ## Adding to your project (Xcode 4)
 
@@ -123,6 +126,8 @@ MWPhotoBrowser very gratefully makes use of 2 other fantastic open source projec
 - [MBProgressHUD](https://github.com/jdg/MBProgressHUD) by Jonathan George — Used to display notifications of photo saving and copying progress/completion.
 
 Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>).
+
+Facebook and Twitter integration via ShareKit provided by Leonardo Baptista (<http://twitter.com/leonardocbs>)
 
 
 ## Licence

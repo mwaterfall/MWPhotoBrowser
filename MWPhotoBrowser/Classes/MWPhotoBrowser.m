@@ -990,54 +990,114 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)actionButtonPressed:(id)sender {
-    if (_actionsSheet) {
-        // Dismiss
-        [_actionsSheet dismissWithClickedButtonIndex:_actionsSheet.cancelButtonIndex animated:YES];
-    } else {
-        id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
-        if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
-            
-            // Keep controls hidden
-            [self setControlsHidden:NO animated:YES permanent:YES];
-            
-            // Sheet
-            if ([MFMailComposeViewController canSendMail]) {
-                self.actionsSheet = [[[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil] autorelease];
-            } else {
-                self.actionsSheet = [[[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil] autorelease];
-            }
-            _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-                [_actionsSheet showFromBarButtonItem:sender animated:YES];
-            } else {
-                [_actionsSheet showInView:self.view];
-            }
-            
-        }
+  if (_actionsSheet) {
+    // Dismiss
+    [_actionsSheet dismissWithClickedButtonIndex:_actionsSheet.cancelButtonIndex animated:YES];
+  } else {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
+      
+      BOOL facebook_avaliable = NSClassFromString(@"SHKFacebook") != nil;
+      BOOL twitter_avaliable = NSClassFromString(@"SHKTwitter") != nil;
+      
+      // Keep controls hidden
+      [self setControlsHidden:NO animated:YES permanent:YES];
+      
+      self.actionsSheet = [[UIActionSheet alloc] init];
+      self.actionsSheet.delegate = self;
+      self.actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+      
+      
+      [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Save", nil) ];
+      [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Copy", nil) ];
+      
+      if ([MFMailComposeViewController canSendMail]) {
+        [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Email", nil) ];
+      }
+      
+      if (facebook_avaliable) {
+        [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Facebook", nil) ];
+      }
+      
+      if (twitter_avaliable) {
+        [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Twitter", nil) ];
+      }
+      
+      self.actionsSheet.cancelButtonIndex = [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
+      
+      if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [_actionsSheet showFromBarButtonItem:sender animated:YES];
+      } else {
+        [_actionsSheet showInView:self.view];
+      }
+      
     }
+  }
+}
+
+#pragma mark - Action Sheet Helper Methods
+
+-(BOOL) isSaveButton : (NSInteger) buttonIndex {
+  
+  NSString *titlePressed = [self.actionsSheet buttonTitleAtIndex:buttonIndex];
+  return [titlePressed isEqualToString: NSLocalizedString(@"Save", nil)];
+}
+
+-(BOOL) isCopyButton : (NSInteger) buttonIndex {
+  
+  NSString *titlePressed = [self.actionsSheet buttonTitleAtIndex:buttonIndex];
+  return [titlePressed isEqualToString: NSLocalizedString(@"Copy", nil)];
+}
+
+-(BOOL) isMailButton : (NSInteger) buttonIndex {
+  
+  NSString *titlePressed = [self.actionsSheet buttonTitleAtIndex:buttonIndex];
+  return [titlePressed isEqualToString: NSLocalizedString(@"Email", nil)];
+}
+
+-(BOOL) isFacebookButton : (NSInteger) buttonIndex {
+  
+  NSString *titlePressed = [self.actionsSheet buttonTitleAtIndex:buttonIndex];
+  return [titlePressed isEqualToString: NSLocalizedString(@"Facebook", nil)];
+}
+
+-(BOOL) isTwitterButton : (NSInteger) buttonIndex {
+  
+  NSString *titlePressed = [self.actionsSheet buttonTitleAtIndex:buttonIndex];
+  return [titlePressed isEqualToString: NSLocalizedString(@"Twitter", nil)];
 }
 
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (actionSheet == _actionsSheet) {           
-        // Actions 
-        self.actionsSheet = nil;
-        if (buttonIndex != actionSheet.cancelButtonIndex) {
-            if (buttonIndex == actionSheet.firstOtherButtonIndex) {
-                [self savePhoto]; return;
-            } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 1) {
-                [self copyPhoto]; return;	
-            } else if (buttonIndex == actionSheet.firstOtherButtonIndex + 2) {
-                [self emailPhoto]; return;
-            }
-        }
-    }
-    [self hideControlsAfterDelay]; // Continue as normal...
+  
+  [self hideControlsAfterDelay]; // Continue as normal...
+  if (actionSheet != _actionsSheet) {
+    return;
+  }
+  
+  if (buttonIndex == actionSheet.cancelButtonIndex) {
+    self.actionsSheet = nil;
+    return;
+  }
+  
+  if ( [self isSaveButton:buttonIndex] ) {
+    [self savePhoto];
+  }
+  else if ( [self isCopyButton:buttonIndex]) {
+    [self copyPhoto];
+  } 
+  else if ( [self isMailButton:buttonIndex] ) {
+    [self emailPhoto];
+  }
+  else if ( [self isFacebookButton:buttonIndex] ) {
+    [self shareOnFacebook];
+  }
+  else if ( [self isTwitterButton: buttonIndex] ) {
+    [self shareOnTwitter];
+  }
+  
+  self.actionsSheet = nil;
 }
 
 #pragma mark - MBProgressHUD
@@ -1140,6 +1200,40 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [emailer release];
         [self hideProgressHUD:NO];
     }
+}
+
+-(void) shareOnFacebook {
+  
+  id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+  
+  BOOL facebook_avaliable = NSClassFromString(@"SHKFacebook") != nil;
+  if (facebook_avaliable == NO) {
+    return;
+  }
+  
+  id item = [[[NSClassFromString(@"SHKItem") alloc] init] autorelease];
+  [item setValue:[photo caption] forKey:@"title"];
+  [item setValue:[photo underlyingImage] forKey:@"image"];
+  [item setValue:[NSNumber numberWithInteger:3] forKey:@"shareType"];
+  Class FacebookClass = NSClassFromString(@"SHKFacebook");
+  [FacebookClass performSelector: @selector(shareItem:) withObject:item];
+}
+
+-(void) shareOnTwitter {
+  
+  id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+  
+  BOOL facebook_avaliable = NSClassFromString(@"SHKTwitter") != nil;
+  if (facebook_avaliable == NO) {
+    return;
+  }
+  
+  id item = [[[NSClassFromString(@"SHKItem") alloc] init] autorelease];
+  [item setValue:[photo caption] forKey:@"title"];
+  [item setValue:[photo underlyingImage] forKey:@"image"];
+  [item setValue:[NSNumber numberWithInteger:3] forKey:@"shareType"];
+  Class TwitterClass = NSClassFromString(@"SHKTwitter");
+  [TwitterClass performSelector: @selector(shareItem:) withObject:item];
 }
 
 #pragma mark Mail Compose Delegate
