@@ -79,6 +79,10 @@ Example delegate method for custom caption view:
         return [captionView autorelease];
     }
 
+### Sharing Content
+
+MWPhotoBrowser is now integrated with [ShareKit](https://github.com/ShareKit/ShareKit) for Twitter and Facebook sharing. If you have SHKFacebook and SHKTwitter classes avaliable in your project, a facebook and twitter button will appear on share section.
+Don't know how to configure ShareKit? [Try they wiki](https://github.com/ShareKit/ShareKit/wiki/Configuration)
 
 ## Adding to your project (Xcode 4)
 
