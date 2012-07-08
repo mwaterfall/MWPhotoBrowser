@@ -220,6 +220,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	
 }
 
+- (id<MWPhoto>)getCurrentPhoto {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    return photo;
+}
+
 #pragma mark - View Loading
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
