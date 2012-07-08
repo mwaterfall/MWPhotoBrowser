@@ -26,6 +26,7 @@
 - (id<MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
 @optional
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
+- (void)deletePhoto:(id<MWPhoto>)photo;
 @end
 
 // MWPhotoBrowser
@@ -46,6 +47,7 @@
 - (void)setInitialPageIndex:(NSUInteger)index;
 
 - (id<MWPhoto>)getCurrentPhoto;
+- (id<MWPhotoBrowserDelegate>)getBrowserDelegate;
 
 @end
 

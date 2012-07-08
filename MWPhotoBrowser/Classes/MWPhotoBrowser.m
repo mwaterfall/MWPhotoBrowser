@@ -225,6 +225,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     return photo;
 }
 
+- (id<MWPhotoBrowserDelegate>)getBrowserDelegate {
+    return _delegate;
+}
+
 #pragma mark - View Loading
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
