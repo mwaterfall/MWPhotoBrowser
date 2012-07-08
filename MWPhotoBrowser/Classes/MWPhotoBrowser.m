@@ -139,6 +139,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 @synthesize displayActionButton = _displayActionButton, actionsSheet = _actionsSheet;
 @synthesize progressHUD = _progressHUD;
 @synthesize previousViewControllerBackButton = _previousViewControllerBackButton;
+@synthesize shouldLoadAdjacentPhotos = _shouldLoadAdjacentPhotos;
 
 #pragma mark - NSObject
 
@@ -148,6 +149,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         // Defaults
         self.wantsFullScreenLayout = YES;
         self.hidesBottomBarWhenPushed = YES;
+        self.shouldLoadAdjacentPhotos = YES;
         _photoCount = NSNotFound;
 		_currentPageIndex = 0;
 		_performingLayout = NO; // Reset on view did appear
@@ -216,6 +218,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
 	
+}
+
+- (id<MWPhoto>)getCurrentPhoto {
+    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    return photo;
+}
+
+- (id<MWPhotoBrowserDelegate>)getBrowserDelegate {
+    return _delegate;
 }
 
 #pragma mark - View Loading
@@ -597,25 +608,27 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo {
-    MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
-    if (page) {
-        // If page is current page then initiate loading of previous and next pages
-        NSUInteger pageIndex = PAGE_INDEX(page);
-        if (_currentPageIndex == pageIndex) {
-            if (pageIndex > 0) {
-                // Preload index - 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex-1];
-                if (![photo underlyingImage]) {
-                    [photo loadUnderlyingImageAndNotify];
-                    MWLog(@"Pre-loading image at index %i", pageIndex-1);
+    if (self.shouldLoadAdjacentPhotos == YES) {
+        MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
+        if (page) {
+            // If page is current page then initiate loading of previous and next pages
+            NSUInteger pageIndex = PAGE_INDEX(page);
+            if (_currentPageIndex == pageIndex) {
+                if (pageIndex > 0) {
+                    // Preload index - 1
+                    id <MWPhoto> photo = [self photoAtIndex:pageIndex-1];
+                    if (![photo underlyingImage]) {
+                        [photo loadUnderlyingImageAndNotify];
+                        MWLog(@"Pre-loading image at index %i", pageIndex-1);
+                    }
                 }
-            }
-            if (pageIndex < [self numberOfPhotos] - 1) {
-                // Preload index + 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex+1];
-                if (![photo underlyingImage]) {
-                    [photo loadUnderlyingImageAndNotify];
-                    MWLog(@"Pre-loading image at index %i", pageIndex+1);
+                if (pageIndex < [self numberOfPhotos] - 1) {
+                    // Preload index + 1
+                    id <MWPhoto> photo = [self photoAtIndex:pageIndex+1];
+                    if (![photo underlyingImage]) {
+                        [photo loadUnderlyingImageAndNotify];
+                        MWLog(@"Pre-loading image at index %i", pageIndex+1);
+                    }
                 }
             }
         }

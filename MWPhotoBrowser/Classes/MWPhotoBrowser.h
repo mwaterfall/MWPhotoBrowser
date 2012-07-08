@@ -26,6 +26,7 @@
 - (id<MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
 @optional
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
+- (void)deletePhoto:(id<MWPhoto>)photo;
 @end
 
 // MWPhotoBrowser
@@ -33,6 +34,7 @@
 
 // Properties
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic) BOOL shouldLoadAdjacentPhotos;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
@@ -43,6 +45,9 @@
 
 // Set page that photo browser starts on
 - (void)setInitialPageIndex:(NSUInteger)index;
+
+- (id<MWPhoto>)getCurrentPhoto;
+- (id<MWPhotoBrowserDelegate>)getBrowserDelegate;
 
 @end
 
