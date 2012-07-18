@@ -170,7 +170,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate {
     if ((self = [self init])) {
-        _delegate = delegate;
+        _delegate = [delegate retain];
 	}
 	return self;
 }
@@ -195,6 +195,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	[_previousButton release];
 	[_nextButton release];
     [_actionButton release];
+	[_delegate release];
   	[_depreciatedPhotoData release];
     [self releaseAllUnderlyingPhotos];
     [[SDImageCache sharedImageCache] clearMemory]; // clear memory
