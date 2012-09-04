@@ -165,5 +165,9 @@
 //    return [captionView autorelease];
 //}
 
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didViewPhotoAtIndex:(NSUInteger)index {
+    NSLog(@"Did start viewing photo at index %i", index);
+}
+
 @end
 
