@@ -775,8 +775,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Notify delegate
     static NSUInteger prevIndex = NSUIntegerMax;
     if (index != prevIndex) {
-        if ([_delegate respondsToSelector:@selector(photoBrowser:didViewPhotoAtIndex:)])
-            [_delegate photoBrowser:self didViewPhotoAtIndex:index];
+        if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
+            [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
         prevIndex = index;
     }
     
