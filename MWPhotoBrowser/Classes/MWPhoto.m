@@ -38,8 +38,10 @@
 @implementation MWPhoto
 
 // Properties
-@synthesize underlyingImage = _underlyingImage, 
-caption = _caption;
+@synthesize underlyingImage = _underlyingImage;
+@synthesize caption = _caption;
+@synthesize photoURL = _photoURL;
+@synthesize filePath = _photoPath;
 
 #pragma mark Class Methods
 

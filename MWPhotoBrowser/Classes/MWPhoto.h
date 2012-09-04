@@ -19,6 +19,8 @@
 
 // Properties
 @property (nonatomic, retain) NSString *caption;
+@property (nonatomic, readonly) NSURL *photoURL;
+@property (nonatomic, readonly) NSString *filePath;
 
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;
