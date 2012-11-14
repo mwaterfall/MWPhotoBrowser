@@ -22,34 +22,34 @@ MWPhotoBrowser is designed to be presented within a navigation controller. Simpl
 See the code snippet below for an example of how to implement the photo browser. There is also a simple demo app within the project.
 
 ```obj-c
-    // Create array of `MWPhoto` objects
-    self.photos = [NSMutableArray array];
-    [photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
-    [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
-    [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
+// Create array of `MWPhoto` objects
+self.photos = [NSMutableArray array];
+[photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
+[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
+[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
 
-    // Create & present browser
-    MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-    // Set options
-    browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
-    browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
-    [browser setInitialPageIndex:1]; // Example: allows second image to be presented first
-    // Present
-    [self.navigationController pushViewController:browser animated:YES];
+// Create & present browser
+MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+// Set options
+browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
+[browser setInitialPageIndex:1]; // Example: allows second image to be presented first
+// Present
+[self.navigationController pushViewController:browser animated:YES];
 ```
 
 Then respond to the required delegate methods:
 
 ```obj-c
-    - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
-        return self.photos.count;
-    }
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return self.photos.count;
+}
 
-    - (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-        if (index < self.photos.count)
-            return [self.photos objectAtIndex:index];
-        return nil;
-    }
+- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index < self.photos.count)
+        return [self.photos objectAtIndex:index];
+    return nil;
+}
 ```
 
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
@@ -62,8 +62,8 @@ If you don't want to view the photo browser full screen (for example if you are 
 Photo captions can be displayed simply by setting the `caption` property on specific photos:
 
 ```obj-c
-    MWPhoto *photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
-    photo.caption = @"Campervan";
+MWPhoto *photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
+photo.caption = @"Campervan";
 ```
 
 No caption will be displayed if the caption property is not set.
@@ -80,11 +80,11 @@ By default, the caption is a simple black transparent view with a label displayi
 Example delegate method for custom caption view:
 
 ```obj-c
-    - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-        MWPhoto *photo = [self.photos objectAtIndex:index];
-        MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
-        return [captionView autorelease];
-    }
+- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
+    MWPhoto *photo = [self.photos objectAtIndex:index];
+    MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
+    return [captionView autorelease];
+}
 ```
 
 ## Adding to your project (Xcode 4)
