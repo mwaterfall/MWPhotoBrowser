@@ -6,6 +6,7 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
+#import <AssetsLibrary/AssetsLibrary.h>
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
 #import "SDWebImageDecoder.h"
@@ -112,30 +113,54 @@ caption = _caption;
             // Load async from file
             [self performSelectorInBackground:@selector(loadImageFromFileAsync) withObject:nil];
         } else if (_photoURL) {
-            // Load async from web (using SDWebImage)
-            SDWebImageManager *manager = [SDWebImageManager sharedManager];
-            _dlOperation = [[manager downloadWithURL:_photoURL
-                                             options:0
-                                            progress:nil
-                                           completed:^(UIImage* image, NSError* error, SDImageCacheType cacheType, BOOL finished) {
-                                               if (image) {
-                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                       /// decompress
-                                                       self.underlyingImage = image;
-                                                       [self imageLoadingComplete];
-                                                   });
-                                               }
-                                               else {
-                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                       self.underlyingImage = nil;
-                                                       MWLog(@"SDWebImage failed to download image: %@", error);
-                                                       [self imageLoadingComplete];
-                                                   });
-                                               }
-                                               if (finished) {
-                                                   [self cancelLoadOperation];
-                                               }
-                                           }] retain];
+            if ([_photoURL.scheme isEqualToString:@"assets-library"]) {
+                ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
+                {
+                    ALAssetRepresentation *rep = [myasset defaultRepresentation];
+                    CGImageRef iref = [rep fullResolutionImage];
+                    UIImage* resultingImage = [UIImage imageWithCGImage:iref];
+                    self.underlyingImage = resultingImage;
+                    [self imageLoadingComplete];
+                };
+                
+                ALAssetsLibraryAccessFailureBlock failureblock  = ^(NSError *myerror)
+                {
+                    self.underlyingImage = nil;
+                    MWLog(@"Cant retrieve image from asset library: %@", error);
+                    [self imageLoadingComplete];
+                };
+                
+                ALAssetsLibrary* assetslibrary = [[ALAssetsLibrary alloc] init];
+                [assetslibrary assetForURL:_photoURL
+                               resultBlock:resultblock
+                              failureBlock:failureblock];
+            }
+            else {
+                // Load async from web (using SDWebImage)
+                SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                _dlOperation = [[manager downloadWithURL:_photoURL
+                                                 options:0
+                                                progress:nil
+                                               completed:^(UIImage* image, NSError* error, SDImageCacheType cacheType, BOOL finished) {
+                                                   if (image) {
+                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                           /// decompress
+                                                           self.underlyingImage = image;
+                                                           [self imageLoadingComplete];
+                                                       });
+                                                   }
+                                                   else {
+                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                           self.underlyingImage = nil;
+                                                           MWLog(@"SDWebImage failed to download image: %@", error);
+                                                           [self imageLoadingComplete];
+                                                       });
+                                                   }
+                                                   if (finished) {
+                                                       [self cancelLoadOperation];
+                                                   }
+                                               }] retain];
+            }
         } else {
             // Failed - no source
             self.underlyingImage = nil;
