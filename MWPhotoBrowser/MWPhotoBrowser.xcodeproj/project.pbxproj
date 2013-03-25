@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
+		253779ED1700620900E6A294 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 253779EC1700620900E6A294 /* AssetsLibrary.framework */; };
 		25F4792B16F0A8620078F475 /* MKAnnotationView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 25F4791616F0A8620078F475 /* MKAnnotationView+WebCache.h */; };
 		25F4792C16F0A8620078F475 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 25F4791716F0A8620078F475 /* MKAnnotationView+WebCache.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		25F4792D16F0A8620078F475 /* SDImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 25F4791816F0A8620078F475 /* SDImageCache.h */; };
@@ -50,6 +51,7 @@
 
 /* Begin PBXFileReference section */
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		253779EC1700620900E6A294 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		25F4791616F0A8620078F475 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
 		25F4791716F0A8620078F475 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
 		25F4791816F0A8620078F475 /* SDImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDImageCache.h; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				253779ED1700620900E6A294 /* AssetsLibrary.framework in Frameworks */,
 				0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */,
 				4C6F97C714AF74E200F8389A /* MessageUI.framework in Frameworks */,
 				4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */,
@@ -151,6 +154,7 @@
 		4C6F96B914AF704100F8389A = {
 			isa = PBXGroup;
 			children = (
+				253779EC1700620900E6A294 /* AssetsLibrary.framework */,
 				4C6F96C914AF704100F8389A /* MWPhotoBrowser */,
 				4C6F97E114AF7CCE00F8389A /* Supporting Files */,
 				4C6F96C614AF704100F8389A /* Frameworks */,

@@ -34,7 +34,6 @@
 @property (nonatomic, retain) UIImage *underlyingImage;
 
 // Methods
-- (void)imageDidFinishLoadingSoDecompress;
 - (void)imageLoadingComplete;
 
 - (void)cancelLoadOperation;
@@ -138,28 +137,31 @@ caption = _caption;
             else {
                 // Load async from web (using SDWebImage)
                 SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                __block MWPhoto *blockSelf = self;
+                SDWebImageCompletedWithFinishedBlock completeBlock = ^(UIImage* image, NSError* error, SDImageCacheType cacheType, BOOL finished) {
+                    if (image) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            /// decompress
+                            blockSelf.underlyingImage = image;
+                            [blockSelf imageLoadingComplete];
+                        });
+                    }
+                    else {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            blockSelf.underlyingImage = nil;
+                            MWLog(@"SDWebImage failed to download image: %@", error);
+                            [blockSelf imageLoadingComplete];
+                        });
+                    }
+                    if (finished) {
+                        [blockSelf cancelLoadOperation];
+                    }
+                };
                 _dlOperation = [[manager downloadWithURL:_photoURL
                                                  options:0
                                                 progress:nil
-                                               completed:^(UIImage* image, NSError* error, SDImageCacheType cacheType, BOOL finished) {
-                                                   if (image) {
-                                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                                           /// decompress
-                                                           self.underlyingImage = image;
-                                                           [self imageLoadingComplete];
-                                                       });
-                                                   }
-                                                   else {
-                                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                                           self.underlyingImage = nil;
-                                                           MWLog(@"SDWebImage failed to download image: %@", error);
-                                                           [self imageLoadingComplete];
-                                                       });
-                                                   }
-                                                   if (finished) {
-                                                       [self cancelLoadOperation];
-                                                   }
-                                               }] retain];
+                                               completed:[[completeBlock copy] autorelease]
+                                 ] retain];
             }
         } else {
             // Failed - no source
@@ -196,7 +198,10 @@ caption = _caption;
         }
     } @catch (NSException *exception) {
     } @finally {
-        [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
+        if (self.underlyingImage) {
+            self.underlyingImage = [UIImage decodedImageWithImage:self.underlyingImage];
+        }
+        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
         [pool drain];
     }
 }
