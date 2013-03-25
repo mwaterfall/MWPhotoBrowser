@@ -52,6 +52,7 @@
     UIColor *_previousNavBarTintColor;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
+	BOOL _previousStatusBarIsHidden;
     UIBarButtonItem *_previousViewControllerBackButton;
     
     // Misc
@@ -359,6 +360,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Status bar
     if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+		_previousStatusBarIsHidden = [[UIApplication sharedApplication] isStatusBarHidden];
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
     }
     
@@ -395,6 +397,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Status bar
     if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
+		[[UIApplication sharedApplication] setStatusBarHidden:_previousStatusBarIsHidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
     }
     
 	// Super
@@ -986,7 +989,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
-    [self dismissModalViewControllerAnimated:YES];
+	if ([_delegate respondsToSelector:@selector(photoBrowserDidFinish:)]) {
+		[_delegate photoBrowserDidFinish:self];
+	}
+	else {
+		[self dismissModalViewControllerAnimated:YES];
+	}
 }
 
 - (void)actionButtonPressed:(id)sender {
