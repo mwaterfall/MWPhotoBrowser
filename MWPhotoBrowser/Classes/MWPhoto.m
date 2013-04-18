@@ -29,7 +29,6 @@
 @property (nonatomic, retain) UIImage *underlyingImage;
 
 // Methods
-- (void)imageDidFinishLoadingSoDecompress;
 - (void)imageLoadingComplete;
 
 @end
