@@ -910,7 +910,19 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         if ([UIApplication instancesRespondToSelector:@selector(setStatusBarHidden:withAnimation:)]) {
             [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
         } else {
-            [[UIApplication sharedApplication] setStatusBarHidden:hidden animated:animated];
+            
+            SEL theSelector = NSSelectorFromString(@"setStatusBarHidden:animated:");
+            UIApplication *target = [UIApplication sharedApplication];
+            
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[[target class] instanceMethodSignatureForSelector:theSelector]];
+            
+            [invocation setSelector:theSelector];
+            [invocation setTarget:target];
+            
+            [invocation setArgument:&hidden atIndex:2];
+            [invocation setArgument:&animated atIndex:3];
+            
+            [invocation invoke];
         }
         
         // Get status bar height if visible
