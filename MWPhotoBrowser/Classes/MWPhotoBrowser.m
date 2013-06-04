@@ -987,7 +987,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+    [self dismissViewControllerAnimated:YES completion:nil];
+#else
     [self dismissModalViewControllerAnimated:YES];
+#endif
 }
 
 - (void)actionButtonPressed:(id)sender {
@@ -1137,7 +1141,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
         }
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+        [self presentViewController:emailer animated:YES completion:nil];
+#else
         [self presentModalViewController:emailer animated:YES];
+#endif
         [emailer release];
         [self hideProgressHUD:NO];
     }
@@ -1152,7 +1160,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil] autorelease];
 		[alert show];
     }
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+    [self dismissViewControllerAnimated:YES completion:nil];
+#else
 	[self dismissModalViewControllerAnimated:YES];
+#endif
 }
 
 @end
