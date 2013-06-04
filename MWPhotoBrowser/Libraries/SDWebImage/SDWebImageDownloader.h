@@ -30,10 +30,10 @@ extern NSString *const SDWebImageDownloadStopNotification;
     size_t width, height;
 }
 
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, strong) NSURL *url;
 @property (nonatomic, assign) id<SDWebImageDownloaderDelegate> delegate;
-@property (nonatomic, retain) NSMutableData *imageData;
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) NSMutableData *imageData;
+@property (nonatomic, strong) id userInfo;
 @property (nonatomic, readwrite) BOOL lowPriority;
 
 /**

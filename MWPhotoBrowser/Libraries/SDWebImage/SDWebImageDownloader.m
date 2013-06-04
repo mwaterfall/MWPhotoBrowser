@@ -17,7 +17,7 @@ NSString *const SDWebImageDownloadStartNotification = @"SDWebImageDownloadStartN
 NSString *const SDWebImageDownloadStopNotification = @"SDWebImageDownloadStopNotification";
 
 @interface SDWebImageDownloader ()
-@property (nonatomic, retain) NSURLConnection *connection;
+@property (nonatomic, strong) NSURLConnection *connection;
 @end
 
 @implementation SDWebImageDownloader

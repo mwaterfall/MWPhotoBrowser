@@ -26,7 +26,7 @@
 }
 
 // Properties
-@property (nonatomic, retain) UIImage *underlyingImage;
+@property (nonatomic, strong) UIImage *underlyingImage;
 
 // Methods
 - (void)imageDidFinishLoadingSoDecompress;
@@ -44,15 +44,15 @@ caption = _caption;
 #pragma mark Class Methods
 
 + (MWPhoto *)photoWithImage:(UIImage *)image {
-	return [[[MWPhoto alloc] initWithImage:image] autorelease];
+	return [[MWPhoto alloc] initWithImage:image];
 }
 
 + (MWPhoto *)photoWithFilePath:(NSString *)path {
-	return [[[MWPhoto alloc] initWithFilePath:path] autorelease];
+	return [[MWPhoto alloc] initWithFilePath:path];
 }
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {
-	return [[[MWPhoto alloc] initWithURL:url] autorelease];
+	return [[MWPhoto alloc] initWithURL:url];
 }
 
 #pragma mark NSObject
@@ -79,12 +79,7 @@ caption = _caption;
 }
 
 - (void)dealloc {
-    [_caption release];
     [[SDWebImageManager sharedManager] cancelForDelegate:self];
-	[_photoPath release];
-	[_photoURL release];
-	[_underlyingImage release];
-	[super dealloc];
 }
 
 #pragma mark MWPhoto Protocol Methods
@@ -129,12 +124,11 @@ caption = _caption;
 // Called in background
 // Load image in background from local file
 - (void)loadImageFromFileAsync {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     @try {
         NSError *error = nil;
         NSData *data = [NSData dataWithContentsOfFile:_photoPath options:NSDataReadingUncached error:&error];
         if (!error) {
-            self.underlyingImage = [[[UIImage alloc] initWithData:data] autorelease];
+            self.underlyingImage = [[UIImage alloc] initWithData:data];
         } else {
             self.underlyingImage = nil;
             MWLog(@"Photo from file error: %@", error);
@@ -142,7 +136,6 @@ caption = _caption;
     } @catch (NSException *exception) {
     } @finally {
         [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
-        [pool drain];
     }
 }
 
