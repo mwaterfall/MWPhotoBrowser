@@ -44,15 +44,15 @@ caption = _caption;
 #pragma mark Class Methods
 
 + (MWPhoto *)photoWithImage:(UIImage *)image {
-	return [[[MWPhoto alloc] initWithImage:image] autorelease];
+	return [[MWPhoto alloc] initWithImage:image];
 }
 
 + (MWPhoto *)photoWithFilePath:(NSString *)path {
-	return [[[MWPhoto alloc] initWithFilePath:path] autorelease];
+	return [[MWPhoto alloc] initWithFilePath:path];
 }
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {
-	return [[[MWPhoto alloc] initWithURL:url] autorelease];
+	return [[MWPhoto alloc] initWithURL:url];
 }
 
 #pragma mark NSObject
@@ -129,21 +129,22 @@ caption = _caption;
 // Called in background
 // Load image in background from local file
 - (void)loadImageFromFileAsync {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    @try {
-        NSError *error = nil;
-        NSData *data = [NSData dataWithContentsOfFile:_photoPath options:NSDataReadingUncached error:&error];
-        if (!error) {
-            self.underlyingImage = [[[UIImage alloc] initWithData:data] autorelease];
-        } else {
-            self.underlyingImage = nil;
-            MWLog(@"Photo from file error: %@", error);
+    @autoreleasepool {
+        @try {
+            NSError *error = nil;
+            NSData *data = [NSData dataWithContentsOfFile:_photoPath options:NSDataReadingUncached error:&error];
+            if (!error) {
+                self.underlyingImage = [[UIImage alloc] initWithData:data];
+            } else {
+                self.underlyingImage = nil;
+                MWLog(@"Photo from file error: %@", error);
+            }
+        } @catch (NSException *exception) {
+        } @finally {
+            [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
         }
-    } @catch (NSException *exception) {
-    } @finally {
-        [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
-        [pool drain];
     }
+    
 }
 
 // Called on main
