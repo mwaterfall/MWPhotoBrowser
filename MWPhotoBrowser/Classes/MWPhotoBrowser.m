@@ -625,6 +625,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - MWPhoto Loading Notification
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
+    _actionButton.enabled = YES;
     id <MWPhoto> photo = [notification object];
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
@@ -737,7 +738,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 // Handle page changes
 - (void)didStartViewingPageAtIndex:(NSUInteger)index {
-    
+    _actionButton.enabled = NO;
     // Release images further away than +/-1
     NSUInteger i;
     if (index > 0) {
