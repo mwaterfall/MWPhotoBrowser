@@ -532,6 +532,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [_photos removeAllObjects];
     for (int i = 0; i < numberOfPhotos; i++) [_photos addObject:[NSNull null]];
     
+    [self setInitialPageIndex:_currentPageIndex];
+    
     // Update
     [self performLayout];
     
