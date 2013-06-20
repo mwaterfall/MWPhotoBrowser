@@ -23,7 +23,7 @@ static const CGFloat labelPadding = 10;
 - (id)initWithPhoto:(id<MWPhoto>)photo {
     self = [super initWithFrame:CGRectMake(0, 0, 320, 44)]; // Random initial frame
     if (self) {
-        _photo = [photo retain];
+        _photo = photo;
         self.opaque = NO;
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -48,8 +48,14 @@ static const CGFloat labelPadding = 10;
     _label.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     _label.opaque = NO;
     _label.backgroundColor = [UIColor clearColor];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0
+    _label.textAlignment = NSTextAlignmentCenter;
+    _label.lineBreakMode = NSLineBreakByWordWrapping;
+#else
     _label.textAlignment = UITextAlignmentCenter;
     _label.lineBreakMode = UILineBreakModeWordWrap;
+#endif
+    
     _label.numberOfLines = 3;
     _label.textColor = [UIColor whiteColor];
     _label.shadowColor = [UIColor blackColor];
@@ -62,10 +68,5 @@ static const CGFloat labelPadding = 10;
     [self addSubview:_label];
 }
 
-- (void)dealloc {
-    [_label release];
-    [_photo release];
-    [super dealloc];
-}
 
 @end

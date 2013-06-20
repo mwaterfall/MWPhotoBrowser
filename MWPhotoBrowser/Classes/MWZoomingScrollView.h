@@ -15,7 +15,7 @@
 
 @interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, MWTapDetectingImageViewDelegate, MWTapDetectingViewDelegate> {
 	
-	MWPhotoBrowser *_photoBrowser;
+	MWPhotoBrowser *__weak _photoBrowser;
     id<MWPhoto> _photo;
 	
     // This view references the related caption view for simplified
@@ -28,8 +28,8 @@
 	
 }
 
-@property (nonatomic, retain) MWCaptionView *captionView;
-@property (nonatomic, retain) id<MWPhoto> photo;
+@property (nonatomic, strong) MWCaptionView *captionView;
+@property (nonatomic, strong) id<MWPhoto> photo;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;
 - (void)displayImage;
