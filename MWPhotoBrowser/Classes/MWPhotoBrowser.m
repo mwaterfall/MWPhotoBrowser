@@ -282,30 +282,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
-        // Set appearance
-        if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
-            [doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            [doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
-            [doneButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-            [doneButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
-            [doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-            [doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-        }
         self.navigationItem.rightBarButtonItem = doneButton;
     } else {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
         UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
-        // Appearance
-        if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
-            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-        }
         self.previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
     }
