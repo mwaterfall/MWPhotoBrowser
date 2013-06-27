@@ -258,7 +258,18 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     
 	// Super
     [super viewDidLoad];
+    
+    //Add SwipeDown Gesture
+    UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureFrom:)];
+    swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
+    swipeDown.numberOfTouchesRequired = 1;
+    [_pagingScrollView addGestureRecognizer:swipeDown];
 	
+}
+
+//Handle SwipeDown Gesture
+- (void)handleGestureFrom:(UISwipeGestureRecognizer *)recognizer {
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)performLayout {
