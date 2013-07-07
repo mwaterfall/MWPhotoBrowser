@@ -10,6 +10,7 @@
 #import "MWPhotoProtocol.h"
 #import "MWTapDetectingImageView.h"
 #import "MWTapDetectingView.h"
+#import "DACircularProgressView.h"
 
 @class MWPhotoBrowser, MWPhoto, MWCaptionView;
 
@@ -24,11 +25,13 @@
     
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
-	UIActivityIndicatorView *_spinner;
+    DACircularProgressView *_progressView;
+    
 	
 }
 
 @property (nonatomic, retain) MWCaptionView *captionView;
+@property (nonatomic, retain) DACircularProgressView *progressView;
 @property (nonatomic, retain) id<MWPhoto> photo;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;

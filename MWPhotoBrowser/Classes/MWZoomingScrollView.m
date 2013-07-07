@@ -26,7 +26,7 @@
 
 @implementation MWZoomingScrollView
 
-@synthesize photoBrowser = _photoBrowser, photo = _photo, captionView = _captionView;
+@synthesize photoBrowser = _photoBrowser, photo = _photo, captionView = _captionView, progressView = _progressView;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
     if ((self = [super init])) {
@@ -48,12 +48,19 @@
 		_photoImageView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_photoImageView];
 		
-		// Spinner
-		_spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		_spinner.hidesWhenStopped = YES;
-		_spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+        //ProgressView
+        _progressView = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
+        _progressView.roundedCorners = YES;
+        _progressView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-		[self addSubview:_spinner];
+        [self addSubview:_progressView];
+        
+        // Listen for MWPhoto notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(setProgressFromNotification:)
+                                                     name:MWPHOTO_PROGRESS_NOTIFICATION
+                                                   object:nil];
+        
 		
 		// Setup
 		self.backgroundColor = [UIColor blackColor];
@@ -68,12 +75,22 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	[_tapView release];
 	[_photoImageView release];
-	[_spinner release];
+    [_progressView release];
     [_photo release];
     [_captionView release];
 	[super dealloc];
+}
+
+#pragma mark - MWPhoto Loading Notification
+
+- (void)setProgressFromNotification:(NSNotification *)notification {
+    float progress = [[[notification object] valueForKey:@"progress"] floatValue];
+    NSLog(@"Progress: %f", progress);
+    if( progress > 0 )
+        _progressView.progress = progress;
 }
 
 - (void)setPhoto:(id<MWPhoto>)photo {
@@ -98,7 +115,7 @@
 	if (_photo && _photoImageView.image == nil) {
 		
 		// Reset
-		self.maximumZoomScale = 1;
+		self.maximumZoomScale = 2;
 		self.minimumZoomScale = 1;
 		self.zoomScale = 1;
 		self.contentSize = CGSizeMake(0, 0);
@@ -108,7 +125,8 @@
 		if (img) {
 			
 			// Hide spinner
-			[_spinner stopAnimating];
+            _progressView.hidden = YES;
+            _progressView.progress = 0;
 			
 			// Set image
 			_photoImageView.image = img;
@@ -128,7 +146,7 @@
 			
 			// Hide image view
 			_photoImageView.hidden = YES;
-			[_spinner startAnimating];
+            _progressView.hidden = NO;
 			
 		}
 		[self setNeedsLayout];
@@ -137,7 +155,8 @@
 
 // Image failed so just show black!
 - (void)displayImageFailure {
-	[_spinner stopAnimating];
+    _progressView.hidden = YES;
+    _progressView.progress = 0;
 }
 
 #pragma mark - Setup
@@ -145,7 +164,7 @@
 - (void)setMaxMinZoomScalesForCurrentBounds {
 	
 	// Reset
-	self.maximumZoomScale = 1;
+	self.maximumZoomScale = 2;
 	self.minimumZoomScale = 1;
 	self.zoomScale = 1;
 	
@@ -194,8 +213,8 @@
 	_tapView.frame = self.bounds;
 	
 	// Spinner
-	if (!_spinner.hidden) _spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
-													  floorf(self.bounds.size.height/2.0));
+    if(!_progressView.hidden) _progressView.center = CGPointMake(floorf(self.bounds.size.width/2.0),
+                                                                 floorf(self.bounds.size.height/2.0));
 	// Super
 	[super layoutSubviews];
 	
