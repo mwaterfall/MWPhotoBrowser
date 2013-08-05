@@ -864,6 +864,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	} else {
 		self.title = nil;
 	}
+    
+    if ([_delegate respondsToSelector:@selector(photoBrowser:displayPhotoAtIndex:)])
+        [_delegate photoBrowser:self displayPhotoAtIndex:_currentPageIndex];
 	
 	// Buttons
 	_previousButton.enabled = (_currentPageIndex > 0);
