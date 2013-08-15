@@ -1,6 +1,6 @@
 # MWPhotoBrowser — A simple iOS photo browser
 
-MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, file paths to images on the device, or URLs to images online. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 3.2+. All strings are localisable so they can be used in apps that support multiple languages.
+MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, file paths to images on the device, or URLs to images online. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 5.0+. All strings are localisable so they can be used in apps that support multiple languages.
 
 [![Alt][screenshot1_thumb]][screenshot1]    [![Alt][screenshot2_thumb]][screenshot2]    [![Alt][screenshot3_thumb]][screenshot3]    [![Alt][screenshot4_thumb]][screenshot4]
 [screenshot1_thumb]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser1_thumb.png

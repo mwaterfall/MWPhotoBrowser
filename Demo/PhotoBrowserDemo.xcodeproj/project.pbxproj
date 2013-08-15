@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DD1985417BC9B7800D286FB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD1985317BC9B7800D286FB /* MapKit.framework */; };
 		0E76FFEF1573FE1A000EE5CA /* MWPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */; };
 		0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E76FFED1573FE14000EE5CA /* libMWPhotoBrowser.a */; };
 		0E85B24C14C6F40500EA35BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E85B24E14C6F40500EA35BF /* Localizable.strings */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0DD1985317BC9B7800D286FB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0E76FFE51573FE13000EE5CA /* MWPhotoBrowser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MWPhotoBrowser.xcodeproj; path = ../../MWPhotoBrowser/MWPhotoBrowser.xcodeproj; sourceTree = "<group>"; };
 		0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MWPhotoBrowser.bundle; path = ../../MWPhotoBrowser/MWPhotoBrowser.bundle; sourceTree = "<group>"; };
 		0E85B24D14C6F40500EA35BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DD1985417BC9B7800D286FB /* MapKit.framework in Frameworks */,
 				0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */,
 				0EA380351573EA53003F4582 /* ImageIO.framework in Frameworks */,
 				4C6F97C914AF750400F8389A /* MessageUI.framework in Frameworks */,
@@ -117,6 +120,7 @@
 		4C6F979014AF734900F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0DD1985317BC9B7800D286FB /* MapKit.framework */,
 				0EA380341573EA53003F4582 /* ImageIO.framework */,
 				4C6F97C814AF750400F8389A /* MessageUI.framework */,
 				4C6F979114AF734900F8389A /* UIKit.framework */,
@@ -347,7 +351,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
@@ -365,7 +373,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
