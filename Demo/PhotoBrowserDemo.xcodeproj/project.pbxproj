@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0DD1985417BC9B7800D286FB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD1985317BC9B7800D286FB /* MapKit.framework */; };
 		076E5E6C1768CF570029E472 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 076E5E6B1768CF570029E472 /* Default-568h@2x.png */; };
+		0DD1985417BC9B7800D286FB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD1985317BC9B7800D286FB /* MapKit.framework */; };
 		0E76FFEF1573FE1A000EE5CA /* MWPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */; };
 		0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E76FFED1573FE14000EE5CA /* libMWPhotoBrowser.a */; };
 		0E85B24C14C6F40500EA35BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E85B24E14C6F40500EA35BF /* Localizable.strings */; };
@@ -48,8 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0DD1985317BC9B7800D286FB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		076E5E6B1768CF570029E472 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		0DD1985317BC9B7800D286FB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0E76FFE51573FE13000EE5CA /* MWPhotoBrowser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MWPhotoBrowser.xcodeproj; path = ../../MWPhotoBrowser/MWPhotoBrowser.xcodeproj; sourceTree = "<group>"; };
 		0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MWPhotoBrowser.bundle; path = ../../MWPhotoBrowser/MWPhotoBrowser.bundle; sourceTree = "<group>"; };
 		0E85B24D14C6F40500EA35BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -361,7 +361,7 @@
 					armv6,
 					"$(ARCHS_STANDARD_32_BIT)",
 				);
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -384,7 +384,7 @@
 					armv6,
 					"$(ARCHS_STANDARD_32_BIT)",
 				);
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
