@@ -236,6 +236,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	_pagingScrollView.showsVerticalScrollIndicator = NO;
 	_pagingScrollView.backgroundColor = [UIColor blackColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
+    
+    //fix for iOS 7 issue where photos not aligned as expected when swiping between them
+    if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    
 	[self.view addSubview:_pagingScrollView];
 	
     // Toolbar
