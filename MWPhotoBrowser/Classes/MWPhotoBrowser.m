@@ -20,7 +20,6 @@
 @interface MWPhotoBrowser () {
     
 	// Data
-    id <MWPhotoBrowserDelegate> _delegate;
     NSUInteger _photoCount;
     NSMutableArray *_photos;
 	NSArray *_depreciatedPhotoData; // Depreciated
@@ -136,32 +135,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (id)init {
     if ((self = [super init])) {
-        
-        // Defaults
-        self.wantsFullScreenLayout = YES;
-        self.hidesBottomBarWhenPushed = YES;
-        _photoCount = NSNotFound;
-		_currentPageIndex = 0;
-        _displayActionButton = NO;
-        _displayNavArrows = NO;
-        _zoomPhotosToFill = YES;
-		_performingLayout = NO; // Reset on view did appear
-		_rotating = NO;
-        _viewIsActive = NO;
-        _visiblePages = [[NSMutableSet alloc] init];
-        _recycledPages = [[NSMutableSet alloc] init];
-        _photos = [[NSMutableArray alloc] init];
-
-        _didSavePreviousStateOfNavBar = NO;
-        if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
-            self.automaticallyAdjustsScrollViewInsets = NO;
-        }
-        
-        // Listen for MWPhoto notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleMWPhotoLoadingDidEndNotification:)
-                                                     name:MWPHOTO_LOADING_DID_END_NOTIFICATION
-                                                   object:nil];
+        [self _initialisation];
     }
     return self;
 }
@@ -169,6 +143,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate {
     if ((self = [self init])) {
         _delegate = delegate;
+        [self _initialisation];
 	}
 	return self;
 }
@@ -176,8 +151,46 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (id)initWithPhotos:(NSArray *)photosArray {
 	if ((self = [self init])) {
 		_depreciatedPhotoData = photosArray;
+        [self _initialisation];
 	}
 	return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder {
+	if ((self = [self initWithCoder:decoder])) {
+        [self _initialisation];
+	}
+	return self;
+}
+
+- (void)_initialisation {
+    
+    // Defaults
+    self.wantsFullScreenLayout = YES;
+    self.hidesBottomBarWhenPushed = YES;
+    _photoCount = NSNotFound;
+    _currentPageIndex = 0;
+    _displayActionButton = NO;
+    _displayNavArrows = NO;
+    _zoomPhotosToFill = YES;
+    _performingLayout = NO; // Reset on view did appear
+    _rotating = NO;
+    _viewIsActive = NO;
+    _visiblePages = [[NSMutableSet alloc] init];
+    _recycledPages = [[NSMutableSet alloc] init];
+    _photos = [[NSMutableArray alloc] init];
+    
+    _didSavePreviousStateOfNavBar = NO;
+    if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    
+    // Listen for MWPhoto notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleMWPhotoLoadingDidEndNotification:)
+                                                 name:MWPHOTO_LOADING_DID_END_NOTIFICATION
+                                               object:nil];
+    
 }
 
 - (void)dealloc {
@@ -188,7 +201,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)releaseAllUnderlyingPhotos {
-    for (id p in _photos) { if (p != [NSNull null]) [p unloadUnderlyingImage]; } // Release photos
+    for (id p in _photos) { if (p != [NSNull null])
+        [p unloadUnderlyingImage]; } // Release photos
 }
 
 - (void)didReceiveMemoryWarning {
