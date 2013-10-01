@@ -120,11 +120,6 @@
 
 @end
 
-// Handle depreciations and supress hide warnings
-@interface UIApplication (DepreciationWarningSuppresion)
-- (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated;
-@end
-
 // MWPhotoBrowser
 @implementation MWPhotoBrowser
 
@@ -918,11 +913,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             }
             
             // Status Bar
-            if ([UIApplication instancesRespondToSelector:@selector(setStatusBarHidden:withAnimation:)]) {
-                [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
-            } else {
-                [[UIApplication sharedApplication] setStatusBarHidden:hidden animated:animated];
-            }
+            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
             
             // Get status bar height if visible
             if (![UIApplication sharedApplication].statusBarHidden) {
@@ -1006,7 +997,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)actionButtonPressed:(id)sender {
@@ -1170,7 +1161,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil];
 		[alert show];
     }
-	[self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
