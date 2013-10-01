@@ -152,8 +152,16 @@
     CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
 
+    // Calculate Max
+	CGFloat maxScale = 2.0; // Allow double scale
+    // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
+    // maximum zoom scale to 0.5.
+	if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
+		maxScale = maxScale / [[UIScreen mainScreen] scale];
+	}
+    
     // Image is smaller than screen so no zooming!
-	if (xScale > 1 && yScale > 1) {
+	if (xScale >= 1 && yScale >= 1) {
 		minScale = 1.0;
 	}
 
@@ -165,16 +173,10 @@
         CGFloat imageAR = imageSize.width / imageSize.height;
         if (ABS(boundsAR - imageAR) < 0.3) {
             zoomScale = MAX(xScale, yScale);
+            // Ensure we don't zoom in or out too far, just in case
+            zoomScale = MIN(MAX(minScale, zoomScale), maxScale);
         }
     }
-    
-	// Calculate Max
-	CGFloat maxScale = 2.0; // Allow double scale
-    // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
-    // maximum zoom scale to 0.5.
-	if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
-		maxScale = maxScale / [[UIScreen mainScreen] scale];
-	}
 	
 	// Set
 	self.maximumZoomScale = maxScale;
