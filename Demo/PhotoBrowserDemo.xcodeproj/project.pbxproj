@@ -206,6 +206,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					4C6F978C14AF734800F8389A = {
+						DevelopmentTeam = VK94X636H2;
+					};
+				};
 			};
 			buildConfigurationList = 4C6F978714AF734800F8389A /* Build configuration list for PBXProject "PhotoBrowserDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -363,6 +368,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -373,6 +380,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
 			};
@@ -382,6 +390,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -392,6 +402,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
 			};
