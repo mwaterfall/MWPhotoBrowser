@@ -24,9 +24,9 @@
         _segmentedControl.selectedSegmentIndex = 0;
         [_segmentedControl addTarget:self action:@selector(segmentChange) forControlEvents:UIControlEventValueChanged];
         
-        UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithCustomView:_segmentedControl] autorelease];
+        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:_segmentedControl];
         self.navigationItem.rightBarButtonItem = item;
-        self.navigationItem.backBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:nil action:nil] autorelease];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:nil action:nil];
 
     }
     return self;
@@ -36,11 +36,6 @@
     [self.tableView reloadData];
 }
 
-- (void)dealloc {
-    [_segmentedControl release];
-    [_photos release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -76,7 +71,7 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     cell.accessoryType = _segmentedControl.selectedSegmentIndex == 0 ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 
@@ -145,12 +140,9 @@
         UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:browser];
         nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         [self presentModalViewController:nc animated:YES];
-        [nc release];
     }
     
     // Release
-	[browser release];
-	[photos release];
 	
 	// Deselect
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
