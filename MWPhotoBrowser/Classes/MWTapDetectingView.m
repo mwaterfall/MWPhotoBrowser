@@ -42,22 +42,6 @@
 		default:
 			break;
 	}
-	// Doesnt work in iOS 3
-	//	switch (tapCount) {
-	//		case 1:
-	//			[self performSelector:@selector(handleSingleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		case 2:
-	//			[NSObject cancelPreviousPerformRequestsWithTarget:self];
-	//			[self performSelector:@selector(handleDoubleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		case 3:
-	//			[NSObject cancelPreviousPerformRequestsWithTarget:self];
-	//			[self performSelector:@selector(handleTripleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		default:
-	//			break;
-	//	}
 	[[self nextResponder] touchesEnded:touches withEvent:event];
 }
 

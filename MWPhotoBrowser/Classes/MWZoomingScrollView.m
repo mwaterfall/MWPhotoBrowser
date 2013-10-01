@@ -271,8 +271,18 @@
 	} else {
 		
 		// Zoom in
-		[self zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
-		
+        CGFloat newZoomScale;
+        if (((self.zoomScale - self.minimumZoomScale) / self.maximumZoomScale) >= 0.3) { // we're zoomed in a fair bit, so zoom to max now
+            // Go to max zoom
+            newZoomScale = self.maximumZoomScale;
+        } else {
+            // Zoom to 50%
+            newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
+        }
+        CGFloat xsize = self.bounds.size.width / newZoomScale;
+        CGFloat ysize = self.bounds.size.height / newZoomScale;
+        [self zoomToRect:CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize) animated:YES];
+
 	}
 	
 	// Delay controls
@@ -290,10 +300,24 @@
 
 // Background View
 - (void)view:(UIView *)view singleTapDetected:(UITouch *)touch {
-    [self handleSingleTap:[touch locationInView:view]];
+    // Translate touch location to image view location
+    CGFloat touchX = [touch locationInView:view].x;
+    CGFloat touchY = [touch locationInView:view].y;
+    touchX *= 1/self.zoomScale;
+    touchY *= 1/self.zoomScale;
+    touchX += self.contentOffset.x;
+    touchY += self.contentOffset.y;
+    [self handleSingleTap:CGPointMake(touchX, touchY)];
 }
 - (void)view:(UIView *)view doubleTapDetected:(UITouch *)touch {
-    [self handleDoubleTap:[touch locationInView:view]];
+    // Translate touch location to image view location
+    CGFloat touchX = [touch locationInView:view].x;
+    CGFloat touchY = [touch locationInView:view].y;
+    touchX *= 1/self.zoomScale;
+    touchY *= 1/self.zoomScale;
+    touchX += self.contentOffset.x;
+    touchY += self.contentOffset.y;
+    [self handleDoubleTap:CGPointMake(touchX, touchY)];
 }
 
 @end
