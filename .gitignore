@@ -16,8 +16,6 @@ profile
 !default.perspective
 *.perspectivev3
 !default.perspectivev3
-*.xcworkspace
-!default.xcworkspace
 xcuserdata
 *.xcodeproj/project.xcworkspace/
 *.xcodeproj/xcuserdata/
