@@ -368,6 +368,10 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
@@ -383,6 +387,10 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "../**";
 				WRAPPER_EXTENSION = app;
