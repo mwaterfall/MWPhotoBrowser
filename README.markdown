@@ -32,6 +32,7 @@ See the code snippet below for an example of how to implement the photo browser.
     // Set options
     browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
     browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
+    browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
     browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
     [browser setInitialPageIndex:1]; // Example: allows second image to be presented first
     // Present
