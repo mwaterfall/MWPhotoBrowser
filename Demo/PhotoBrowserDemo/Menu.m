@@ -128,8 +128,9 @@
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     browser.displayActionButton = YES;
-    //browser.wantsFullScreenLayout = NO;
-    //[browser setInitialPageIndex:2];
+    browser.displayNavArrows = YES;
+    browser.wantsFullScreenLayout = YES;
+    [browser setInitialPageIndex:0];
     
     // Show
     if (_segmentedControl.selectedSegmentIndex == 0) {

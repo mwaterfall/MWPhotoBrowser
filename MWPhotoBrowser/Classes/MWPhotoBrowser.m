@@ -237,8 +237,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     // Toolbar Items
-    _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
-    _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+    if (self.displayNavArrows) {
+        _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+        _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+    }
     _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
     
     // Update
@@ -273,9 +275,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     NSMutableArray *items = [[NSMutableArray alloc] init];
     if (_displayActionButton) [items addObject:fixedLeftSpace];
     [items addObject:flexSpace];
-    if (numberOfPhotos > 1) [items addObject:_previousButton];
+    if (_previousButton && numberOfPhotos > 1) [items addObject:_previousButton];
     [items addObject:flexSpace];
-    if (numberOfPhotos > 1) [items addObject:_nextButton];
+    if (_nextButton && numberOfPhotos > 1) [items addObject:_nextButton];
     [items addObject:flexSpace];
     if (_displayActionButton) [items addObject:_actionButton];
     [_toolbar setItems:items];
