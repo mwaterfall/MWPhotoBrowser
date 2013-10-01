@@ -50,10 +50,13 @@ static const CGFloat labelPadding = 10;
     _label.backgroundColor = [UIColor clearColor];
     _label.textAlignment = UITextAlignmentCenter;
     _label.lineBreakMode = UILineBreakModeWordWrap;
-    _label.numberOfLines = 3;
+    _label.numberOfLines = 0;
     _label.textColor = [UIColor whiteColor];
-    _label.shadowColor = [UIColor blackColor];
-    _label.shadowOffset = CGSizeMake(1, 1);
+    if (SYSTEM_VERSION_LESS_THAN(@"7")) {
+        // Shadow on 6 and below
+        _label.shadowColor = [UIColor blackColor];
+        _label.shadowOffset = CGSizeMake(1, 1);
+    }
     _label.font = [UIFont systemFontOfSize:17];
     if ([_photo respondsToSelector:@selector(caption)]) {
         _label.text = [_photo caption] ? [_photo caption] : @" ";
