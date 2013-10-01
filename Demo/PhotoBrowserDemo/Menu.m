@@ -128,7 +128,7 @@
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     browser.displayActionButton = YES;
-    browser.displayNavArrows = YES;
+    browser.displayNavArrows = NO;
     browser.wantsFullScreenLayout = YES;
     [browser setInitialPageIndex:0];
     
