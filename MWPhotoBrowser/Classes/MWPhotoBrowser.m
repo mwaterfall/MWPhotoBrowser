@@ -147,13 +147,16 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         self.hidesBottomBarWhenPushed = YES;
         _photoCount = NSNotFound;
 		_currentPageIndex = 0;
+        _displayActionButton = NO;
+        _displayNavArrows = NO;
+        _zoomPhotosToFill = YES;
 		_performingLayout = NO; // Reset on view did appear
 		_rotating = NO;
         _viewIsActive = NO;
         _visiblePages = [[NSMutableSet alloc] init];
         _recycledPages = [[NSMutableSet alloc] init];
         _photos = [[NSMutableArray alloc] init];
-        _displayActionButton = NO;
+
         _didSavePreviousStateOfNavBar = NO;
         if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
             self.automaticallyAdjustsScrollViewInsets = NO;

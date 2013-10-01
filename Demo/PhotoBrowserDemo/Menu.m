@@ -130,6 +130,7 @@
     browser.displayActionButton = YES;
     browser.displayNavArrows = NO;
     browser.wantsFullScreenLayout = YES;
+    browser.zoomPhotosToFill = YES;
     [browser setInitialPageIndex:0];
     
     // Show

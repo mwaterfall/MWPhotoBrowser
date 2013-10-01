@@ -151,12 +151,22 @@
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
     CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
-	
-	// If image is smaller than the screen then ensure we show it at
-	// min scale of 1
+
+    // Image is smaller than screen so no zooming!
 	if (xScale > 1 && yScale > 1) {
 		minScale = 1.0;
 	}
+
+    // Initial zoom
+    CGFloat zoomScale = minScale;
+    if (self.photoBrowser.zoomPhotosToFill) {
+        // Zoom image to fill if the aspect ratios are fairly similar
+        CGFloat boundsAR = boundsSize.width / boundsSize.height;
+        CGFloat imageAR = imageSize.width / imageSize.height;
+        if (ABS(boundsAR - imageAR) < 0.3) {
+            zoomScale = MAX(xScale, yScale);
+        }
+    }
     
 	// Calculate Max
 	CGFloat maxScale = 2.0; // Allow double scale
@@ -169,10 +179,18 @@
 	// Set
 	self.maximumZoomScale = maxScale;
 	self.minimumZoomScale = minScale;
-	self.zoomScale = minScale;
-	
+	self.zoomScale = zoomScale;
+    
 	// Reset position
 	_photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
+    
+    // If we're zooming to full then centralise
+    if (zoomScale != minScale) {
+        self.contentOffset = CGPointMake((imageSize.width * zoomScale - boundsSize.width) / 2.0,
+                                         (imageSize.height * zoomScale - boundsSize.height) / 2.0);
+    }
+    
+    // Layout
 	[self setNeedsLayout];
 
 }
