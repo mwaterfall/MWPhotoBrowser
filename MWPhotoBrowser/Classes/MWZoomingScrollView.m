@@ -153,12 +153,11 @@
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
 
     // Calculate Max
-	CGFloat maxScale = 2.0; // Allow double scale
-    // on high resolution screens we have double the pixel density, so we will be seeing every pixel if we limit the
-    // maximum zoom scale to 0.5.
-	if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
-		maxScale = maxScale / [[UIScreen mainScreen] scale];
-	}
+	CGFloat maxScale = 3;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        // Let them go a bit bigger on a bigger screen!
+        maxScale = 4;
+    }
     
     // Image is smaller than screen so no zooming!
 	if (xScale >= 1 && yScale >= 1) {
