@@ -944,8 +944,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         
         // Hide status bar
         // Not working because of https://devforums.apple.com/thread/207799
-//        _statusBarShouldBeHidden = hidden;
-//        [self setNeedsStatusBarAppearanceUpdate];
+        _statusBarShouldBeHidden = hidden;
+        [self setNeedsStatusBarAppearanceUpdate];
         
     } else {
         
