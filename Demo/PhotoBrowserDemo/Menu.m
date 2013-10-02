@@ -188,6 +188,10 @@
 //    return [captionView autorelease];
 //}
 
+//- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index {
+//    NSLog(@"ACTION!");
+//}
+
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didViewPhotoAtIndex:(NSUInteger)index {
     NSLog(@"Did start viewing photo at index %i", index);
 }

@@ -32,7 +32,7 @@ self.photos = [NSMutableArray array];
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
 // Set options
 browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
-browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
+browser.displayActionButton = YES; // Show action button to allow sharing, copying, etc.
 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
 [browser setCurrentPhotoIndex:1]; // Example: allows second image to be presented first
@@ -57,6 +57,19 @@ Then respond to the required delegate methods:
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
 
 If you don't want to view the photo browser full screen (for example if you are using view controller containment in iOS 5) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
+
+
+### Actions
+
+By default, if the action button is visible then the image (and caption if it exists) are sent to a UIActivityViewController. On iOS 5, a custom action sheet appears allowing them to copy or email the photo.
+
+You can provide a custom action by implementing the following delegate method:
+
+```obj-c
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index {
+    // Do your thing!
+}
+```
 
 
 ### Photo Captions

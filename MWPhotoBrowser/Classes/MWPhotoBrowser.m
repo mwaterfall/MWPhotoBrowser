@@ -15,6 +15,7 @@
 #define PADDING                 10
 #define PAGE_INDEX_TAG_OFFSET   1000
 #define PAGE_INDEX(page)        ([(page) tag] - PAGE_INDEX_TAG_OFFSET)
+#define ACTION_SHEET_OLD_ACTIONS 2000
 
 // Private
 @interface MWPhotoBrowser () {
@@ -64,6 +65,7 @@
 @property (nonatomic, strong) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
 @property (nonatomic, strong) UIActionSheet *actionsSheet;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
+@property (nonatomic, strong) UIActivityViewController *activityViewController;
 
 // Private Methods
 
@@ -1052,34 +1054,83 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - Actions
+
 - (void)actionButtonPressed:(id)sender {
     if (_actionsSheet) {
+        
         // Dismiss
         [_actionsSheet dismissWithClickedButtonIndex:_actionsSheet.cancelButtonIndex animated:YES];
+        
     } else {
+        
+        // Only react when image has loaded
         id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
         if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
             
+            // If they have defined a delegate method then just message them
+            if ([self.delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
+                
+                // Let delegate handle things
+                [self.delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
+                
+            } else {
+                
+                // Handle default actions
+                if (SYSTEM_VERSION_LESS_THAN(@"6")) {
+                    
+                    // Old handling of activities with action sheet
+                    if ([MFMailComposeViewController canSendMail]) {
+                        self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
+                                                               cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
+                                                               otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil];
+                    } else {
+                        self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
+                                                               cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
+                                                               otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil];
+                    }
+                    _actionsSheet.tag = ACTION_SHEET_OLD_ACTIONS;
+                    _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+                    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+                        [_actionsSheet showFromBarButtonItem:sender animated:YES];
+                    } else {
+                        [_actionsSheet showInView:self.view];
+                    }
+                    
+                } else {
+                    
+                    // Show activity view controller
+                    NSMutableArray *items = [NSMutableArray arrayWithObject:[photo underlyingImage]];
+                    if (photo.caption) {
+                        [items addObject:photo.caption];
+                    }
+                    self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+                    
+                    // Show loading spinner after a couple of seconds
+                    double delayInSeconds = 2.0;
+                    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                        if (self.activityViewController) {
+                            [self showProgressHUDWithMessage:nil];
+                        }
+                    });
+
+                    // Show
+                    __weak typeof(self) weakSelf = self;
+                    [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+                        [weakSelf hideControlsAfterDelay];
+                        weakSelf.activityViewController = nil;
+                        [weakSelf hideProgressHUD:YES];
+                    }];
+                    [self presentViewController:self.activityViewController animated:YES completion:nil];
+                    
+                }
+                
+            }
+            
             // Keep controls hidden
             [self setControlsHidden:NO animated:YES permanent:YES];
-            
-            // Sheet
-            if ([MFMailComposeViewController canSendMail]) {
-                self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil];
-            } else {
-                self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                        otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil];
-            }
-            _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-                [_actionsSheet showFromBarButtonItem:sender animated:YES];
-            } else {
-                [_actionsSheet showInView:self.view];
-            }
-            
+
         }
     }
 }
@@ -1087,8 +1138,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (actionSheet == _actionsSheet) {           
-        // Actions 
+    if (actionSheet.tag == ACTION_SHEET_OLD_ACTIONS) {
+        // Old Actions
         self.actionsSheet = nil;
         if (buttonIndex != actionSheet.cancelButtonIndex) {
             if (buttonIndex == actionSheet.firstOtherButtonIndex) {
@@ -1103,7 +1154,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self hideControlsAfterDelay]; // Continue as normal...
 }
 
-#pragma mark - MBProgressHUD
+#pragma mark - Action Progress
 
 - (MBProgressHUD *)progressHUD {
     if (!_progressHUD) {
@@ -1203,8 +1254,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [self hideProgressHUD:NO];
     }
 }
-
-#pragma mark Mail Compose Delegate
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     if (result == MFMailComposeResultFailed) {
