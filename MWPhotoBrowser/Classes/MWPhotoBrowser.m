@@ -110,7 +110,7 @@
 - (id<MWPhoto>)photoAtIndex:(NSUInteger)index;
 - (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
 - (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo;
-- (void)releaseAllUnderlyingPhotos;
+- (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent;
 
 // Actions
 - (void)savePhoto;
@@ -196,19 +196,25 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)dealloc {
     _pagingScrollView.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self releaseAllUnderlyingPhotos];
+    [self releaseAllUnderlyingPhotos:NO];
     [[SDImageCache sharedImageCache] clearMemory]; // clear memory
 }
 
-- (void)releaseAllUnderlyingPhotos {
-    for (id p in _photos) { if (p != [NSNull null])
-        [p unloadUnderlyingImage]; } // Release photos
+- (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
+    for (id p in _photos) {
+        if (p != [NSNull null]) {
+            if (preserveCurrent && p == [self photoAtIndex:self.currentIndex]) {
+                continue; // skip current
+            }
+            [p unloadUnderlyingImage];
+        }
+    } // Release photos
 }
 
 - (void)didReceiveMemoryWarning {
 	
 	// Release any cached data, images, etc that aren't in use.
-    [self releaseAllUnderlyingPhotos];
+    [self releaseAllUnderlyingPhotos:YES];
 	[_recycledPages removeAllObjects];
 	
 	// Releases the view if it doesn't have a superview.
@@ -534,9 +540,17 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     
     // Get data
     NSUInteger numberOfPhotos = [self numberOfPhotos];
-    [self releaseAllUnderlyingPhotos];
+    [self releaseAllUnderlyingPhotos:YES];
     [_photos removeAllObjects];
     for (int i = 0; i < numberOfPhotos; i++) [_photos addObject:[NSNull null]];
+    
+    // Remove everything
+    while (_pagingScrollView.subviews.count) {
+        [[_pagingScrollView.subviews lastObject] removeFromSuperview];
+    }
+    
+    // Update current page index
+    _currentPageIndex = MAX(0, MIN(_currentPageIndex, numberOfPhotos - 1));
     
     // Update
     [self performLayout];
@@ -743,6 +757,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 // Handle page changes
 - (void)didStartViewingPageAtIndex:(NSUInteger)index {
     
+    if (![self numberOfPhotos]) {
+        // Show controls
+        [self setControlsHidden:NO animated:YES permanent:YES];
+        return;
+    }
+    
     // Release images further away than +/-1
     NSUInteger i;
     if (index > 0) {
@@ -906,6 +926,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 // If permanent then we don't set timers to hide again
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated permanent:(BOOL)permanent {
     
+    // Force visible if no photos
+    if (![self numberOfPhotos]) hidden = NO;
+    
     // Cancel any timers
     [self cancelControlHiding];
     
@@ -1000,13 +1023,20 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 #pragma mark - Properties
 
+// Handle depreciated method
 - (void)setInitialPageIndex:(NSUInteger)index {
+    [self setCurrentPhotoIndex:index];
+}
+
+- (void)setCurrentPhotoIndex:(NSUInteger)index {
     // Validate
-    if (index >= [self numberOfPhotos]) index = [self numberOfPhotos]-1;
+    if (index >= [self numberOfPhotos])
+        index = [self numberOfPhotos]-1;
     _currentPageIndex = index;
 	if ([self isViewLoaded]) {
         [self jumpToPageAtIndex:index];
-        if (!_viewIsActive) [self tilePages]; // Force tiling if view is not visible
+        if (!_viewIsActive)
+            [self tilePages]; // Force tiling if view is not visible
     }
 }
 

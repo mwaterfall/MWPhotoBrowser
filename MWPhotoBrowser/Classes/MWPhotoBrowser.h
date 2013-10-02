@@ -40,14 +40,15 @@
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 // Init
-- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
+- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
 
 // Reloads the photo browser and refetches data
 - (void)reloadData;
 
 // Set page that photo browser starts on
-- (void)setInitialPageIndex:(NSUInteger)index;
+- (void)setCurrentPhotoIndex:(NSUInteger)index;
+- (void)setInitialPageIndex:(NSUInteger)index  __attribute__((deprecated("Use setCurrentPhotoIndex: instead"))); // Depreciated
 
 @end
 

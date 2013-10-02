@@ -35,7 +35,7 @@ browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser ful
 browser.displayActionButton = YES; // Show action button to save, copy or email photos (defaults to NO)
 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-[browser setInitialPageIndex:1]; // Example: allows second image to be presented first
+[browser setCurrentPhotoIndex:1]; // Example: allows second image to be presented first
 // Present
 [self.navigationController pushViewController:browser animated:YES];
 ```

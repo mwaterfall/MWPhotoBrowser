@@ -131,7 +131,7 @@
     browser.displayNavArrows = NO;
     browser.wantsFullScreenLayout = YES;
     browser.zoomPhotosToFill = YES;
-    [browser setInitialPageIndex:0];
+    [browser setCurrentPhotoIndex:0];
     
     // Show
     if (_segmentedControl.selectedSegmentIndex == 0) {
@@ -148,6 +148,25 @@
 	
 	// Deselect
 	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    // Test reloading of data after delay
+    double delayInSeconds = 3;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        
+        // Test removing an object
+//        [_photos removeLastObject];
+//        [browser reloadData];
+        
+        // Test all new
+//        [_photos removeAllObjects];
+//        [_photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]]];
+//        [browser reloadData];
+        
+        // Test changing photo index
+//        [browser setCurrentPhotoIndex:9];
+        
+    });
 	
 }
 

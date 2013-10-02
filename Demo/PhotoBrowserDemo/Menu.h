@@ -10,8 +10,9 @@
 #import "MWPhotoBrowser.h"
 
 @interface Menu : UITableViewController <MWPhotoBrowserDelegate> {
-    NSArray *_photos;
     UISegmentedControl *_segmentedControl;
 }
-@property (nonatomic, strong) NSArray *photos;
+
+@property (nonatomic, strong) NSMutableArray *photos;
+
 @end
