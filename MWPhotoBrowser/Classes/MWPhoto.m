@@ -106,7 +106,13 @@
             SDWebImageManager *manager = [SDWebImageManager sharedManager];
             [manager downloadWithURL:_photoURL
                              options:0
-                            progress:nil
+                            progress:^(NSUInteger receivedSize, long long expectedSize) {
+                                float progress = receivedSize / (float)expectedSize;
+                                NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                      [NSNumber numberWithFloat:progress], @"progress",
+                                                      self, @"photo", nil];
+                                [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+                            }
                            completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
                                if (error) {
                                    MWLog(@"SDWebImage failed to download image: %@", error);

@@ -9,6 +9,7 @@
 #import "MWZoomingScrollView.h"
 #import "MWPhotoBrowser.h"
 #import "MWPhoto.h"
+#import "DACircularProgressView.h"
 
 // Declare private methods of browser
 @interface MWPhotoBrowser ()
@@ -22,7 +23,7 @@
     
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
-	UIActivityIndicatorView *_spinner;
+	DACircularProgressView *_loadingIndicator;
     
 }
 
@@ -55,13 +56,25 @@
 		_photoImageView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_photoImageView];
 		
-		// Spinner
-		_spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		_spinner.hidesWhenStopped = YES;
-		_spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+		// Loading indicator
+		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
+            _loadingIndicator.thicknessRatio = 0.1;
+            _loadingIndicator.roundedCorners = NO;
+        } else {
+            _loadingIndicator.thicknessRatio = 0.2;
+            _loadingIndicator.roundedCorners = YES;
+        }
+		_loadingIndicator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-		[self addSubview:_spinner];
-		
+		[self addSubview:_loadingIndicator];
+
+        // Listen progress notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(setProgressFromNotification:)
+                                                     name:MWPHOTO_PROGRESS_NOTIFICATION
+                                                   object:nil];
+        
 		// Setup
 		self.backgroundColor = [UIColor blackColor];
 		self.delegate = self;
@@ -72,6 +85,10 @@
         
     }
     return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)setPhoto:(id<MWPhoto>)photo {
@@ -104,8 +121,8 @@
 		UIImage *img = [self.photoBrowser imageForPhoto:_photo];
 		if (img) {
 			
-			// Hide spinner
-			[_spinner stopAnimating];
+			// Hide indicator
+			[self hideLoadingIndicator];
 			
 			// Set image
 			_photoImageView.image = img;
@@ -125,7 +142,7 @@
 			
 			// Hide image view
 			_photoImageView.hidden = YES;
-			[_spinner startAnimating];
+			[self showLoadingIndicator];
 			
 		}
 		[self setNeedsLayout];
@@ -134,7 +151,28 @@
 
 // Image failed so just show black!
 - (void)displayImageFailure {
-	[_spinner stopAnimating];
+    [self hideLoadingIndicator];
+}
+
+#pragma mark - Loading Progress
+
+- (void)setProgressFromNotification:(NSNotification *)notification {
+    NSDictionary *dict = [notification object];
+    MWPhoto *photoWithProgress = (MWPhoto *)[dict objectForKey:@"photo"];
+    if (photoWithProgress == self.photo) {
+        float progress = [[dict valueForKey:@"progress"] floatValue];
+        NSLog(@"Progress: %f", progress);
+        _loadingIndicator.progress = MAX(MIN(1, progress), 0);
+    }
+}
+
+- (void)hideLoadingIndicator {
+    _loadingIndicator.hidden = YES;
+}
+
+- (void)showLoadingIndicator {
+    _loadingIndicator.progress = 0;
+    _loadingIndicator.hidden = NO;
 }
 
 #pragma mark - Setup
@@ -209,9 +247,10 @@
 	// Update tap view frame
 	_tapView.frame = self.bounds;
 	
-	// Spinner
-	if (!_spinner.hidden) _spinner.center = CGPointMake(floorf(self.bounds.size.width/2.0),
-													  floorf(self.bounds.size.height/2.0));
+	// Indicator
+	if (!_loadingIndicator.hidden)
+        _loadingIndicator.center = CGPointMake(floorf(self.bounds.size.width/2.0),
+                                               floorf(self.bounds.size.height/2.0));
 	// Super
 	[super layoutSubviews];
 	

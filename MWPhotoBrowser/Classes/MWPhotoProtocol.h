@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-// Name of notification used when a photo has completed loading process
-// Used to notify browser display the image
+// Notifications
 #define MWPHOTO_LOADING_DID_END_NOTIFICATION @"MWPHOTO_LOADING_DID_END_NOTIFICATION"
+#define MWPHOTO_PROGRESS_NOTIFICATION @"MWPHOTO_PROGRESS_NOTIFICATION"
 
 // If you wish to use your own data models for photo then they must conform
 // to this protocol. See instructions for details on each method.

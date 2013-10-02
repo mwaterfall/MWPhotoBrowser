@@ -113,11 +113,11 @@ Example delegate method for custom caption view:
 3. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
 4. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
 5. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths" is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored. In the file layout of the MWPhotoBrowser project, a simple ../** works as the demo project folder and MWPhotoBrowser project folder are adjacent to one another. Please let me know if you encounter any issue with this.
-6. In "Summary" add `MessageUI.framework` and `ImageIO.framework` to "Linked Frameworks and Libraries".
+6. Under "Build Phases / Link Binary With Libraries" add `MessageUI.framework`, `QuartzCore.framework` and `ImageIO.framework` to "Linked Frameworks and Libraries".
 
 You should now be able to include `MWPhotoBrowser.h` into your project and start using it.
 
-Setting these things up in Xcode 4 can be a bit tricky so if you run into any problems you may wish to read through a few bits of information:
+Setting these things up in Xcode can be a bit tricky so if you run into any problems you may wish to read through a few bits of information:
 
 - [Developing a Static Library and Incorporating It in Your Application](http://developer.apple.com/library/ios/#documentation/Xcode/Conceptual/ios_development_workflow/910-A-Developing_a_Static_Library_and_Incorporating_It_in_Your_Application/archiving_an_application_that_uses_a_static_library.html)
 - [Using Open Source Static Libraries in Xcode 4](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library)
@@ -135,7 +135,8 @@ If your project uses ARC then you will have to disable ARC for each of the files
 MWPhotoBrowser very gratefully makes use of 2 other fantastic open source projects:
 
 - [SDWebImage](https://github.com/rs/SDWebImage) by Olivier Poitrey — Used to handle downloading and decompressing of photos from the web.
-- [MBProgressHUD](https://github.com/jdg/MBProgressHUD) by Jonathan George — Used to display notifications of photo saving and copying progress/completion.
+- [MBProgressHUD](https://github.com/jdg/MBProgressHUD) by Jonathan George — Used to display activity notifications.
+- [DACircularProgress](https://github.com/danielamitay/DACircularProgress) by Daniel Amitay — Used to display image download progress.
 
 Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>).
 
