@@ -96,7 +96,7 @@
     MWPhoto *photo;
 	switch (indexPath.row) {
 		case 0: 
-            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
             photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
 			[photos addObject:photo];
 			break;
@@ -104,10 +104,10 @@
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]]];
             photo.caption = @"Grotto of the Madonna";
 			[photos addObject:photo];
-            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]];
             photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
 			[photos addObject:photo];
-            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]]];
             photo.caption = @"York Floods";
 			[photos addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4l" ofType:@"jpg"]]];

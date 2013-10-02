@@ -19,17 +19,17 @@
 @property (nonatomic) NSString *caption;
 @property (nonatomic, readonly) UIImage *image;
 @property (nonatomic, readonly) NSURL *photoURL;
-@property (nonatomic, readonly) NSString *filePath;
+@property (nonatomic, readonly) NSString *filePath  __attribute__((deprecated("Use photoURL"))); // Depreciated
 
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;
-+ (MWPhoto *)photoWithFilePath:(NSString *)path;
++ (MWPhoto *)photoWithFilePath:(NSString *)path  __attribute__((deprecated("Use photoWithURL: with a file URL"))); // Depreciated
 + (MWPhoto *)photoWithURL:(NSURL *)url;
 
 // Init
 - (id)initWithImage:(UIImage *)image;
-- (id)initWithFilePath:(NSString *)path;
 - (id)initWithURL:(NSURL *)url;
+- (id)initWithFilePath:(NSString *)path  __attribute__((deprecated("Use initWithURL: with a file URL"))); // Depreciated
 
 @end
 

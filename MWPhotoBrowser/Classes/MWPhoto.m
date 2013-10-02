@@ -10,6 +10,7 @@
 #import "MWPhotoBrowser.h"
 #import "SDWebImageDecoder.h"
 #import "SDWebImageManager.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 // Private
 @interface MWPhoto () {
@@ -38,8 +39,9 @@
 	return [[MWPhoto alloc] initWithImage:image];
 }
 
+// Depricated
 + (MWPhoto *)photoWithFilePath:(NSString *)path {
-	return [[MWPhoto alloc] initWithFilePath:path];
+    return [MWPhoto photoWithURL:[NSURL fileURLWithPath:path]];
 }
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {
@@ -55,9 +57,10 @@
 	return self;
 }
 
+// Depricated
 - (id)initWithFilePath:(NSString *)path {
 	if ((self = [super init])) {
-		_filePath = [path copy];
+		_photoURL = [NSURL fileURLWithPath:path];
 	}
 	return self;
 }
@@ -82,50 +85,93 @@
     NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
     _loadingInProgress = YES;
     if (self.underlyingImage) {
+        
         // Image already loaded
         [self imageLoadingComplete];
+        
     } else {
+        
+        // Get underlying image
         if (_image) {
+            
             // We have UIImage so decompress
             self.underlyingImage = _image;
             [self decompressImageAndFinishLoading];
-        } else if (_filePath) {
-            // Load async from file
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                @autoreleasepool {
-                    @try {
-                        self.underlyingImage = [UIImage imageWithContentsOfFile:_filePath];
-                        if (!_underlyingImage) {
-                            MWLog(@"Error loading photo from path: %@", _photoPath);
-                        }
-                    } @finally {
-                        [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
-                    }
-                }
-            });
+            
         } else if (_photoURL) {
-            // Load async from web (using SDWebImage)
-            SDWebImageManager *manager = [SDWebImageManager sharedManager];
-            [manager downloadWithURL:_photoURL
-                             options:0
-                            progress:^(NSUInteger receivedSize, long long expectedSize) {
-                                float progress = receivedSize / (float)expectedSize;
-                                NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                      [NSNumber numberWithFloat:progress], @"progress",
-                                                      self, @"photo", nil];
-                                [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+            
+            // Check what type of url it is
+            if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
+                
+                // Load from asset library async
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    @autoreleasepool {
+                        @try {
+                            ALAssetsLibrary *assetslibrary = [[ALAssetsLibrary alloc] init];
+                            [assetslibrary assetForURL:_photoURL
+                                           resultBlock:^(ALAsset *asset){
+                                               ALAssetRepresentation *rep = [asset defaultRepresentation];
+                                               CGImageRef iref = [rep fullScreenImage];
+                                               if (iref) {
+                                                   self.underlyingImage = [UIImage imageWithCGImage:iref];
+                                               }
+                                           }
+                                          failureBlock:^(NSError *error) {
+                                              self.underlyingImage = nil;
+                                              MWLog(@"Photo from file error: %@",error);
+                                          }];
+                        } @finally {
+                            [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                        }
+                        
+                    }
+                });
+                
+            } else if ([_photoURL isFileReferenceURL]) {
+                
+                // Load from local file async
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    @autoreleasepool {
+                        @try {
+                            self.underlyingImage = [UIImage imageWithContentsOfFile:_photoURL.path];
+                            if (!_underlyingImage) {
+                                MWLog(@"Error loading photo from path: %@", _photoPath);
                             }
-                           completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
-                               if (error) {
-                                   MWLog(@"SDWebImage failed to download image: %@", error);
-                               }
-                               self.underlyingImage = image;
-                               [self decompressImageAndFinishLoading];
-                           }];
+                        } @finally {
+                            [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                        }
+                    }
+                });
+                
+            } else {
+                
+                // Load async from web (using SDWebImage)
+                SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                [manager downloadWithURL:_photoURL
+                                 options:0
+                                progress:^(NSUInteger receivedSize, long long expectedSize) {
+                                    float progress = receivedSize / (float)expectedSize;
+                                    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                          [NSNumber numberWithFloat:progress], @"progress",
+                                                          self, @"photo", nil];
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+                                }
+                               completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
+                                   if (error) {
+                                       MWLog(@"SDWebImage failed to download image: %@", error);
+                                   }
+                                   self.underlyingImage = image;
+                                   [self decompressImageAndFinishLoading];
+                               }];
+                
+            }
+            
         } else {
+            
             // Failed - no source
             self.underlyingImage = nil;
             [self imageLoadingComplete];
+            
         }
     }
 }

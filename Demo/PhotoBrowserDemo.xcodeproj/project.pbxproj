@@ -11,6 +11,7 @@
 		0E76FFEF1573FE1A000EE5CA /* MWPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */; };
 		0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E76FFED1573FE14000EE5CA /* libMWPhotoBrowser.a */; };
 		0E8515C617FC781600FE1EF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515C517FC781600FE1EF3 /* QuartzCore.framework */; };
+		0E8515D017FCC34700FE1EF3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515CF17FCC34700FE1EF3 /* AssetsLibrary.framework */; };
 		0E85B24C14C6F40500EA35BF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E85B24E14C6F40500EA35BF /* Localizable.strings */; };
 		0EA380351573EA53003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380341573EA53003F4582 /* ImageIO.framework */; };
 		4C6F979214AF734900F8389A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F979114AF734900F8389A /* UIKit.framework */; };
@@ -52,6 +53,7 @@
 		0E76FFE51573FE13000EE5CA /* MWPhotoBrowser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MWPhotoBrowser.xcodeproj; path = ../../MWPhotoBrowser/MWPhotoBrowser.xcodeproj; sourceTree = "<group>"; };
 		0E76FFEE1573FE1A000EE5CA /* MWPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MWPhotoBrowser.bundle; path = ../../MWPhotoBrowser/MWPhotoBrowser.bundle; sourceTree = "<group>"; };
 		0E8515C517FC781600FE1EF3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		0E8515CF17FCC34700FE1EF3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		0E85B24D14C6F40500EA35BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0EA380341573EA53003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		4C6F978D14AF734900F8389A /* PhotoBrowserDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoBrowserDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E8515D017FCC34700FE1EF3 /* AssetsLibrary.framework in Frameworks */,
 				0E8515C617FC781600FE1EF3 /* QuartzCore.framework in Frameworks */,
 				0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */,
 				0EA380351573EA53003F4582 /* ImageIO.framework in Frameworks */,
@@ -123,6 +126,7 @@
 		4C6F979014AF734900F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0E8515CF17FCC34700FE1EF3 /* AssetsLibrary.framework */,
 				0E8515C517FC781600FE1EF3 /* QuartzCore.framework */,
 				0EA380341573EA53003F4582 /* ImageIO.framework */,
 				4C6F97C814AF750400F8389A /* MessageUI.framework */,
