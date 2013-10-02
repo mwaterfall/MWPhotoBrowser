@@ -495,7 +495,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         NSUInteger index = PAGE_INDEX(page);
 		page.frame = [self frameForPageAtIndex:index];
         page.captionView.frame = [self frameForCaptionView:page.captionView atIndex:index];
-		[page setMaxMinZoomScalesForCurrentBounds];
+        
+        // Adjust scales if bounds has changed since last time
+        static CGRect previousBounds = {0};
+        if (!CGRectEqualToRect(previousBounds, self.view.bounds)) {
+            // Update zooms for new bounds
+            [page setMaxMinZoomScalesForCurrentBounds];
+            previousBounds = self.view.bounds;
+        }
+
 	}
 	
 	// Adjust contentOffset to preserve page location based on values collected prior to location
