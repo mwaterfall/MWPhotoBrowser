@@ -101,7 +101,7 @@
 			[photos addObject:photo];
 			break;
 		case 1: {
-            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]];
+            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo1l" ofType:@"jpg"]]];
             photo.caption = @"Grotto of the Madonna";
 			[photos addObject:photo];
             photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]];
@@ -110,7 +110,7 @@
             photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3l" ofType:@"jpg"]];
             photo.caption = @"York Floods";
 			[photos addObject:photo];
-            photo = [MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo4l" ofType:@"jpg"]];
+            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4l" ofType:@"jpg"]]];
             photo.caption = @"Campervan";
 			[photos addObject:photo];
 			break;

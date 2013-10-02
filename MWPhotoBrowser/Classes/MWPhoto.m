@@ -14,13 +14,6 @@
 // Private
 @interface MWPhoto () {
 
-    // Image Sources
-    NSString *_photoPath;
-    NSURL *_photoURL;
-
-    // Image
-    UIImage *_underlyingImage;
-
     // Other
     NSString *_caption;
     BOOL _loadingInProgress;
@@ -28,22 +21,16 @@
 }
 
 // Properties
-@property (nonatomic, strong) UIImage *underlyingImage;
+@property (nonatomic, strong) UIImage *underlyingImage; // holds the decompressed image
 
 // Methods
-- (void)imageDidFinishLoadingSoDecompress;
+- (void)decompressImageAndFinishLoading;
 - (void)imageLoadingComplete;
 
 @end
 
 // MWPhoto
 @implementation MWPhoto
-
-// Properties
-@synthesize underlyingImage = _underlyingImage;
-@synthesize caption = _caption;
-@synthesize photoURL = _photoURL;
-@synthesize filePath = _photoPath;
 
 #pragma mark Class Methods
 
@@ -63,14 +50,14 @@
 
 - (id)initWithImage:(UIImage *)image {
 	if ((self = [super init])) {
-		self.underlyingImage = image;
+		_image = image;
 	}
 	return self;
 }
 
 - (id)initWithFilePath:(NSString *)path {
 	if ((self = [super init])) {
-		_photoPath = [path copy];
+		_filePath = [path copy];
 	}
 	return self;
 }
@@ -98,9 +85,24 @@
         // Image already loaded
         [self imageLoadingComplete];
     } else {
-        if (_photoPath) {
+        if (_image) {
+            // We have UIImage so decompress
+            self.underlyingImage = _image;
+            [self decompressImageAndFinishLoading];
+        } else if (_filePath) {
             // Load async from file
-            [self performSelectorInBackground:@selector(loadImageFromFileAsync) withObject:nil];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                @autoreleasepool {
+                    @try {
+                        self.underlyingImage = [UIImage imageWithContentsOfFile:_filePath];
+                        if (!_underlyingImage) {
+                            MWLog(@"Error loading photo from path: %@", _photoPath);
+                        }
+                    } @finally {
+                        [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                    }
+                }
+            });
         } else if (_photoURL) {
             // Load async from web (using SDWebImage)
             SDWebImageManager *manager = [SDWebImageManager sharedManager];
@@ -118,7 +120,7 @@
                                    MWLog(@"SDWebImage failed to download image: %@", error);
                                }
                                self.underlyingImage = image;
-                               [self imageDidFinishLoadingSoDecompress];
+                               [self decompressImageAndFinishLoading];
                            }];
         } else {
             // Failed - no source
@@ -131,30 +133,12 @@
 // Release if we can get it again from path or url
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
-	if (self.underlyingImage && (_photoPath || _photoURL)) {
+	if (self.underlyingImage) {
 		self.underlyingImage = nil;
 	}
 }
 
-#pragma mark - Async Loading
-
-// Called in background
-// Load image in background from local file
-- (void)loadImageFromFileAsync {
-    @autoreleasepool {
-        @try {
-            self.underlyingImage = [UIImage imageWithContentsOfFile:_photoPath];
-            if (!_underlyingImage) {
-                MWLog(@"Error loading photo from path: %@", _photoPath);
-            }
-        } @finally {
-            [self performSelectorOnMainThread:@selector(imageDidFinishLoadingSoDecompress) withObject:nil waitUntilDone:NO];
-        }
-    }
-}
-
-// Called on main
-- (void)imageDidFinishLoadingSoDecompress {
+- (void)decompressImageAndFinishLoading {
     NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
     if (self.underlyingImage) {
         // Decode image async to avoid lagging when UIKit lazy loads
