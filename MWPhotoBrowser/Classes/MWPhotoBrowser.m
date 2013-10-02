@@ -254,8 +254,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     
     // Toolbar Items
     if (self.displayNavArrows) {
-        _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowLeft.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
-        _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowRight.png"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+        NSString *arrowPathFormat;
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
+            arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowOutline%@.png";
+        } else {
+            arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrow%@.png";
+        }
+        _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Left"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+        _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Right"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
