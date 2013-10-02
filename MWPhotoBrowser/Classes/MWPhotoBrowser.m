@@ -701,6 +701,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             // Failed to load
             [page displayImageFailure];
         }
+        // Update nav
+        [self updateNavigation];
     }
 }
 
@@ -849,6 +851,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         prevIndex = index;
     }
     
+    // Update nav
+    [self updateNavigation];
+    
 }
 
 #pragma mark - Frame Calculations
@@ -946,6 +951,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	// Buttons
 	_previousButton.enabled = (_currentPageIndex > 0);
 	_nextButton.enabled = (_currentPageIndex < [self numberOfPhotos]-1);
+    _actionButton.enabled = [[self photoAtIndex:_currentPageIndex] underlyingImage] != nil;
 	
 }
 
