@@ -120,6 +120,7 @@
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"]]];
+			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.staticflickr.com/2449/4052876281_6e068ac860_b.jpg"]]];
 			break;
 		default: break;
 	}

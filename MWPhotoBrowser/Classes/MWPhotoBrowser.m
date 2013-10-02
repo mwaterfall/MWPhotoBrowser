@@ -172,7 +172,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     self.hidesBottomBarWhenPushed = YES;
     _photoCount = NSNotFound;
     _currentPageIndex = 0;
-    _displayActionButton = NO;
+    _displayActionButton = YES;
     _displayNavArrows = NO;
     _zoomPhotosToFill = YES;
     _performingLayout = NO; // Reset on view did appear
@@ -287,28 +287,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [_visiblePages removeAllObjects];
     [_recycledPages removeAllObjects];
     
-    // Toolbar
-    if (numberOfPhotos > 1 || _displayActionButton) {
-        [self.view addSubview:_toolbar];
-    } else {
-        [_toolbar removeFromSuperview];
-    }
-    
-    // Toolbar items & navigation
-    UIBarButtonItem *fixedLeftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
-    fixedLeftSpace.width = 32; // To balance action button
-    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    NSMutableArray *items = [[NSMutableArray alloc] init];
-    if (_displayActionButton) [items addObject:fixedLeftSpace];
-    [items addObject:flexSpace];
-    if (_previousButton && numberOfPhotos > 1) [items addObject:_previousButton];
-    [items addObject:flexSpace];
-    if (_nextButton && numberOfPhotos > 1) [items addObject:_nextButton];
-    [items addObject:flexSpace];
-    if (_actionButton) [items addObject:_actionButton];
-    [_toolbar setItems:items];
-	[self updateNavigation];
-    
     // Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
@@ -340,6 +318,45 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         self.previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
     }
+    
+    // Show action button on nav if we can
+    BOOL actionButtonOnNavBar = !self.navigationItem.rightBarButtonItem;
+    if (_actionButton && actionButtonOnNavBar) {
+        self.navigationItem.rightBarButtonItem = _actionButton;
+    }
+
+    // Toolbar items
+    UIBarButtonItem *fixedLeftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    fixedLeftSpace.width = 32; // To balance action button
+    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    NSMutableArray *items = [[NSMutableArray alloc] init];
+    if (_actionButton && !actionButtonOnNavBar) [items addObject:fixedLeftSpace];
+    [items addObject:flexSpace];
+    if (_previousButton || _nextButton) {
+        if (_previousButton && numberOfPhotos > 1) [items addObject:_previousButton];
+        [items addObject:flexSpace];
+        if (_nextButton && numberOfPhotos > 1) [items addObject:_nextButton];
+    }
+    [items addObject:flexSpace];
+    if (_actionButton && !actionButtonOnNavBar) [items addObject:_actionButton];
+    [_toolbar setItems:items];
+
+    // Toolbar visibility
+    BOOL hideToolbar = YES;
+    for (UIBarButtonItem* item in _toolbar.items) {
+        if (item != fixedLeftSpace && item != flexSpace) {
+            hideToolbar = NO;
+            break;
+        }
+    }
+    if (hideToolbar) {
+        [_toolbar removeFromSuperview];
+    } else {
+        [self.view addSubview:_toolbar];
+    }
+    
+    // Update nav
+	[self updateNavigation];
     
     // Content offset
 	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:_currentPageIndex];
