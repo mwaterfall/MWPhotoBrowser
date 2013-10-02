@@ -477,7 +477,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	
 	// Toolbar
 	_toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-	
+    
 	// Remember index
 	NSUInteger indexPriorToLayout = _currentPageIndex;
 	
@@ -527,6 +527,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	// Remember page index before rotation
 	_pageIndexBeforeRotation = _currentPageIndex;
 	_rotating = YES;
+    
+    // In iOS 7 the nav bar gets shown after rotation, but might as well do this for everything!
+    if ([self areControlsHidden]) {
+        // Force hidden
+        self.navigationController.navigationBarHidden = YES;
+    }
 	
 }
 
@@ -545,6 +551,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 	_rotating = NO;
+    // Ensure nav bar isn't re-displayed
+    if ([self areControlsHidden]) {
+        self.navigationController.navigationBarHidden = NO;
+        self.navigationController.navigationBar.alpha = 0;
+    }
 }
 
 #pragma mark - Data
@@ -991,17 +1002,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         if (page.captionView) [captionViews addObject:page.captionView];
     }
 
-	// Animate
-    if (animated) {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.35];
-    }
-    CGFloat alpha = hidden ? 0 : 1;
-	[self.navigationController.navigationBar setAlpha:alpha];
-	[_toolbar setAlpha:alpha];
-    for (UIView *v in captionViews) v.alpha = alpha;
-	if (animated) [UIView commitAnimations];
-	
+    // Hide/show bars
+    [UIView animateWithDuration:(animated ? 0.35 : 0) animations:^(void) {
+        CGFloat alpha = hidden ? 0 : 1;
+        [self.navigationController.navigationBar setAlpha:alpha];
+        [_toolbar setAlpha:alpha];
+        for (UIView *v in captionViews) v.alpha = alpha;
+    } completion:^(BOOL finished) {}];
+    
 	// Control hiding timer
 	// Will cancel existing timer but only begin hiding if
 	// they are visible
