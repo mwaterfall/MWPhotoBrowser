@@ -10,8 +10,6 @@
 
 @implementation MWTapDetectingView
 
-@synthesize tapDelegate;
-
 - (id)init {
 	if ((self = [super init])) {
 		self.userInteractionEnabled = YES;
@@ -46,18 +44,18 @@
 }
 
 - (void)handleSingleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:singleTapDetected:)])
-		[tapDelegate view:self singleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:singleTapDetected:)])
+		[_tapDelegate view:self singleTapDetected:touch];
 }
 
 - (void)handleDoubleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:doubleTapDetected:)])
-		[tapDelegate view:self doubleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:doubleTapDetected:)])
+		[_tapDelegate view:self doubleTapDetected:touch];
 }
 
 - (void)handleTripleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:tripleTapDetected:)])
-		[tapDelegate view:self tripleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:tripleTapDetected:)])
+		[_tapDelegate view:self tripleTapDetected:touch];
 }
 
 @end

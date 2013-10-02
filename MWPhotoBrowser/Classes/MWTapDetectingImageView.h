@@ -10,18 +10,22 @@
 
 @protocol MWTapDetectingImageViewDelegate;
 
-@interface MWTapDetectingImageView : UIImageView {
-	id <MWTapDetectingImageViewDelegate> __weak tapDelegate;
-}
+@interface MWTapDetectingImageView : UIImageView {}
+
 @property (nonatomic, weak) id <MWTapDetectingImageViewDelegate> tapDelegate;
+
 - (void)handleSingleTap:(UITouch *)touch;
 - (void)handleDoubleTap:(UITouch *)touch;
 - (void)handleTripleTap:(UITouch *)touch;
+
 @end
 
 @protocol MWTapDetectingImageViewDelegate <NSObject>
+
 @optional
+
 - (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch;
 - (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch;
 - (void)imageView:(UIImageView *)imageView tripleTapDetected:(UITouch *)touch;
+
 @end

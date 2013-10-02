@@ -18,15 +18,22 @@
 @end
 
 // Private methods and properties
-@interface MWZoomingScrollView ()
+@interface MWZoomingScrollView () {
+    
+	MWTapDetectingView *_tapView; // for background taps
+	MWTapDetectingImageView *_photoImageView;
+	UIActivityIndicatorView *_spinner;
+    
+}
+
 @property (nonatomic, weak) MWPhotoBrowser *photoBrowser;
+
 - (void)handleSingleTap:(CGPoint)touchPoint;
 - (void)handleDoubleTap:(CGPoint)touchPoint;
+
 @end
 
 @implementation MWZoomingScrollView
-
-@synthesize photoBrowser = _photoBrowser, photo = _photo, captionView = _captionView;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
     if ((self = [super init])) {
@@ -66,7 +73,6 @@
     }
     return self;
 }
-
 
 - (void)setPhoto:(id<MWPhoto>)photo {
     _photoImageView.image = nil; // Release image
