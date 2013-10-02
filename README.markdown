@@ -3,14 +3,14 @@
 MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, file paths to images on the device, or URLs to images online. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 5+. All strings are localisable so they can be used in apps that support multiple languages.
 
 [![Alt][screenshot1_thumb]][screenshot1]    [![Alt][screenshot2_thumb]][screenshot2]    [![Alt][screenshot3_thumb]][screenshot3]    [![Alt][screenshot4_thumb]][screenshot4]
-[screenshot1_thumb]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser1_thumb.png
-[screenshot1]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser1.png
-[screenshot2_thumb]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser2_thumb.png
-[screenshot2]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser2.png
-[screenshot3_thumb]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser3_thumb.png
-[screenshot3]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser3.png
-[screenshot4_thumb]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser4_thumb.png
-[screenshot4]: http://dl.dropbox.com/u/2111839/Permanent/MWPhotoBrowser/mwphotobrowser4.png
+[screenshot1_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser1t.png
+[screenshot1]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser1.png
+[screenshot2_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser2t.png
+[screenshot2]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser2.png
+[screenshot3_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser3t.png
+[screenshot3]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser3.png
+[screenshot4_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser4t.png
+[screenshot4]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser4.png
 
 
 ## Usage
@@ -127,11 +127,6 @@ Setting these things up in Xcode 4 can be a bit tricky so if you run into any pr
 Another method is to simply add the files to your Xcode project, copying them to your project's directory if required. Ensure that all the code within `MWPhotoBrowser/Classes`, `MWPhotoBrowser/Libraries` and the `MWPhotoBrowser.bundle` is included in your project.
 
 If your project uses ARC then you will have to disable ARC for each of the files in MWPhotoBrowser. Here's how you do it: http://stackoverflow.com/a/6658549/106244
-
-
-## Outstanding issues and improvements
-
-*Nothing outstanding*
 
 
 ## Notes and Accreditation
