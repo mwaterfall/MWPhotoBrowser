@@ -1,4 +1,5 @@
-# MWPhotoBrowser — A simple iOS photo browser
+# MWPhotoBrowser
+## A simple iOS photo browser
 
 MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, file paths to images on the device, or URLs to images online. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 5+. All strings are localisable so they can be used in apps that support multiple languages.
 
@@ -31,11 +32,11 @@ self.photos = [NSMutableArray array];
 // Create & present browser
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
 // Set options
-browser.wantsFullScreenLayout = YES; // Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
 browser.displayActionButton = YES; // Show action button to allow sharing, copying, etc (defaults to YES)
 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
 [browser setCurrentPhotoIndex:1]; // Example: allows second image to be presented first
+browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
 // Present
 [self.navigationController pushViewController:browser animated:YES];
 ```
@@ -56,7 +57,7 @@ Then respond to the required delegate methods:
 
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
 
-If you don't want to view the photo browser full screen (for example if you are using view controller containment in iOS 5) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
+If using iOS 5 or 6 and you don't want to view the photo browser full screen (for example if you are using view controller containment) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
 
 
 ### Actions
