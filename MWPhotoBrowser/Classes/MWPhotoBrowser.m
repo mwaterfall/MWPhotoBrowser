@@ -55,6 +55,7 @@
     BOOL _isVCBasedStatusBarAppearance;
     BOOL _statusBarShouldBeHidden;
     BOOL _displayActionButton;
+    BOOL _leaveStatusBarAlone;
 	BOOL _performingLayout;
 	BOOL _rotating;
     BOOL _viewIsActive; // active as in it's in the view heirarchy
@@ -75,6 +76,7 @@
 
 // Layout
 - (void)performLayout;
+- (BOOL)presentingViewControllerPrefersStatusBarHidden;
 
 // Nav Bar Appearance
 - (void)setNavBarAppearance:(BOOL)animated;
@@ -389,18 +391,39 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [super viewDidUnload];
 }
 
+- (BOOL)presentingViewControllerPrefersStatusBarHidden {
+    UIViewController *presenting = self.presentingViewController;
+    if (presenting) {
+        if ([presenting isKindOfClass:[UINavigationController class]]) {
+            presenting = [(UINavigationController *)presenting topViewController];
+        }
+    } else {
+        // We're in a navigation controller so get previous one!
+        if (self.navigationController && self.navigationController.viewControllers.count > 1) {
+            presenting = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
+        }
+    }
+    if (presenting) {
+        return [presenting prefersStatusBarHidden];
+    } else {
+        return NO;
+    }
+}
+
 #pragma mark - Appearance
 
 - (void)viewWillAppear:(BOOL)animated {
     
 	// Super
 	[super viewWillAppear:animated];
-	
-	// Layout manually (iOS < 5)
-    if (SYSTEM_VERSION_LESS_THAN(@"5")) [self viewWillLayoutSubviews];
     
     // Status bar
-    if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if ([UIViewController instancesRespondToSelector:@selector(prefersStatusBarHidden)]) {
+        _leaveStatusBarAlone = [self presentingViewControllerPrefersStatusBarHidden];
+    } else {
+        _leaveStatusBarAlone = [UIApplication sharedApplication].statusBarHidden;
+    }
+    if (!_leaveStatusBarAlone && self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
     }
@@ -440,7 +463,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self setControlsHidden:NO animated:NO permanent:YES];
     
     // Status bar
-    if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if (!_leaveStatusBarAlone && self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
     
@@ -476,7 +499,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
-    self.previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
+    if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
+        self.previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
+    }
     self.previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
     _previousNavBarHidden = self.navigationController.navigationBarHidden;
     _previousNavBarStyle = self.navigationController.navigationBar.barStyle;
@@ -491,7 +516,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [self.navigationController setNavigationBarHidden:_previousNavBarHidden animated:animated];
         UINavigationBar *navBar = self.navigationController.navigationBar;
         navBar.tintColor = _previousNavBarTintColor;
-        navBar.barTintColor = _previousNavBarBarTintColor;
+        if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
+            navBar.barTintColor = _previousNavBarBarTintColor;
+        }
         navBar.barStyle = _previousNavBarStyle;
         if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
             [navBar setBackgroundImage:_navigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
@@ -511,7 +538,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)viewWillLayoutSubviews {
     
     // Super
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5")) [super viewWillLayoutSubviews];
+    [super viewWillLayoutSubviews];
 	
 	// Flag
 	_performingLayout = YES;
@@ -581,9 +608,6 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	
 	// Perform layout
 	_currentPageIndex = _pageIndexBeforeRotation;
-    
-	// Layout manually (iOS < 5)
-    if (SYSTEM_VERSION_LESS_THAN(@"5")) [self viewWillLayoutSubviews];
 	
 	// Delay control holding
 	[self hideControlsAfterDelay];
@@ -624,8 +648,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self performLayout];
     
     // Layout
-    if (SYSTEM_VERSION_LESS_THAN(@"5")) [self viewWillLayoutSubviews];
-    else [self.view setNeedsLayout];
+    [self.view setNeedsLayout];
     
 }
 
@@ -1015,54 +1038,56 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     CGFloat animationDuration = (animated ? 0.35 : 0);
     
     // Status bar
-    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-        
-        // Hide status bar
-        if (!_isVCBasedStatusBarAppearance) {
+    if (!_leaveStatusBarAlone) {
+        if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
             
-            // Non-view controller based
-            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
-            
+            // Hide status bar
+            if (!_isVCBasedStatusBarAppearance) {
+                
+                // Non-view controller based
+                [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
+                
+            } else {
+                
+                // View controller based so animate away
+                _statusBarShouldBeHidden = hidden;
+                [UIView animateWithDuration:animationDuration animations:^(void) {
+                    [self setNeedsStatusBarAppearanceUpdate];
+                } completion:^(BOOL finished) {}];
+                
+            }
+
         } else {
             
-            // View controller based so animate away
-            _statusBarShouldBeHidden = hidden;
-            [UIView animateWithDuration:animationDuration animations:^(void) {
-                [self setNeedsStatusBarAppearanceUpdate];
-            } completion:^(BOOL finished) {}];
-            
-        }
-
-    } else {
-        
-        // Status bar and nav bar positioning
-        if (self.wantsFullScreenLayout) {
-            
-            // Need to get heights and set nav bar position to overcome display issues
-            
-            // Get status bar height if visible
-            CGFloat statusBarHeight = 0;
-            if (![UIApplication sharedApplication].statusBarHidden) {
-                CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-                statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
+            // Status bar and nav bar positioning
+            if (self.wantsFullScreenLayout) {
+                
+                // Need to get heights and set nav bar position to overcome display issues
+                
+                // Get status bar height if visible
+                CGFloat statusBarHeight = 0;
+                if (![UIApplication sharedApplication].statusBarHidden) {
+                    CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+                    statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
+                }
+                
+                // Status Bar
+                [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
+                
+                // Get status bar height if visible
+                if (![UIApplication sharedApplication].statusBarHidden) {
+                    CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+                    statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
+                }
+                
+                // Set navigation bar frame
+                CGRect navBarFrame = self.navigationController.navigationBar.frame;
+                navBarFrame.origin.y = statusBarHeight;
+                self.navigationController.navigationBar.frame = navBarFrame;
+                
             }
             
-            // Status Bar
-            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
-            
-            // Get status bar height if visible
-            if (![UIApplication sharedApplication].statusBarHidden) {
-                CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-                statusBarHeight = MIN(statusBarFrame.size.height, statusBarFrame.size.width);
-            }
-            
-            // Set navigation bar frame
-            CGRect navBarFrame = self.navigationController.navigationBar.frame;
-            navBarFrame.origin.y = statusBarHeight;
-            self.navigationController.navigationBar.frame = navBarFrame;
-            
         }
-        
     }
     
     // Toolbar, nav bar and captions
@@ -1123,7 +1148,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return _statusBarShouldBeHidden;
+    if (!_leaveStatusBarAlone) {
+        return _statusBarShouldBeHidden;
+    } else {
+        return [self presentingViewControllerPrefersStatusBarHidden];
+    }
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
