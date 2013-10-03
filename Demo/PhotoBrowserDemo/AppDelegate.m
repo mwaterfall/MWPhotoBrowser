@@ -21,7 +21,6 @@
     
     Menu *menu = [[Menu alloc] initWithStyle:UITableViewStylePlain];
     self.viewController = (UIViewController *)[[UINavigationController alloc] initWithRootViewController:menu];
-                                  
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;

@@ -44,12 +44,15 @@
     UIImage *_navigationBarBackgroundImageDefault, 
     *_navigationBarBackgroundImageLandscapePhone;
     BOOL _previousNavBarHidden;
+    BOOL _previousNavToolbarHidden;
     UIColor *_previousNavBarTintColor;
+    UIColor *_previousNavBarBarTintColor;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
     UIBarButtonItem *_previousViewControllerBackButton;
     
     // Misc
+    BOOL _isVCBasedStatusBarAppearance;
     BOOL _statusBarShouldBeHidden;
     BOOL _displayActionButton;
 	BOOL _performingLayout;
@@ -61,6 +64,7 @@
 
 // Private Properties
 @property (nonatomic, strong) UIColor *previousNavBarTintColor;
+@property (nonatomic, strong) UIColor *previousNavBarBarTintColor;
 @property (nonatomic, strong) UIBarButtonItem *previousViewControllerBackButton;
 @property (nonatomic, strong) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
 @property (nonatomic, strong) UIActionSheet *actionsSheet;
@@ -168,6 +172,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)_initialisation {
     
     // Defaults
+    NSNumber *isVCBasedStatusBarAppearanceNum = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"];
+    if (isVCBasedStatusBarAppearanceNum) {
+        _isVCBasedStatusBarAppearance = isVCBasedStatusBarAppearanceNum.boolValue;
+    } else {
+        _isVCBasedStatusBarAppearance = YES; // default
+    }
     self.wantsFullScreenLayout = YES;
     self.hidesBottomBarWhenPushed = YES;
     _photoCount = NSNotFound;
@@ -401,6 +411,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     }
     [self setNavBarAppearance:animated];
     
+    // Hide navigation controller's toolbar
+    _previousNavToolbarHidden = self.navigationController.toolbarHidden;
+    [self.navigationController setToolbarHidden:YES];
+    
     // Update UI
 	[self hideControlsAfterDelay];
     
@@ -430,6 +444,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
     
+    // Show navigation controller's toolbar
+    [self.navigationController setToolbarHidden:_previousNavToolbarHidden];
+    
 	// Super
 	[super viewWillDisappear:animated];
     
@@ -446,6 +463,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
     navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+    if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
+        navBar.barTintColor = nil;
+        navBar.shadowImage = nil;
+    }
     navBar.barStyle = UIBarStyleBlackTranslucent;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
         [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
@@ -455,6 +476,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
+    self.previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     self.previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
     _previousNavBarHidden = self.navigationController.navigationBarHidden;
     _previousNavBarStyle = self.navigationController.navigationBar.barStyle;
@@ -469,6 +491,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [self.navigationController setNavigationBarHidden:_previousNavBarHidden animated:animated];
         UINavigationBar *navBar = self.navigationController.navigationBar;
         navBar.tintColor = _previousNavBarTintColor;
+        navBar.barTintColor = _previousNavBarBarTintColor;
         navBar.barStyle = _previousNavBarStyle;
         if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
             [navBar setBackgroundImage:_navigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
@@ -995,15 +1018,27 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
         
         // Hide status bar
-        _statusBarShouldBeHidden = hidden;
-        [UIView animateWithDuration:animationDuration animations:^(void) {
-            [self setNeedsStatusBarAppearanceUpdate];
-        } completion:^(BOOL finished) {}];
+        if (!_isVCBasedStatusBarAppearance) {
+            
+            // Non-view controller based
+            [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
+            
+        } else {
+            
+            // View controller based so animate away
+            _statusBarShouldBeHidden = hidden;
+            [UIView animateWithDuration:animationDuration animations:^(void) {
+                [self setNeedsStatusBarAppearanceUpdate];
+            } completion:^(BOOL finished) {}];
+            
+        }
 
     } else {
         
         // Status bar and nav bar positioning
         if (self.wantsFullScreenLayout) {
+            
+            // Need to get heights and set nav bar position to overcome display issues
             
             // Get status bar height if visible
             CGFloat statusBarHeight = 0;
