@@ -37,19 +37,19 @@
 	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
 	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
-    UIActionSheet *_actionsSheet;
     MBProgressHUD *_progressHUD;
+    UIActionSheet *_actionsSheet;
     
     // Appearance
-    UIImage *_navigationBarBackgroundImageDefault, 
-    *_navigationBarBackgroundImageLandscapePhone;
     BOOL _previousNavBarHidden;
     BOOL _previousNavToolbarHidden;
-    UIColor *_previousNavBarTintColor;
-    UIColor *_previousNavBarBarTintColor;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
+    UIColor *_previousNavBarTintColor;
+    UIColor *_previousNavBarBarTintColor;
     UIBarButtonItem *_previousViewControllerBackButton;
+    UIImage *_previousNavigationBarBackgroundImageDefault;
+    UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
     
     // Misc
     BOOL _isVCBasedStatusBarAppearance;
@@ -63,16 +63,8 @@
     
 }
 
-// Private Properties
-@property (nonatomic, strong) UIColor *previousNavBarTintColor;
-@property (nonatomic, strong) UIColor *previousNavBarBarTintColor;
-@property (nonatomic, strong) UIBarButtonItem *previousViewControllerBackButton;
-@property (nonatomic, strong) UIImage *navigationBarBackgroundImageDefault, *navigationBarBackgroundImageLandscapePhone;
-@property (nonatomic, strong) UIActionSheet *actionsSheet;
-@property (nonatomic, strong) MBProgressHUD *progressHUD;
-@property (nonatomic, strong) UIActivityViewController *activityViewController;
-
-// Private Methods
+// Private
+@property (nonatomic) UIActivityViewController *activityViewController;
 
 // Layout
 - (void)performLayout;
@@ -129,15 +121,6 @@
 
 // MWPhotoBrowser
 @implementation MWPhotoBrowser
-
-// Properties
-@synthesize previousNavBarTintColor = _previousNavBarTintColor;
-@synthesize navigationBarBackgroundImageDefault = _navigationBarBackgroundImageDefault,
-navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandscapePhone;
-@synthesize displayActionButton = _displayActionButton, actionsSheet = _actionsSheet;
-@synthesize progressHUD = _progressHUD;
-@synthesize previousViewControllerBackButton = _previousViewControllerBackButton;
-@synthesize currentIndex = _currentPageIndex;
 
 #pragma mark - NSObject
 
@@ -226,7 +209,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)didReceiveMemoryWarning {
-	
+
 	// Release any cached data, images, etc that aren't in use.
     [self releaseAllUnderlyingPhotos:YES];
 	[_recycledPages removeAllObjects];
@@ -328,7 +311,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
             [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         }
-        self.previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
+        _previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
     }
     
@@ -387,7 +370,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     _toolbar = nil;
     _previousButton = nil;
     _nextButton = nil;
-    self.progressHUD = nil;
+    _progressHUD = nil;
     [super viewDidUnload];
 }
 
@@ -500,14 +483,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
     if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
-        self.previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
+        _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     }
-    self.previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
+    _previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
     _previousNavBarHidden = self.navigationController.navigationBarHidden;
     _previousNavBarStyle = self.navigationController.navigationBar.barStyle;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
-        self.navigationBarBackgroundImageDefault = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault];
-        self.navigationBarBackgroundImageLandscapePhone = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsLandscapePhone];
+        _previousNavigationBarBackgroundImageDefault = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault];
+        _previousNavigationBarBackgroundImageLandscapePhone = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsLandscapePhone];
     }
 }
 
@@ -521,14 +504,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         }
         navBar.barStyle = _previousNavBarStyle;
         if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
-            [navBar setBackgroundImage:_navigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
-            [navBar setBackgroundImage:_navigationBarBackgroundImageLandscapePhone forBarMetrics:UIBarMetricsLandscapePhone];
+            [navBar setBackgroundImage:_previousNavigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
+            [navBar setBackgroundImage:_previousNavigationBarBackgroundImageLandscapePhone forBarMetrics:UIBarMetricsLandscapePhone];
         }
         // Restore back button if we need to
         if (_previousViewControllerBackButton) {
             UIViewController *previousViewController = [self.navigationController topViewController]; // We've disappeared so previous is now top
             previousViewController.navigationItem.backBarButtonItem = _previousViewControllerBackButton;
-            self.previousViewControllerBackButton = nil;
+            _previousViewControllerBackButton = nil;
         }
     }
 }
@@ -1231,11 +1214,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
                     
                     // Old handling of activities with action sheet
                     if ([MFMailComposeViewController canSendMail]) {
-                        self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
+                        _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
                                                                cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
                                                                otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil];
                     } else {
-                        self.actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
+                        _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
                                                                cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
                                                                otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil];
                     }
@@ -1290,7 +1273,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == ACTION_SHEET_OLD_ACTIONS) {
         // Old Actions
-        self.actionsSheet = nil;
+        _actionsSheet = nil;
         if (buttonIndex != actionSheet.cancelButtonIndex) {
             if (buttonIndex == actionSheet.firstOtherButtonIndex) {
                 [self savePhoto]; return;

@@ -15,8 +15,6 @@
 // Private
 @interface MWPhoto () {
 
-    // Other
-    NSString *_caption;
     BOOL _loadingInProgress;
         
 }

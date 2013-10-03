@@ -13,7 +13,7 @@ static const CGFloat labelPadding = 10;
 
 // Private
 @interface MWCaptionView () {
-    id<MWPhoto> _photo;
+    id <MWPhoto> _photo;
     UILabel *_label;    
 }
 @end
@@ -74,7 +74,6 @@ static const CGFloat labelPadding = 10;
     if ([_photo respondsToSelector:@selector(caption)]) {
         _label.text = [_photo caption] ? [_photo caption] : @" ";
     }
-    
     [self addSubview:_label];
 }
 
