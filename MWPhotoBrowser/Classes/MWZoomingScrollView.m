@@ -58,6 +58,7 @@
 		
 		// Loading indicator
 		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
+        _loadingIndicator.userInteractionEnabled = NO;
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
             _loadingIndicator.thicknessRatio = 0.1;
             _loadingIndicator.roundedCorners = NO;
@@ -161,7 +162,6 @@
     MWPhoto *photoWithProgress = (MWPhoto *)[dict objectForKey:@"photo"];
     if (photoWithProgress == self.photo) {
         float progress = [[dict valueForKey:@"progress"] floatValue];
-        NSLog(@"Progress: %f", progress);
         _loadingIndicator.progress = MAX(MIN(1, progress), 0);
     }
 }
