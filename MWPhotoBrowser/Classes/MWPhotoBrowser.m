@@ -862,7 +862,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
     frame.origin.x -= PADDING;
     frame.size.width += (2 * PADDING);
-    return frame;
+    return CGRectIntegral(frame);
 }
 
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
@@ -874,7 +874,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     CGRect pageFrame = bounds;
     pageFrame.size.width -= (2 * PADDING);
     pageFrame.origin.x = (bounds.size.width * index) + PADDING;
-    return pageFrame;
+    return CGRectIntegral(pageFrame);
 }
 
 - (CGSize)contentSizeForPagingScrollView {
@@ -893,15 +893,17 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     CGFloat height = 44;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 32;
-	return CGRectMake(0, self.view.bounds.size.height - height, self.view.bounds.size.width, height);
+	return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height, self.view.bounds.size.width, height));
 }
 
 - (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
     CGRect pageFrame = [self frameForPageAtIndex:index];
-    captionView.frame = CGRectMake(0, 0, pageFrame.size.width, 44); // set initial frame
     CGSize captionSize = [captionView sizeThatFits:CGSizeMake(pageFrame.size.width, 0)];
-    CGRect captionFrame = CGRectMake(pageFrame.origin.x, pageFrame.size.height - captionSize.height - (_toolbar.superview?_toolbar.frame.size.height:0), pageFrame.size.width, captionSize.height);
-    return captionFrame;
+    CGRect captionFrame = CGRectMake(pageFrame.origin.x,
+                                     pageFrame.size.height - captionSize.height - (_toolbar.superview?_toolbar.frame.size.height:0),
+                                     pageFrame.size.width,
+                                     captionSize.height);
+    return CGRectIntegral(captionFrame);
 }
 
 #pragma mark - UIScrollView Delegate
@@ -975,6 +977,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 #pragma mark - Control Hiding / Showing
 
 // If permanent then we don't set timers to hide again
+// Fades all controls on iOS 5 & 6, and iOS 7 controls slide and fade
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated permanent:(BOOL)permanent {
     
     // Force visible if no photos
@@ -983,13 +986,20 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Cancel any timers
     [self cancelControlHiding];
     
+    // Animations & positions
+    BOOL slideAndFade = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7");
+    CGFloat animatonOffset = 20;
+    CGFloat animationDuration = (animated ? 0.35 : 0);
+    
+    // Status bar
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
         
         // Hide status bar
-        // Not working because of https://devforums.apple.com/thread/207799
         _statusBarShouldBeHidden = hidden;
-        [self setNeedsStatusBarAppearanceUpdate];
-        
+        [UIView animateWithDuration:animationDuration animations:^(void) {
+            [self setNeedsStatusBarAppearanceUpdate];
+        } completion:^(BOOL finished) {}];
+
     } else {
         
         // Status bar and nav bar positioning
@@ -1020,18 +1030,54 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         
     }
     
-    // Captions
-    NSMutableSet *captionViews = [[NSMutableSet alloc] initWithCapacity:_visiblePages.count];
-    for (MWZoomingScrollView *page in _visiblePages) {
-        if (page.captionView) [captionViews addObject:page.captionView];
+    // Toolbar, nav bar and captions
+    // Pre-appear animation positions for iOS 7 sliding
+    if (slideAndFade && [self areControlsHidden] && !hidden && animated) {
+        
+        // Toolbar
+        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:self.interfaceOrientation], 0, animatonOffset);
+        
+        // Captions
+        for (MWZoomingScrollView *page in _visiblePages) {
+            if (page.captionView) {
+                MWCaptionView *v = page.captionView;
+                // Pass any index, all we're interested in is the Y
+                CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
+                captionFrame.origin.x = v.frame.origin.x; // Reset X
+                v.frame = CGRectOffset(captionFrame, 0, animatonOffset);
+            }
+        }
+        
     }
-
-    // Hide/show bars
-    [UIView animateWithDuration:(animated ? 0.35 : 0) animations:^(void) {
+    [UIView animateWithDuration:animationDuration animations:^(void) {
+        
         CGFloat alpha = hidden ? 0 : 1;
+
+        // Nav bar slides up on it's own on iOS 7
         [self.navigationController.navigationBar setAlpha:alpha];
-        [_toolbar setAlpha:alpha];
-        for (UIView *v in captionViews) v.alpha = alpha;
+        
+        // Toolbar
+        if (slideAndFade) {
+            _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+            if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
+        }
+        _toolbar.alpha = alpha;
+
+        // Captions
+        for (MWZoomingScrollView *page in _visiblePages) {
+            if (page.captionView) {
+                MWCaptionView *v = page.captionView;
+                if (slideAndFade) {
+                    // Pass any index, all we're interested in is the Y
+                    CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
+                    captionFrame.origin.x = v.frame.origin.x; // Reset X
+                    if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animatonOffset);
+                    v.frame = captionFrame;
+                }
+                v.alpha = alpha;
+            }
+        }
+        
     } completion:^(BOOL finished) {}];
     
 	// Control hiding timer
@@ -1046,7 +1092,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
-    return UIStatusBarAnimationFade;
+    return UIStatusBarAnimationSlide;
 }
 
 - (void)cancelControlHiding {
@@ -1065,7 +1111,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	}
 }
 
-- (BOOL)areControlsHidden { return (_toolbar.alpha == 0); /* [UIApplication sharedApplication].isStatusBarHidden; */ }
+- (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
 - (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
 
@@ -1158,8 +1204,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
                     // Show
                     __weak typeof(self) weakSelf = self;
                     [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
-                        [weakSelf hideControlsAfterDelay];
                         weakSelf.activityViewController = nil;
+                        [weakSelf hideControlsAfterDelay];
                         [weakSelf hideProgressHUD:YES];
                     }];
                     [self presentViewController:self.activityViewController animated:YES completion:nil];
