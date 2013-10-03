@@ -28,6 +28,8 @@
         self.navigationItem.rightBarButtonItem = item;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:nil action:nil];
 
+        [self loadAssets];
+        
     }
     return self;
 }
@@ -62,7 +64,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    NSInteger rows = 3;
+    if (_assets.count) rows++;
+    return rows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -79,7 +83,8 @@
 	switch (indexPath.row) {
 		case 0: cell.textLabel.text = @"Single local photo"; break;
 		case 1: cell.textLabel.text = @"Local photos"; break;
-		case 2: cell.textLabel.text = @"Photos from Flickr"; break;
+		case 2: cell.textLabel.text = @"Flickr photos"; break;
+		case 3: cell.textLabel.text = @"Library photos"; break;
 		default: break;
 	}
     return cell;
@@ -115,12 +120,17 @@
 			[photos addObject:photo];
 			break;
         }
-		case 2: 
+		case 2:
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"]]];
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.staticflickr.com/2449/4052876281_6e068ac860_b.jpg"]]];
+			break;
+		case 3:
+            for (ALAsset *asset in _assets) {
+                [photos addObject:[MWPhoto photoWithURL:asset.defaultRepresentation.url]];
+            }
 			break;
 		default: break;
 	}
@@ -195,6 +205,56 @@
 
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didViewPhotoAtIndex:(NSUInteger)index {
     NSLog(@"Did start viewing photo at index %i", index);
+}
+                                         
+#pragma mark - Load Assets
+
+- (void)loadAssets {
+    
+    _assets = [NSMutableArray new];
+    _assetLibrary = [[ALAssetsLibrary alloc] init];
+    
+    NSMutableArray *assetGroups = [[NSMutableArray alloc] init];
+    NSMutableArray *assetURLDictionaries = [[NSMutableArray alloc] init];
+
+    // Process assets
+    void (^assetEnumerator)(ALAsset *, NSUInteger, BOOL *) = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
+        if (result != nil) {
+            if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
+                [assetURLDictionaries addObject:[result valueForProperty:ALAssetPropertyURLs]];
+                NSURL *url = result.defaultRepresentation.url;
+                [_assetLibrary assetForURL:url
+                               resultBlock:^(ALAsset *asset) {
+                                   if (asset) {
+                                       [_assets addObject:asset];
+                                       if (_assets.count == 1) {
+                                           // Added first asset so reload data
+                                           [self.tableView reloadData];
+                                       }
+                                   }
+                               }
+                              failureBlock:^(NSError *error){
+                                  NSLog(@"operation was not successfull!");
+                              }];
+                
+            }
+        }
+    };
+
+    // Process groups
+    void (^ assetGroupEnumerator) (ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) {
+        if (group != nil) {
+            [group enumerateAssetsUsingBlock:assetEnumerator];
+            [assetGroups addObject:group];
+        }
+    };
+    
+    // Process!
+    [_assetLibrary enumerateGroupsWithTypes:ALAssetsGroupAll
+                                 usingBlock:assetGroupEnumerator
+                               failureBlock:^(NSError *error) {
+                                   NSLog(@"There is an error");
+                               }];
 }
 
 @end
