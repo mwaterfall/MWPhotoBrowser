@@ -115,15 +115,17 @@
                                                if (iref) {
                                                    self.underlyingImage = [UIImage imageWithCGImage:iref];
                                                }
+                                               [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
                                            }
                                           failureBlock:^(NSError *error) {
                                               self.underlyingImage = nil;
-                                              MWLog(@"Photo from file error: %@",error);
+                                              MWLog(@"Photo from asset library error: %@",error);
+                                              [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
                                           }];
-                        } @finally {
+                        } @catch (NSException *e) {
+                            MWLog(@"Photo from asset library error: %@", e);
                             [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
                         }
-                        
                     }
                 });
                 
@@ -146,23 +148,28 @@
             } else {
                 
                 // Load async from web (using SDWebImage)
-                SDWebImageManager *manager = [SDWebImageManager sharedManager];
-                [manager downloadWithURL:_photoURL
-                                 options:0
-                                progress:^(NSUInteger receivedSize, long long expectedSize) {
-                                    float progress = receivedSize / (float)expectedSize;
-                                    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                          [NSNumber numberWithFloat:progress], @"progress",
-                                                          self, @"photo", nil];
-                                    [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
-                                }
-                               completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
-                                   if (error) {
-                                       MWLog(@"SDWebImage failed to download image: %@", error);
-                                   }
-                                   self.underlyingImage = image;
-                                   [self decompressImageAndFinishLoading];
-                               }];
+                @try {
+                    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                    [manager downloadWithURL:_photoURL
+                                     options:0
+                                    progress:^(NSUInteger receivedSize, long long expectedSize) {
+                                        float progress = receivedSize / (float)expectedSize;
+                                        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                              [NSNumber numberWithFloat:progress], @"progress",
+                                                              self, @"photo", nil];
+                                        [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+                                    }
+                                   completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
+                                       if (error) {
+                                           MWLog(@"SDWebImage failed to download image: %@", error);
+                                       }
+                                       self.underlyingImage = image;
+                                       [self decompressImageAndFinishLoading];
+                                   }];
+                } @catch (NSException *e) {
+                    MWLog(@"Photo from web: %@", e);
+                    [self decompressImageAndFinishLoading];
+                }
                 
             }
             
