@@ -130,8 +130,6 @@ Setting these things up in Xcode can be a bit tricky so if you run into any prob
 
 Another method is to simply add the files to your Xcode project, copying them to your project's directory if required. Ensure that all the code within `MWPhotoBrowser/Classes`, `MWPhotoBrowser/Libraries` and the `MWPhotoBrowser.bundle` is included in your project.
 
-If your project uses ARC then you will have to disable ARC for each of the files in MWPhotoBrowser. Here's how you do it: http://stackoverflow.com/a/6658549/106244
-
 
 ## Notes and Accreditation
 
