@@ -10,8 +10,6 @@
 
 @implementation Menu
 
-@synthesize photos = _photos;
-
 #pragma mark -
 #pragma mark Initialization
 
@@ -74,7 +72,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows = 3;
-    if (_assets.count) rows++;
+    if (self.assets.count) rows++;
     return rows;
 }
 
@@ -137,7 +135,7 @@
 			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.staticflickr.com/2449/4052876281_6e068ac860_b.jpg"]]];
 			break;
 		case 3:
-            for (ALAsset *asset in _assets) {
+            for (ALAsset *asset in self.assets) {
                 [photos addObject:[MWPhoto photoWithURL:asset.defaultRepresentation.url]];
             }
 			break;
@@ -220,50 +218,59 @@
 
 - (void)loadAssets {
     
-    _assets = [NSMutableArray new];
-    _assetLibrary = [[ALAssetsLibrary alloc] init];
+    // Initialise
+    self.assets = [NSMutableArray new];
+    self.assetLibrary = [[ALAssetsLibrary alloc] init];
     
-    NSMutableArray *assetGroups = [[NSMutableArray alloc] init];
-    NSMutableArray *assetURLDictionaries = [[NSMutableArray alloc] init];
+    // Run in the background as it takes a while to get all assets from the library
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-    // Process assets
-    void (^assetEnumerator)(ALAsset *, NSUInteger, BOOL *) = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
-        if (result != nil) {
-            if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
-                [assetURLDictionaries addObject:[result valueForProperty:ALAssetPropertyURLs]];
-                NSURL *url = result.defaultRepresentation.url;
-                [_assetLibrary assetForURL:url
-                               resultBlock:^(ALAsset *asset) {
-                                   if (asset) {
-                                       [_assets addObject:asset];
-                                       if (_assets.count == 1) {
-                                           // Added first asset so reload data
-                                           [self.tableView reloadData];
+        NSMutableArray *assetGroups = [[NSMutableArray alloc] init];
+        NSMutableArray *assetURLDictionaries = [[NSMutableArray alloc] init];
+        
+        // Process assets
+        void (^assetEnumerator)(ALAsset *, NSUInteger, BOOL *) = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
+            if (result != nil) {
+                if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
+                    [assetURLDictionaries addObject:[result valueForProperty:ALAssetPropertyURLs]];
+                    NSURL *url = result.defaultRepresentation.url;
+                    [_assetLibrary assetForURL:url
+                                   resultBlock:^(ALAsset *asset) {
+                                       if (asset) {
+                                           [self.assets addObject:asset];
+                                           if (self.assets.count == 1) {
+                                               
+                                               // Added first asset so reload data
+                                               [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+                                               
+                                           }
                                        }
                                    }
-                               }
-                              failureBlock:^(NSError *error){
-                                  NSLog(@"operation was not successfull!");
-                              }];
-                
+                                  failureBlock:^(NSError *error){
+                                      NSLog(@"operation was not successfull!");
+                                  }];
+                    
+                }
             }
-        }
-    };
-
-    // Process groups
-    void (^ assetGroupEnumerator) (ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) {
-        if (group != nil) {
-            [group enumerateAssetsUsingBlock:assetEnumerator];
-            [assetGroups addObject:group];
-        }
-    };
+        };
+        
+        // Process groups
+        void (^ assetGroupEnumerator) (ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) {
+            if (group != nil) {
+                [group enumerateAssetsUsingBlock:assetEnumerator];
+                [assetGroups addObject:group];
+            }
+        };
+        
+        // Process!
+        [self.assetLibrary enumerateGroupsWithTypes:ALAssetsGroupAll
+                                         usingBlock:assetGroupEnumerator
+                                       failureBlock:^(NSError *error) {
+                                           NSLog(@"There is an error");
+                                       }];
+        
+    });
     
-    // Process!
-    [_assetLibrary enumerateGroupsWithTypes:ALAssetsGroupAll
-                                 usingBlock:assetGroupEnumerator
-                               failureBlock:^(NSError *error) {
-                                   NSLog(@"There is an error");
-                               }];
 }
 
 @end
