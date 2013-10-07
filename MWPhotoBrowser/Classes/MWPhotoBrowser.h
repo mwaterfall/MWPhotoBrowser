@@ -56,4 +56,8 @@
 - (void)setCurrentPhotoIndex:(NSUInteger)index;
 - (void)setInitialPageIndex:(NSUInteger)index  __attribute__((deprecated("Use setCurrentPhotoIndex: instead"))); // Depreciated
 
+// Navigation
+- (void)showNextPhotoAnimated:(BOOL)animated;
+- (void)showPreviousPhotoAnimated:(BOOL)animated;
+
 @end

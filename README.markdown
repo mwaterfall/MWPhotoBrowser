@@ -42,6 +42,10 @@ browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be in
 browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
 // Present
 [self.navigationController pushViewController:browser animated:YES];
+
+// Manipulate!
+[browser showPreviousPhotoAnimated:YES];
+[browser showNextPhotoAnimated:YES];
 ```
 
 Then respond to the required delegate methods:

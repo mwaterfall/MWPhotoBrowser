@@ -94,7 +94,7 @@
 
 // Navigation
 - (void)updateNavigation;
-- (void)jumpToPageAtIndex:(NSUInteger)index;
+- (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated;
 - (void)gotoPreviousPage;
 - (void)gotoNextPage;
 
@@ -986,12 +986,12 @@
 	
 }
 
-- (void)jumpToPageAtIndex:(NSUInteger)index {
+- (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated {
 	
 	// Change page
 	if (index < [self numberOfPhotos]) {
 		CGRect pageFrame = [self frameForPageAtIndex:index];
-		_pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - PADDING, 0);
+        [_pagingScrollView setContentOffset:CGPointMake(pageFrame.origin.x - PADDING, 0) animated:animated];
 		[self updateNavigation];
 	}
 	
@@ -1000,8 +1000,21 @@
 	
 }
 
-- (void)gotoPreviousPage { [self jumpToPageAtIndex:_currentPageIndex-1]; }
-- (void)gotoNextPage { [self jumpToPageAtIndex:_currentPageIndex+1]; }
+- (void)gotoPreviousPage {
+    [self showPreviousPhotoAnimated:NO];
+}
+- (void)gotoNextPage {
+    [self showNextPhotoAnimated:NO];
+}
+
+- (void)showPreviousPhotoAnimated:(BOOL)animated {
+    [self jumpToPageAtIndex:_currentPageIndex-1 animated:animated];
+}
+
+- (void)showNextPhotoAnimated:(BOOL)animated {
+    [self jumpToPageAtIndex:_currentPageIndex+1 animated:animated];
+}
+
 
 #pragma mark - Control Hiding / Showing
 
@@ -1175,7 +1188,7 @@
         index = [self numberOfPhotos]-1;
     _currentPageIndex = index;
 	if ([self isViewLoaded]) {
-        [self jumpToPageAtIndex:index];
+        [self jumpToPageAtIndex:index animated:NO];
         if (!_viewIsActive)
             [self tilePages]; // Force tiling if view is not visible
     }
