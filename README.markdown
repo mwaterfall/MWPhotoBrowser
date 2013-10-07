@@ -133,7 +133,7 @@ Another method is to simply add the files to your Xcode project, copying them to
 
 ## Notes and Accreditation
 
-MWPhotoBrowser very gratefully makes use of 2 other fantastic open source projects:
+MWPhotoBrowser very gratefully makes use of these other fantastic open source projects:
 
 - [SDWebImage](https://github.com/rs/SDWebImage) by Olivier Poitrey — Used to handle downloading and decompressing of photos from the web.
 - [MBProgressHUD](https://github.com/jdg/MBProgressHUD) by Jonathan George — Used to display activity notifications.
