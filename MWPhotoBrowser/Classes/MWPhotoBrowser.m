@@ -198,7 +198,10 @@
 }
 
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
-    for (id p in _photos) {
+    //
+    // create a copy in case this array is modified while we are looping through
+    NSArray *photosCopy = [_photos copy];
+    for (id p in photosCopy) {
         if (p != [NSNull null]) {
             if (preserveCurrent && p == [self photoAtIndex:self.currentIndex]) {
                 continue; // skip current
