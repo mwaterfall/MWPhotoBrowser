@@ -229,10 +229,13 @@
 	// Reset position
 	_photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
     
-    // If we're zooming to full then centralise
+    // If we're zooming to fill then centralise
     if (zoomScale != minScale) {
+        // Centralise
         self.contentOffset = CGPointMake((imageSize.width * zoomScale - boundsSize.width) / 2.0,
                                          (imageSize.height * zoomScale - boundsSize.height) / 2.0);
+        // Disable scrolling initially until the first pinch to fix issues with swiping on an initally zoomed in photo
+        self.scrollEnabled = NO;
     }
     
     // Layout
@@ -289,6 +292,7 @@
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
+    self.scrollEnabled = YES; // reset
 	[_photoBrowser cancelControlHiding];
 }
 
