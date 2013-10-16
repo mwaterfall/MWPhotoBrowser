@@ -148,7 +148,7 @@
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
-	if ((self = [self initWithCoder:decoder])) {
+	if ((self = [super initWithCoder:decoder])) {
         [self _initialisation];
 	}
 	return self;
