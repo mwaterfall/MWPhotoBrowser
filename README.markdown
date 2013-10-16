@@ -106,7 +106,7 @@ Example delegate method for custom caption view:
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
     MWPhoto *photo = [self.photos objectAtIndex:index];
     MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
-    return [captionView autorelease];
+    return captionView;
 }
 ```
 
