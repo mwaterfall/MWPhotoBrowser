@@ -1264,7 +1264,7 @@
                     });
 
                     // Show
-                    __weak typeof(self) weakSelf = self;
+                    typeof(self) __weak weakSelf = self;
                     [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
                         weakSelf.activityViewController = nil;
                         [weakSelf hideControlsAfterDelay];
