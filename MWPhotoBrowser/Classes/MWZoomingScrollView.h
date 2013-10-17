@@ -17,8 +17,10 @@
 
 }
 
-@property (nonatomic) MWCaptionView *captionView;
-@property (nonatomic) id<MWPhoto> photo;
+@property () NSUInteger index;
+@property (nonatomic) id <MWPhoto> photo;
+@property (nonatomic, weak) MWCaptionView *captionView;
+@property (nonatomic, weak) UIButton *selectedButton;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;
 - (void)displayImage;

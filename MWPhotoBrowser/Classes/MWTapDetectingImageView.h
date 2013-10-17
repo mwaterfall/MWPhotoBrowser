@@ -14,10 +14,6 @@
 
 @property (nonatomic, weak) id <MWTapDetectingImageViewDelegate> tapDelegate;
 
-- (void)handleSingleTap:(UITouch *)touch;
-- (void)handleDoubleTap:(UITouch *)touch;
-- (void)handleTripleTap:(UITouch *)touch;
-
 @end
 
 @protocol MWTapDetectingImageViewDelegate <NSObject>

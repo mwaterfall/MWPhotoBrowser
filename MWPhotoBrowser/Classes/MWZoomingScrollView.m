@@ -10,27 +10,18 @@
 #import "MWPhotoBrowser.h"
 #import "MWPhoto.h"
 #import "DACircularProgressView.h"
-
-// Declare private methods of browser
-@interface MWPhotoBrowser ()
-- (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
-- (void)cancelControlHiding;
-- (void)hideControlsAfterDelay;
-@end
+#import "MWPhotoBrowserPrivate.h"
 
 // Private methods and properties
 @interface MWZoomingScrollView () {
     
+    MWPhotoBrowser __weak *_photoBrowser;
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
 	DACircularProgressView *_loadingIndicator;
+    UIImageView *_loadingError;
     
 }
-
-@property (nonatomic, weak) MWPhotoBrowser *photoBrowser;
-
-- (void)handleSingleTap:(CGPoint)touchPoint;
-- (void)handleDoubleTap:(CGPoint)touchPoint;
 
 @end
 
@@ -39,8 +30,9 @@
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
     if ((self = [super init])) {
         
-        // Delegate
-        self.photoBrowser = browser;
+        // Setup
+        _index = NSUIntegerMax;
+        _photoBrowser = browser;
         
 		// Tap view for background
 		_tapView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
@@ -92,21 +84,33 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)setPhoto:(id<MWPhoto>)photo {
-    _photoImageView.image = nil; // Release image
-    if (_photo != photo) {
-        _photo = photo;
-    }
-    [self displayImage];
-}
-
 - (void)prepareForReuse {
+    [self hideImageFailure];
     self.photo = nil;
-    [_captionView removeFromSuperview];
     self.captionView = nil;
+    self.selectedButton = nil;
+    _photoImageView.image = nil;
+    _index = NSUIntegerMax;
 }
 
 #pragma mark - Image
+
+- (void)setPhoto:(id<MWPhoto>)photo {
+    // Cancel any loading on old photo
+    if (_photo && photo == nil) {
+        if ([_photo respondsToSelector:@selector(cancelAnyLoading)]) {
+            [_photo cancelAnyLoading];
+        }
+    }
+    _photo = photo;
+    UIImage *img = [_photoBrowser imageForPhoto:_photo];
+    if (img) {
+        [self displayImage];
+    } else {
+        // Will be loading so show loading
+        [self showLoadingIndicator];
+    }
+}
 
 // Get and display image
 - (void)displayImage {
@@ -119,7 +123,7 @@
 		self.contentSize = CGSizeMake(0, 0);
 		
 		// Get image from browser as it handles ordering of fetching
-		UIImage *img = [self.photoBrowser imageForPhoto:_photo];
+		UIImage *img = [_photoBrowser imageForPhoto:_photo];
 		if (img) {
 			
 			// Hide indicator
@@ -141,9 +145,8 @@
 			
 		} else {
 			
-			// Hide image view
-			_photoImageView.hidden = YES;
-			[self showLoadingIndicator];
+			// Failed no image
+            [self displayImageFailure];
 			
 		}
 		[self setNeedsLayout];
@@ -153,13 +156,34 @@
 // Image failed so just show black!
 - (void)displayImageFailure {
     [self hideLoadingIndicator];
+    _photoImageView.image = nil;
+    if (!_loadingError) {
+        _loadingError = [UIImageView new];
+        _loadingError.image = [UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageError.png"];
+        _loadingError.userInteractionEnabled = NO;
+		_loadingError.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
+        [_loadingError sizeToFit];
+        [self addSubview:_loadingError];
+    }
+    _loadingError.frame = CGRectMake(floorf((self.bounds.size.width - _loadingError.frame.size.width) / 2.),
+                                     floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
+                                     _loadingError.frame.size.width,
+                                     _loadingError.frame.size.height);
+}
+
+- (void)hideImageFailure {
+    if (_loadingError) {
+        [_loadingError removeFromSuperview];
+        _loadingError = nil;
+    }
 }
 
 #pragma mark - Loading Progress
 
 - (void)setProgressFromNotification:(NSNotification *)notification {
     NSDictionary *dict = [notification object];
-    MWPhoto *photoWithProgress = (MWPhoto *)[dict objectForKey:@"photo"];
+    id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
     if (photoWithProgress == self.photo) {
         float progress = [[dict valueForKey:@"progress"] floatValue];
         _loadingIndicator.progress = MAX(MIN(1, progress), 0);
@@ -171,8 +195,12 @@
 }
 
 - (void)showLoadingIndicator {
+    self.zoomScale = 0;
+    self.minimumZoomScale = 0;
+    self.maximumZoomScale = 0;
     _loadingIndicator.progress = 0;
     _loadingIndicator.hidden = NO;
+    [self hideImageFailure];
 }
 
 #pragma mark - Setup
@@ -210,7 +238,7 @@
 
     // Initial zoom
     CGFloat zoomScale = minScale;
-    if (self.photoBrowser.zoomPhotosToFill) {
+    if (_photoBrowser.zoomPhotosToFill) {
         // Zoom image to fill if the aspect ratios are fairly similar
         CGFloat boundsAR = boundsSize.width / boundsSize.height;
         CGFloat imageAR = imageSize.width / imageSize.height;
@@ -250,10 +278,18 @@
 	// Update tap view frame
 	_tapView.frame = self.bounds;
 	
-	// Indicator
+	// Position indicators (centre does not seem to work!)
 	if (!_loadingIndicator.hidden)
-        _loadingIndicator.center = CGPointMake(floorf(self.bounds.size.width/2.0),
-                                               floorf(self.bounds.size.height/2.0));
+        _loadingIndicator.frame = CGRectMake(floorf((self.bounds.size.width - _loadingIndicator.frame.size.width) / 2.),
+                                         floorf((self.bounds.size.height - _loadingIndicator.frame.size.height) / 2),
+                                         _loadingIndicator.frame.size.width,
+                                         _loadingIndicator.frame.size.height);
+	if (_loadingError)
+        _loadingError.frame = CGRectMake(floorf((self.bounds.size.width - _loadingError.frame.size.width) / 2.),
+                                         floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
+                                         _loadingError.frame.size.width,
+                                         _loadingError.frame.size.height);
+
 	// Super
 	[super layoutSubviews];
 	

@@ -12,13 +12,13 @@
 
 @interface Menu : UITableViewController <MWPhotoBrowserDelegate> {
     UISegmentedControl *_segmentedControl;
-
+    NSMutableArray *_selections;
 }
 
 @property (nonatomic, strong) NSMutableArray *photos;
-
-@property (atomic, strong) ALAssetsLibrary *assetLibrary;
-@property (atomic, strong) NSMutableArray *assets;
+@property (nonatomic, strong) NSMutableArray *thumbs;
+@property (nonatomic, strong) ALAssetsLibrary *assetLibrary;
+@property (nonatomic, strong) NSMutableArray *assets;
 
 - (void)loadAssets;
 

@@ -6,15 +6,20 @@
 
 MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 5+. All strings are localisable so they can be used in apps that support multiple languages.
 
-[![Alt][screenshot1_thumb]][screenshot1]    [![Alt][screenshot2_thumb]][screenshot2]    [![Alt][screenshot3_thumb]][screenshot3]    [![Alt][screenshot4_thumb]][screenshot4]
-[screenshot1_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser1t.png
-[screenshot1]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser1.png
-[screenshot2_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser2t.png
-[screenshot2]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser2.png
-[screenshot3_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser3t.png
-[screenshot3]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser3.png
-[screenshot4_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser4t.png
-[screenshot4]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Misc/MWPhotoBrowser4.png
+[![Alt][screenshot1_thumb]][screenshot1]    [![Alt][screenshot2_thumb]][screenshot2]    [![Alt][screenshot3_thumb]][screenshot3]    [![Alt][screenshot4_thumb]][screenshot4]    [![Alt][screenshot5_thumb]][screenshot5]    [![Alt][screenshot6_thumb]][screenshot6]
+
+[screenshot1_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser1t.png
+[screenshot1]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser1.png
+[screenshot2_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser2t.png
+[screenshot2]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser2.png
+[screenshot3_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser3t.png
+[screenshot3]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser3.png
+[screenshot4_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser4t.png
+[screenshot4]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser4.png
+[screenshot5_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser5t.png
+[screenshot5]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser5.png
+[screenshot6_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6t.png
+[screenshot6]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6.png
 
 
 ## Usage
@@ -26,7 +31,7 @@ MWPhotoBrowser is designed to be presented within a navigation controller. Simpl
 See the code snippet below for an example of how to implement the photo browser. There is also a simple demo app within the project.
 
 ```obj-c
-// Create array of `MWPhoto` objects
+// Create array of MWPhoto objects
 self.photos = [NSMutableArray array];
 [photos addObject:[MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
@@ -34,18 +39,27 @@ self.photos = [NSMutableArray array];
 
 // Create & present browser
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+
 // Set options
 browser.displayActionButton = YES; // Show action button to allow sharing, copying, etc (defaults to YES)
 browser.displayNavArrows = NO; // Whether to display left and right nav arrows on toolbar (defaults to NO)
+browser.displaySelectionButtons = NO; // Whether selection buttons are shown on each image (defaults to NO)
 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
-[browser setCurrentPhotoIndex:1]; // Example: allows second image to be presented first
+browser.alwaysShowControls = NO; // Allows to control whether the bars and controls are always visible or whether they fade away to show the photo full (defaults to NO)
+browser.enableGrid = YES; // Whether to allow the viewing of all the photo thumbnails on a grid (defaults to YES)
+browser.startOnGrid = NO; // Whether to start on the grid of thumbnails instead of the first photo (defaults to NO)
 browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+
+// Optionally set the current visible photo before displaying
+[browser setCurrentPhotoIndex:1];
+
 // Present
 [self.navigationController pushViewController:browser animated:YES];
 
-// Manipulate!
+// Manipulate
 [browser showPreviousPhotoAnimated:YES];
 [browser showNextPhotoAnimated:YES];
+[browser setCurrentPhotoIndex:10];
 ```
 
 Then respond to the required delegate methods:
@@ -55,7 +69,7 @@ Then respond to the required delegate methods:
     return self.photos.count;
 }
 
-- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (index < self.photos.count)
         return [self.photos objectAtIndex:index];
     return nil;
@@ -65,6 +79,17 @@ Then respond to the required delegate methods:
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
 
 If using iOS 5 or 6 and you don't want to view the photo browser full screen (for example if you are using view controller containment) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
+
+
+### Grid
+
+In order to properly show the grid of thumbnails, you must ensure the property `enableGrid` is set to `YES`, and implement the following delegate method:
+
+```obj-c
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
+```
+
+The photo browser can also start on the grid by enabling the `startOnGrid` property.
 
 
 ### Actions
@@ -107,6 +132,21 @@ Example delegate method for custom caption view:
     MWPhoto *photo = [self.photos objectAtIndex:index];
     MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
     return captionView;
+}
+```
+
+
+#### Selections
+
+The photo browser can display check boxes allowing the user to select one or more of the photos. To use this feature, simply enable the `displaySelectionButtons` property, and implement the following delegate methods:
+
+```obj-c
+- (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
+    return [[_selections objectAtIndex:index] boolValue];
+}
+
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
+    [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
 }
 ```
 
