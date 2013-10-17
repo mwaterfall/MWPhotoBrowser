@@ -41,7 +41,7 @@ static const CGFloat labelPadding = 10;
             CGContextFillRect(context, rect);
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
-            [self setBackgroundImage:image forToolbarPosition:UIBarPositionAny barMetrics:INTMAX_MAX];
+            [self setBackgroundImage:image forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
         }
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         [self setupCaption];
