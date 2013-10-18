@@ -39,7 +39,7 @@
 		0E8515C417FC780500FE1EF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515C317FC780500FE1EF3 /* QuartzCore.framework */; };
 		0E8515CA17FCB05B00FE1EF3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
-		0EFEA24D17FB08B400E451B6 /* MWPreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EFEA24B17FB08B400E451B6 /* MWPreprocessor.h */; };
+		0EFEA24D17FB08B400E451B6 /* MWCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EFEA24B17FB08B400E451B6 /* MWCommon.h */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -92,7 +92,7 @@
 		0E8515C317FC780500FE1EF3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		0EFEA24B17FB08B400E451B6 /* MWPreprocessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWPreprocessor.h; path = Classes/MWPreprocessor.h; sourceTree = SOURCE_ROOT; };
+		0EFEA24B17FB08B400E451B6 /* MWCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWCommon.h; path = Classes/MWCommon.h; sourceTree = SOURCE_ROOT; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F96CB14AF704100F8389A /* MWPhotoBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWPhotoBrowser-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -174,7 +174,7 @@
 		4C6F96C914AF704100F8389A /* MWPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				0EFEA24B17FB08B400E451B6 /* MWPreprocessor.h */,
+				0EFEA24B17FB08B400E451B6 /* MWCommon.h */,
 				4C6F96DA14AF70BD00F8389A /* MWPhotoBrowser.h */,
 				4C6F96DB14AF70BD00F8389A /* MWPhotoBrowser.m */,
 				4C6F96D814AF70BD00F8389A /* MWPhoto.h */,
@@ -289,7 +289,7 @@
 				4C6F96F614AF710800F8389A /* MBProgressHUD.h in Headers */,
 				4CB08BA314B1F38700730E9F /* MWPhotoProtocol.h in Headers */,
 				0E17D77717FAEADE0094ABF6 /* UIImage+GIF.h in Headers */,
-				0EFEA24D17FB08B400E451B6 /* MWPreprocessor.h in Headers */,
+				0EFEA24D17FB08B400E451B6 /* MWCommon.h in Headers */,
 				0E17D77017FAEADE0094ABF6 /* SDWebImageManager.h in Headers */,
 				0E17D77317FAEADE0094ABF6 /* SDWebImagePrefetcher.h in Headers */,
 				0E17D76C17FAEADE0094ABF6 /* SDWebImageDownloader.h in Headers */,
