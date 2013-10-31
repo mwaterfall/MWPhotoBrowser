@@ -43,7 +43,7 @@
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
-@property (nonatomic, readonly) NSUInteger currentIndex;
+@property (nonatomic, readonly) NSUInteger currentPageIndex;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated

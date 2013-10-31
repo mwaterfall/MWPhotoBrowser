@@ -203,7 +203,7 @@
     NSArray *photosCopy = [_photos copy];
     for (id p in photosCopy) {
         if (p != [NSNull null]) {
-            if (preserveCurrent && p == [self photoAtIndex:self.currentIndex]) {
+            if (preserveCurrent && p == [self photoAtIndex:_currentPageIndex]) {
                 continue; // skip current
             }
             [p unloadUnderlyingImage];
