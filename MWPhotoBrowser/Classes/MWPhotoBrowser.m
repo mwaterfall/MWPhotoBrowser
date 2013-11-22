@@ -61,6 +61,7 @@
 	BOOL _rotating;
     BOOL _viewIsActive; // active as in it's in the view heirarchy
     BOOL _didSavePreviousStateOfNavBar;
+    BOOL _iOS7SkipZoomOnControlsChange; // prevent unnecessary zooming on iOS 7 when toggling control visibility
     
 }
 
@@ -548,21 +549,25 @@
 	// Recalculate contentSize based on current orientation
 	_pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	
-	// Adjust frames and configuration of each visible page
-	for (MWZoomingScrollView *page in _visiblePages) {
-        NSUInteger index = PAGE_INDEX(page);
-		page.frame = [self frameForPageAtIndex:index];
-        page.captionView.frame = [self frameForCaptionView:page.captionView atIndex:index];
+    if (!_iOS7SkipZoomOnControlsChange)
+    {
         
-        // Adjust scales if bounds has changed since last time
-        static CGRect previousBounds = {0};
-        if (!CGRectEqualToRect(previousBounds, self.view.bounds)) {
-            // Update zooms for new bounds
-            [page setMaxMinZoomScalesForCurrentBounds];
-            previousBounds = self.view.bounds;
+        // Adjust frames and configuration of each visible page
+        for (MWZoomingScrollView *page in _visiblePages) {
+            NSUInteger index = PAGE_INDEX(page);
+            page.frame = [self frameForPageAtIndex:index];
+            page.captionView.frame = [self frameForCaptionView:page.captionView atIndex:index];
+            
+            // Adjust scales if bounds has changed since last time
+            static CGRect previousBounds = {0};
+            if (!CGRectEqualToRect(previousBounds, self.view.bounds)) {
+                // Update zooms for new bounds
+                [page setMaxMinZoomScalesForCurrentBounds];
+                previousBounds = self.view.bounds;
+            }
+            
         }
-
-	}
+    }
 	
 	// Adjust contentOffset to preserve page location based on values collected prior to location
 	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:indexPriorToLayout];
@@ -571,6 +576,7 @@
 	// Reset
 	_currentPageIndex = indexPriorToLayout;
 	_performingLayout = NO;
+    _iOS7SkipZoomOnControlsChange = NO;
     
 }
 
@@ -1043,6 +1049,8 @@
     // Status bar
     if (!_leaveStatusBarAlone) {
         if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+            
+            _iOS7SkipZoomOnControlsChange = YES;
             
             // Hide status bar
             if (!_isVCBasedStatusBarAppearance) {
