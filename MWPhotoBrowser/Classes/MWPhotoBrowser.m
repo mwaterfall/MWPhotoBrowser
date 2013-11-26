@@ -592,12 +592,14 @@
 	_pageIndexBeforeRotation = _currentPageIndex;
 	_rotating = YES;
     
+    // Ensure that frames are set correctly when rotating device
+    _iOS7SkipZoomOnControlsChange = NO;
+    
     // In iOS 7 the nav bar gets shown after rotation, but might as well do this for everything!
     if ([self areControlsHidden]) {
         // Force hidden
         self.navigationController.navigationBarHidden = YES;
     }
-	
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
