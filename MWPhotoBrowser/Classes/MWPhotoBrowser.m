@@ -44,6 +44,7 @@
     // Appearance
     BOOL _previousNavBarHidden;
     BOOL _previousNavToolbarHidden;
+    BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
     UIColor *_previousNavBarTintColor;
@@ -479,6 +480,7 @@
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
         navBar.shadowImage = nil;
+        navBar.translucent = YES;
     }
     navBar.barStyle = UIBarStyleBlackTranslucent;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
@@ -491,6 +493,7 @@
     _didSavePreviousStateOfNavBar = YES;
     if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
         _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
+        _previousNavBarTranslucent = self.navigationController.navigationBar.translucent;
     }
     _previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
     _previousNavBarHidden = self.navigationController.navigationBarHidden;
@@ -508,6 +511,7 @@
         navBar.tintColor = _previousNavBarTintColor;
         if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
             navBar.barTintColor = _previousNavBarBarTintColor;
+            navBar.translucent = _previousNavBarTranslucent;
         }
         navBar.barStyle = _previousNavBarStyle;
         if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
