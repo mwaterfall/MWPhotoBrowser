@@ -17,6 +17,7 @@
 - (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
 - (void)cancelControlHiding;
 - (void)hideControlsAfterDelay;
+- (void)toggleControls;
 @end
 
 // Private methods and properties
