@@ -48,6 +48,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 //    self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
+//    self.navigationController.navigationBar.translucent = NO;
 //    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
