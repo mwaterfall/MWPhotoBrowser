@@ -2,9 +2,11 @@
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mwaterfall&url=https://github.com/mwaterfall/MWPhotoBrowser&title=MWPhotoBrowser&language=&tags=github&category=software)
 
-## A simple iOS photo browser
+## A simple iOS photo browser with optional grid view, captions and selections.
 
-MWPhotoBrowser is an implementation of a photo browser similar to the native Photos app in iOS. It can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. Works on iOS 5+. All strings are localisable so they can be used in apps that support multiple languages.
+MWPhotoBrowser can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. 
+
+The browser can also be used to allow the user to select one or more photos using either the grid or main image view.
 
 [![Alt][screenshot1_thumb]][screenshot1]    [![Alt][screenshot2_thumb]][screenshot2]    [![Alt][screenshot3_thumb]][screenshot3]    [![Alt][screenshot4_thumb]][screenshot4]    [![Alt][screenshot5_thumb]][screenshot5]    [![Alt][screenshot6_thumb]][screenshot6]
 
@@ -21,6 +23,7 @@ MWPhotoBrowser is an implementation of a photo browser similar to the native Pho
 [screenshot6_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6t.png
 [screenshot6]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6.png
 
+Works on iOS 5+. All strings are localisable so they can be used in apps that support multiple languages.
 
 ## Usage
 
