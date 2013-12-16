@@ -40,7 +40,7 @@ self.photos = [NSMutableArray array];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
 
-// Create & present browser
+// Create browser
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
 
 // Set options
@@ -60,8 +60,8 @@ browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the p
 [self.navigationController pushViewController:browser animated:YES];
 
 // Manipulate
-[browser showPreviousPhotoAnimated:YES];
 [browser showNextPhotoAnimated:YES];
+[browser showPreviousPhotoAnimated:YES];
 [browser setCurrentPhotoIndex:10];
 ```
 
