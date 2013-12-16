@@ -358,22 +358,15 @@
 	[NSObject cancelPreviousPerformRequestsWithTarget:_photoBrowser];
 	
 	// Zoom
-	if (self.zoomScale == self.maximumZoomScale) {
+	if (self.zoomScale != self.minimumZoomScale && self.zoomScale != [self initialZoomScaleWithMinScale]) {
 		
 		// Zoom out
 		[self setZoomScale:self.minimumZoomScale animated:YES];
 		
 	} else {
 		
-		// Zoom in
-        CGFloat newZoomScale;
-        if (((self.zoomScale - self.minimumZoomScale) / self.maximumZoomScale) >= 0.3) { // we're zoomed in a fair bit, so zoom to max now
-            // Go to max zoom
-            newZoomScale = self.maximumZoomScale;
-        } else {
-            // Zoom to 50%
-            newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
-        }
+		// Zoom in to twice the size
+        CGFloat newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
         CGFloat xsize = self.bounds.size.width / newZoomScale;
         CGFloat ysize = self.bounds.size.height / newZoomScale;
         [self zoomToRect:CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize) animated:YES];
