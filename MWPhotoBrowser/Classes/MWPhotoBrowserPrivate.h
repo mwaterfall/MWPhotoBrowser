@@ -23,9 +23,11 @@
 	// Views
 	UIScrollView *_pagingScrollView;
 	
-	// Paging
+	// Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;
 	NSUInteger _currentPageIndex;
+    NSUInteger _previousPageIndex;
+    CGRect _previousLayoutBounds;
 	NSUInteger _pageIndexBeforeRotation;
 	
 	// Navigation & controls

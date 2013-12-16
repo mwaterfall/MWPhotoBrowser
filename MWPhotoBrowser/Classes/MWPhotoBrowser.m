@@ -59,7 +59,9 @@
     self.wantsFullScreenLayout = YES;
     self.hidesBottomBarWhenPushed = YES;
     _photoCount = NSNotFound;
+    _previousLayoutBounds = CGRectZero;
     _currentPageIndex = 0;
+    _previousPageIndex = NSUIntegerMax;
     _displayActionButton = YES;
     _displayNavArrows = NO;
     _zoomPhotosToFill = YES;
@@ -504,11 +506,10 @@
         }
         
         // Adjust scales if bounds has changed since last time
-        static CGRect previousBounds = {0};
-        if (!CGRectEqualToRect(previousBounds, self.view.bounds)) {
+        if (!CGRectEqualToRect(_previousLayoutBounds, self.view.bounds)) {
             // Update zooms for new bounds
             [page setMaxMinZoomScalesForCurrentBounds];
-            previousBounds = self.view.bounds;
+            _previousLayoutBounds = self.view.bounds;
         }
 
 	}
@@ -902,11 +903,10 @@
     }
     
     // Notify delegate
-    static NSUInteger prevIndex = NSUIntegerMax;
-    if (index != prevIndex) {
+    if (index != _previousPageIndex) {
         if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
             [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
-        prevIndex = index;
+        _previousPageIndex = index;
     }
     
     // Update nav
