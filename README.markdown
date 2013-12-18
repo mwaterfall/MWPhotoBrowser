@@ -156,7 +156,17 @@ The photo browser can display check boxes allowing the user to select one or mor
 
 ## Adding to your project
 
-### Method 1: Static Library
+### Method 1: Use CocoaPods
+
+[CocoaPods](cocoapods.org) is great. If you are using CocoaPods ([and here's how to get started](http://guides.cocoapods.org/using/using-cocoapods.html)), simply add `pod 'MWPhotoBrowser'` to your podfile and run `pod install`. You're good to go! Here's an example podfile:
+
+```
+platform :ios, '7'
+    pod 'MWPhotoBrowser'
+```
+
+
+### Method 2: Static Library
 
 1. Get the latest source from GitHub by either [downloading as a zip file](https://github.com/mwaterfall/MWPhotoBrowser/zipball/master) or by cloning the repository at `git://github.com/mwaterfall/MWPhotoBrowser.git` and store the code wherever you wish.
 2. Right-click on the your project in the navigator, click "Add Files to 'Your Project'", and browse to and select "MWPhotoBrowser.xcodeproj"
@@ -173,7 +183,7 @@ Setting these things up in Xcode can be a bit tricky so if you run into any prob
 - [Using Open Source Static Libraries in Xcode 4](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library)
 - [How to embed static library into Xcode 4 project](https://docs.google.com/document/pub?id=14XR5zcZb2Kz2s6A4AbzB00NLkrW9bWxMMprVsUao-hY)
 
-### Method 2: Including Source Directly Into Your Project
+### Method 3: Including Source Directly Into Your Project
 
 Another method is to simply add the files to your Xcode project, copying them to your project's directory if required. Ensure that all the code within `MWPhotoBrowser/Classes`, `MWPhotoBrowser/Libraries` and the `MWPhotoBrowser.bundle` is included in your project.
 
