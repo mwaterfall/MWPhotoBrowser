@@ -1037,9 +1037,17 @@
             self.title = [NSString stringWithFormat:@"%lu %@", (unsigned long)numberOfPhotos, photosText];
         }
     } else if (numberOfPhotos > 1) {
-		self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedString(@"of", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
+        if ([_delegate respondsToSelector:@selector(customTitle:)]) {
+            self.title = [self.delegate customTitle:self];
+        } else {
+            self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedString(@"of", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
+        }
 	} else {
-		self.title = nil;
+        if ([_delegate respondsToSelector:@selector(customTitle:)]) {
+            self.title = [self.delegate customTitle:self];
+        } else {
+            self.title = nil;
+        }
 	}
 	
 	// Buttons
