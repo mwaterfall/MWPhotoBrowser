@@ -47,6 +47,7 @@
 @property (nonatomic) BOOL alwaysShowControls;
 @property (nonatomic) BOOL enableGrid;
 @property (nonatomic) BOOL startOnGrid;
+@property (nonatomic) BOOL enableDismissWhenModal;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 // Init
