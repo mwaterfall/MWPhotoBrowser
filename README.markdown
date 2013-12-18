@@ -158,7 +158,7 @@ The photo browser can display check boxes allowing the user to select one or mor
 
 ### Method 1: Use CocoaPods
 
-[CocoaPods](cocoapods.org) is great. If you are using CocoaPods ([and here's how to get started](http://guides.cocoapods.org/using/using-cocoapods.html)), simply add `pod 'MWPhotoBrowser'` to your podfile and run `pod install`. You're good to go! Here's an example podfile:
+[CocoaPods](http://cocoapods.org) is great. If you are using CocoaPods ([and here's how to get started](http://guides.cocoapods.org/using/using-cocoapods.html)), simply add `pod 'MWPhotoBrowser'` to your podfile and run `pod install`. You're good to go! Here's an example podfile:
 
 ```
 platform :ios, '7'
