@@ -10,6 +10,7 @@
 #import "MWPhoto.h"
 #import "MWGridViewController.h"
 #import "PSTCollectionView.h"
+#import "DACircularProgressView.h"
 
 @interface MWGridCell : PSTCollectionViewCell {}
 
@@ -18,6 +19,7 @@
 @property (nonatomic) id <MWPhoto> photo;
 @property (nonatomic) BOOL selectionMode;
 @property (nonatomic) BOOL isSelected;
+@property (nonatomic, strong) DACircularProgressView *loadingIndicator;
 
 - (void)displayImage;
 

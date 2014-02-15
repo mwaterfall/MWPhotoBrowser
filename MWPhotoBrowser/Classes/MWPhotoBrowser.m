@@ -76,6 +76,16 @@
     _thumbPhotos = [[NSMutableArray alloc] init];
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
+    _navigationBarStyle = UIBarStyleDefault;
+    _navigationBarTintColor = nil;
+    _navigationBarBackgroundImage = nil;
+    _toolbarBarStyle = UIBarStyleDefault;
+    _toolbarTintColor = nil;
+    _toolbarBackgroundImage = nil;
+    _backgroundColor = [UIColor whiteColor];
+    _progressColor = [UIColor grayColor];
+    _imageCellBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
+    _imageCellProgressTintColor = [UIColor grayColor];
     if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
@@ -140,7 +150,7 @@
     if (!_enableGrid) _startOnGrid = NO;
 	
 	// View
-	self.view.backgroundColor = [UIColor blackColor];
+	self.view.backgroundColor = _backgroundColor;
     self.view.clipsToBounds = YES;
 	
 	// Setup paging scrolling view
@@ -151,13 +161,13 @@
 	_pagingScrollView.delegate = self;
 	_pagingScrollView.showsHorizontalScrollIndicator = NO;
 	_pagingScrollView.showsVerticalScrollIndicator = NO;
-	_pagingScrollView.backgroundColor = [UIColor blackColor];
+	_pagingScrollView.backgroundColor = _backgroundColor;
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
 	
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-    _toolbar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+    _toolbar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? _toolbarTintColor : nil;
     if ([_toolbar respondsToSelector:@selector(setBarTintColor:)]) {
         _toolbar.barTintColor = nil;
     }
@@ -165,7 +175,7 @@
         [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
         [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsLandscapePhone];
     }
-    _toolbar.barStyle = UIBarStyleBlackTranslucent;
+    _toolbar.barStyle = _toolbarBarStyle;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     // Toolbar Items
@@ -416,13 +426,13 @@
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? _navigationBarTintColor : nil;
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
         navBar.shadowImage = nil;
     }
     navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
+    navBar.barStyle = _navigationBarStyle;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
         [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];

@@ -49,6 +49,18 @@
 @property (nonatomic) BOOL startOnGrid;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
+// Customize Appearance
+@property (nonatomic, assign) UIBarStyle navigationBarStyle;
+@property (nonatomic, strong) UIColor *navigationBarTintColor;
+@property (nonatomic, strong) UIImage *navigationBarBackgroundImage;
+@property (nonatomic, assign) UIBarStyle toolbarBarStyle;
+@property (nonatomic, strong) UIColor *toolbarTintColor;
+@property (nonatomic, strong) UIImage *toolbarBackgroundImage;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *progressColor;
+@property (nonatomic, strong) UIColor *imageCellBackgroundColor;
+@property (nonatomic, strong) UIColor *imageCellProgressTintColor;
+
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;

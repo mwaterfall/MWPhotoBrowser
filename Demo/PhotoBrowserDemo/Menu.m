@@ -1032,6 +1032,16 @@
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
     [browser setCurrentPhotoIndex:0];
+
+    // Dark color sceheme
+//    browser.navigationBarStyle = UIBarStyleBlackTranslucent;
+//    browser.navigationBarTintColor = [UIColor whiteColor];
+//    browser.toolbarTintColor = [UIColor whiteColor];
+//    browser.toolbarBarStyle = UIBarStyleBlackTranslucent;
+//    browser.backgroundColor = [UIColor blackColor];
+//    browser.progressColor = [UIColor whiteColor];
+//    browser.imageCellBackgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
+//    browser.imageCellProgressTintColor = [UIColor whiteColor];
     
     // Reset selections
     if (displaySelectionButtons) {
