@@ -1126,6 +1126,11 @@
     NSLog(@"Photo at index %lu selected %@", (unsigned long)index, selected ? @"YES" : @"NO");
 }
 
+- (void)doneButtonPressedInPhotoBrowser:(MWPhotoBrowser *)photoBrowser
+{
+    NSLog(@"Done button pressed");
+}
+
 #pragma mark - Load Assets
 
 - (void)loadAssets {
