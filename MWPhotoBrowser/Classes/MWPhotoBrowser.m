@@ -1393,7 +1393,18 @@
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
+    
+    // Fire doneButtonPressedInPhotoBrowser
+    if ([self.delegate respondsToSelector:@selector(doneButtonPressedInPhotoBrowser:)]) {
+        
+        // Let delegate handle things
+        [self.delegate doneButtonPressedInPhotoBrowser:self];
+        
+    }
+    
+    // Dismiss view controller.
     [self dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 #pragma mark - Actions
