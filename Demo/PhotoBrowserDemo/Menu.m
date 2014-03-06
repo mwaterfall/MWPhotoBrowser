@@ -1176,7 +1176,7 @@
         // Process groups
         void (^ assetGroupEnumerator) (ALAssetsGroup *, BOOL *) = ^(ALAssetsGroup *group, BOOL *stop) {
             if (group != nil) {
-                [group enumerateAssetsUsingBlock:assetEnumerator];
+                [group enumerateAssetsWithOptions:NSEnumerationReverse usingBlock:assetEnumerator];
                 [assetGroups addObject:group];
             }
         };
