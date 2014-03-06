@@ -1122,6 +1122,10 @@
     return [[_selections objectAtIndex:index] boolValue];
 }
 
+//- (NSString *)photoBrowser:(MWPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index {
+//    return [NSString stringWithFormat:@"Photo %lu", (unsigned long)index+1];
+//}
+
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
     [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
     NSLog(@"Photo at index %lu selected %@", (unsigned long)index, selected ? @"YES" : @"NO");
