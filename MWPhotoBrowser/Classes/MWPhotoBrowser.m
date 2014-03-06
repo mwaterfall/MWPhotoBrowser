@@ -71,6 +71,7 @@
     _viewIsActive = NO;
     _enableGrid = YES;
     _startOnGrid = NO;
+    _enableSwipeToDismiss = YES;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
     _recycledPages = [[NSMutableSet alloc] init];
@@ -187,6 +188,13 @@
     
     // Update
     [self reloadData];
+    
+    // Swipe to dismiss
+    if (_enableSwipeToDismiss) {
+        UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(doneButtonPressed:)];
+        swipeGesture.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
+        [self.view addGestureRecognizer:swipeGesture];
+    }
     
 	// Super
     [super viewDidLoad];
@@ -1393,11 +1401,14 @@
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
-    if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
-        // Call delegate method and let them dismiss us
-        [_delegate photoBrowserDidFinishModalPresentation:self];
-    } else  {
-        [self dismissViewControllerAnimated:YES completion:nil];
+    // Only if we're modal and there's a done button
+    if (_doneButton) {
+        if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
+            // Call delegate method and let them dismiss us
+            [_delegate photoBrowserDidFinishModalPresentation:self];
+        } else  {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
     }
 }
 

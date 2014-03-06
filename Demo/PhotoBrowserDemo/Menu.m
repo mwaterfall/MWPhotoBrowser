@@ -1031,6 +1031,7 @@
     browser.zoomPhotosToFill = YES;
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
+    browser.enableSwipeToDismiss = YES;
     [browser setCurrentPhotoIndex:0];
     
     // Reset selections
