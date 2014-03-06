@@ -1393,7 +1393,12 @@
 #pragma mark - Misc
 
 - (void)doneButtonPressed:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
+        // Call delegate method and let them dismiss us
+        [_delegate photoBrowserDidFinishModalPresentation:self];
+    } else  {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 #pragma mark - Actions

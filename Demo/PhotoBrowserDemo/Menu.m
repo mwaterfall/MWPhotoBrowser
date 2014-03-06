@@ -1126,6 +1126,12 @@
     NSLog(@"Photo at index %lu selected %@", (unsigned long)index, selected ? @"YES" : @"NO");
 }
 
+- (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser {
+    // If we subscribe to this method we must dismiss the view controller ourselves
+    NSLog(@"Did finish modal presentation");
+    [self dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark - Load Assets
 
 - (void)loadAssets {
