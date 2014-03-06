@@ -55,6 +55,7 @@
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
     
     // Misc
+    BOOL _hasBelongedToViewController;
     BOOL _isVCBasedStatusBarAppearance;
     BOOL _statusBarShouldBeHidden;
     BOOL _displayActionButton;

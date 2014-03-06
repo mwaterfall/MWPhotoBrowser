@@ -40,7 +40,8 @@ self.photos = [NSMutableArray array];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
 
-// Create browser
+// Create browser (must be done each time photo browser is
+// displayed. Photo browser objects cannot be re-used)
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
 
 // Set options
