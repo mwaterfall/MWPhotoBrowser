@@ -73,6 +73,10 @@
 		0E8515CA17FCB05B00FE1EF3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
 		0EFEA24D17FB08B400E451B6 /* MWCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EFEA24B17FB08B400E451B6 /* MWCommon.h */; };
+		2615E44B18CD57C700447857 /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2615E44918CD57C700447857 /* NSData+ImageContentType.h */; };
+		2615E44C18CD57C700447857 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2615E44A18CD57C700447857 /* NSData+ImageContentType.m */; };
+		2615E44F18CD57E500447857 /* MKAnnotationView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */; };
+		2615E45018CD57E500447857 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -159,6 +163,10 @@
 		0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		0EFEA24B17FB08B400E451B6 /* MWCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWCommon.h; path = Classes/MWCommon.h; sourceTree = SOURCE_ROOT; };
+		2615E44918CD57C700447857 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+ImageContentType.h"; path = "Libraries/SDWebImage/SDWebImage/NSData+ImageContentType.h"; sourceTree = SOURCE_ROOT; };
+		2615E44A18CD57C700447857 /* NSData+ImageContentType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+ImageContentType.m"; path = "Libraries/SDWebImage/SDWebImage/NSData+ImageContentType.m"; sourceTree = SOURCE_ROOT; };
+		2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MKAnnotationView+WebCache.h"; path = "Libraries/SDWebImage/SDWebImage/MKAnnotationView+WebCache.h"; sourceTree = SOURCE_ROOT; };
+		2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MKAnnotationView+WebCache.m"; path = "Libraries/SDWebImage/SDWebImage/MKAnnotationView+WebCache.m"; sourceTree = SOURCE_ROOT; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F96CB14AF704100F8389A /* MWPhotoBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWPhotoBrowser-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -350,6 +358,10 @@
 				0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */,
 				0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */,
 				0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */,
+				2615E44918CD57C700447857 /* NSData+ImageContentType.h */,
+				2615E44A18CD57C700447857 /* NSData+ImageContentType.m */,
+				2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */,
+				2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */,
 			);
 			name = "SDWebImage (3.5)";
 			sourceTree = "<group>";
@@ -395,6 +407,7 @@
 				4C6F96E414AF70BD00F8389A /* MWPhoto.h in Headers */,
 				4C6F96E614AF70BD00F8389A /* MWPhotoBrowser.h in Headers */,
 				0E3D58CC180474330000E3A0 /* PSTGridLayoutInfo.h in Headers */,
+				2615E44F18CD57E500447857 /* MKAnnotationView+WebCache.h in Headers */,
 				0E17D76A17FAEADE0094ABF6 /* SDWebImageDecoder.h in Headers */,
 				0E17D77917FAEADE0094ABF6 /* UIImage+MultiFormat.h in Headers */,
 				0E17D76E17FAEADE0094ABF6 /* SDWebImageDownloaderOperation.h in Headers */,
@@ -419,6 +432,7 @@
 				0E17D77317FAEADE0094ABF6 /* SDWebImagePrefetcher.h in Headers */,
 				0E3D58D2180474330000E3A0 /* PSTGridLayoutSection.h in Headers */,
 				0E17D76C17FAEADE0094ABF6 /* SDWebImageDownloader.h in Headers */,
+				2615E44B18CD57C700447857 /* NSData+ImageContentType.h in Headers */,
 				0E17D77517FAEADE0094ABF6 /* UIButton+WebCache.h in Headers */,
 				0E17D76617FAEADE0094ABF6 /* SDImageCache.h in Headers */,
 			);
@@ -489,6 +503,7 @@
 				0E17D77C17FAEADE0094ABF6 /* UIImage+WebP.m in Sources */,
 				4C6F96E514AF70BD00F8389A /* MWPhoto.m in Sources */,
 				0E17D76F17FAEADE0094ABF6 /* SDWebImageDownloaderOperation.m in Sources */,
+				2615E45018CD57E500447857 /* MKAnnotationView+WebCache.m in Sources */,
 				0E17D76B17FAEADE0094ABF6 /* SDWebImageDecoder.m in Sources */,
 				0E17D77E17FAEADE0094ABF6 /* UIImageView+WebCache.m in Sources */,
 				4C6F96E714AF70BD00F8389A /* MWPhotoBrowser.m in Sources */,
@@ -507,6 +522,7 @@
 				0E17D77117FAEADE0094ABF6 /* SDWebImageManager.m in Sources */,
 				4C6F96F714AF710800F8389A /* MBProgressHUD.m in Sources */,
 				0E3D58C4180474330000E3A0 /* PSTCollectionViewFlowLayout.m in Sources */,
+				2615E44C18CD57C700447857 /* NSData+ImageContentType.m in Sources */,
 				0E3D58BD180474330000E3A0 /* PSTCollectionViewCell.m in Sources */,
 				0E8515C217FC77D200FE1EF3 /* DACircularProgressView.m in Sources */,
 				0E17D76717FAEADE0094ABF6 /* SDImageCache.m in Sources */,
