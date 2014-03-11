@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
     s.source_files = 'MWPhotoBrowser/Classes/*.{h,m}'
     s.resources = 'MWPhotoBrowser/MWPhotoBrowser.bundle'
     s.requires_arc = true
-    s.frameworks = 'MessageUI', 'ImageIO', 'QuartzCore', 'AssetsLibrary'
+    s.frameworks = 'MessageUI', 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MapKit'
     s.dependency 'SDWebImage', '~> 3.5.4'
     s.dependency 'MBProgressHUD'
     s.dependency 'DACircularProgress'

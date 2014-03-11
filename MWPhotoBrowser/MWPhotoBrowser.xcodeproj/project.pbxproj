@@ -34,6 +34,7 @@
 		0E17D77C17FAEADE0094ABF6 /* UIImage+WebP.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */; };
 		0E17D77D17FAEADE0094ABF6 /* UIImageView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */; };
 		0E17D77E17FAEADE0094ABF6 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */; };
+		0E3CF61A18CF321F000EC5F2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E3CF61918CF321F000EC5F2 /* MapKit.framework */; };
 		0E3D5899180467550000E3A0 /* MWGridViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E3D5897180467550000E3A0 /* MWGridViewController.h */; };
 		0E3D589A180467550000E3A0 /* MWGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3D5898180467550000E3A0 /* MWGridViewController.m */; };
 		0E3D58B8180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E3D589C180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h */; };
@@ -124,6 +125,7 @@
 		0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+WebP.m"; path = "Libraries/SDWebImage/SDWebImage/UIImage+WebP.m"; sourceTree = SOURCE_ROOT; };
 		0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImageView+WebCache.h"; path = "Libraries/SDWebImage/SDWebImage/UIImageView+WebCache.h"; sourceTree = SOURCE_ROOT; };
 		0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+WebCache.m"; path = "Libraries/SDWebImage/SDWebImage/UIImageView+WebCache.m"; sourceTree = SOURCE_ROOT; };
+		0E3CF61918CF321F000EC5F2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0E3D5897180467550000E3A0 /* MWGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWGridViewController.h; path = Classes/MWGridViewController.h; sourceTree = SOURCE_ROOT; };
 		0E3D5898180467550000E3A0 /* MWGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWGridViewController.m; path = Classes/MWGridViewController.m; sourceTree = SOURCE_ROOT; };
 		0E3D589C180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+PSTCollectionViewAdditions.h"; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E3CF61A18CF321F000EC5F2 /* MapKit.framework in Frameworks */,
 				0E8515CA17FCB05B00FE1EF3 /* AssetsLibrary.framework in Frameworks */,
 				0E8515C417FC780500FE1EF3 /* QuartzCore.framework in Frameworks */,
 				0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */,
@@ -272,6 +275,7 @@
 		4C6F96C614AF704100F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0E3CF61918CF321F000EC5F2 /* MapKit.framework */,
 				0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */,
 				0E8515C317FC780500FE1EF3 /* QuartzCore.framework */,
 				0EA380321573EA4B003F4582 /* ImageIO.framework */,
