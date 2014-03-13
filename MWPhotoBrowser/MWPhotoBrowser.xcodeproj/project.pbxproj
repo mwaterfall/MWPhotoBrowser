@@ -326,7 +326,7 @@
 			children = (
 				0E3D589B180474330000E3A0 /* PSTCollectionView (1.2) */,
 				0E8515BE17FC77D200FE1EF3 /* DACircularProgress (675f395) */,
-				4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */,
+				4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */,
 				4C6F96F114AF70F500F8389A /* SDWebImage (3.5) */,
 			);
 			name = Libraries;
@@ -370,13 +370,13 @@
 			name = "SDWebImage (3.5)";
 			sourceTree = "<group>";
 		};
-		4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */ = {
+		4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */ = {
 			isa = PBXGroup;
 			children = (
 				4C6F96F414AF710800F8389A /* MBProgressHUD.h */,
 				4C6F96F514AF710800F8389A /* MBProgressHUD.m */,
 			);
-			name = "MBProgressHUD (3d5c3cc)";
+			name = "MBProgressHUD (0.8)";
 			sourceTree = "<group>";
 		};
 		4C6F97E114AF7CCE00F8389A /* Supporting Files */ = {
