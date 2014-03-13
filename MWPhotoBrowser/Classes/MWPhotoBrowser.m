@@ -380,10 +380,6 @@
     }
     [self setNavBarAppearance:animated];
     
-    // Hide navigation controller's toolbar
-    _previousNavToolbarHidden = self.navigationController.toolbarHidden;
-    [self.navigationController setToolbarHidden:YES];
-    
     // Update UI
 	[self hideControlsAfterDelay];
     
@@ -424,9 +420,6 @@
     if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
-    
-    // Show navigation controller's toolbar
-    [self.navigationController setToolbarHidden:_previousNavToolbarHidden];
     
 	// Super
 	[super viewWillDisappear:animated];

@@ -50,6 +50,13 @@
 #pragma mark -
 #pragma mark View
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Test toolbar hiding
+//    [self setToolbarItems: @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:nil action:nil]]];
+//    [[self navigationController] setToolbarHidden:NO animated:NO];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 //    self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
