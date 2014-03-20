@@ -34,6 +34,7 @@ Pod::Spec.new do |s|
     s.platform = :ios, '5.1.1'
     s.source_files = 'MWPhotoBrowser/Classes/*.{h,m}'
     s.resources = 'MWPhotoBrowser/MWPhotoBrowser.bundle'
+    s.prefix_header_file = 'MWPhotoBrowser/MWPhotoBrowser-Prefix.pch'
     s.requires_arc = true
     s.frameworks = 'MessageUI', 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MapKit'
     s.dependency 'SDWebImage', '~> 3.5.4'
