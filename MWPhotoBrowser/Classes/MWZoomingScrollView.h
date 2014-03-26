@@ -21,7 +21,7 @@
 @property (nonatomic) id <MWPhoto> photo;
 @property (nonatomic, weak) MWCaptionView *captionView;
 @property (nonatomic, weak) UIButton *selectedButton;
-@property (BOOL) disableProgress;
+@property (nonatomic) BOOL disableProgress;
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser disableProgress:(BOOL)disableProgress;
 - (void)displayImage;
