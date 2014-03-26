@@ -28,12 +28,14 @@
 
 @implementation MWZoomingScrollView
 
-- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
+- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser disableProgress:(BOOL)disableProgress
+{
     if ((self = [super init])) {
         
         // Setup
         _index = NSUIntegerMax;
         _photoBrowser = browser;
+        _disableProgress = disableProgress;
         
 		// Tap view for background
 		_tapView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
@@ -50,18 +52,20 @@
 		[self addSubview:_photoImageView];
 		
 		// Loading indicator
-		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
-        _loadingIndicator.userInteractionEnabled = NO;
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
-            _loadingIndicator.thicknessRatio = 0.1;
-            _loadingIndicator.roundedCorners = NO;
-        } else {
-            _loadingIndicator.thicknessRatio = 0.2;
-            _loadingIndicator.roundedCorners = YES;
+        if (!self.disableProgress) {
+            _loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
+            _loadingIndicator.userInteractionEnabled = NO;
+            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
+                _loadingIndicator.thicknessRatio = 0.1;
+                _loadingIndicator.roundedCorners = NO;
+            } else {
+                _loadingIndicator.thicknessRatio = 0.2;
+                _loadingIndicator.roundedCorners = YES;
+            }
+            _loadingIndicator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+            UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
+            [self addSubview:_loadingIndicator];
         }
-		_loadingIndicator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-		[self addSubview:_loadingIndicator];
 
         // Listen progress notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
