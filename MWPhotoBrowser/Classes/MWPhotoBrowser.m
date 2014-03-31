@@ -380,6 +380,10 @@
     }
     [self setNavBarAppearance:animated];
     
+    // Hide navigation controller's toolbar
+    _previousNavToolbarHidden = self.navigationController.toolbarHidden;
+    [self.navigationController setToolbarHidden:YES];
+    
     // Update UI
 	[self hideControlsAfterDelay];
     
@@ -420,6 +424,9 @@
     if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
+    
+    // Show navigation controller's toolbar
+    [self.navigationController setToolbarHidden:_previousNavToolbarHidden];
     
 	// Super
 	[super viewWillDisappear:animated];
@@ -503,6 +510,7 @@
     [super viewWillLayoutSubviews];
     [self layoutVisiblePages];
 }
+
 
 - (void)layoutVisiblePages {
     
@@ -633,6 +641,10 @@
     
     // Update layout
     if ([self isViewLoaded]) {
+        if (_gridController) {
+            [_gridController.collectionView reloadData];
+        }
+        
         while (_pagingScrollView.subviews.count) {
             [[_pagingScrollView.subviews lastObject] removeFromSuperview];
         }
@@ -700,11 +712,22 @@
     return captionView;
 }
 
+- (BOOL)photoIsSelectableAtIndex:(NSInteger)index {
+    BOOL value = YES;
+    if (_displaySelectionButtons) {
+        if ([_delegate respondsToSelector:@selector(photoBrowser:isPhotoSelectableAtIndex:)]) {
+            value = [_delegate photoBrowser:self isPhotoSelectableAtIndex:index];
+        }
+    }
+    return value;
+    
+}
+
 - (BOOL)photoIsSelectedAtIndex:(NSUInteger)index {
     BOOL value = NO;
     if (_displaySelectionButtons) {
-        if ([self.delegate respondsToSelector:@selector(photoBrowser:isPhotoSelectedAtIndex:)]) {
-            value = [self.delegate photoBrowser:self isPhotoSelectedAtIndex:index];
+        if ([_delegate respondsToSelector:@selector(photoBrowser:isPhotoSelectedAtIndex:)]) {
+            value = [_delegate photoBrowser:self isPhotoSelectedAtIndex:index];
         }
     }
     return value;
@@ -712,8 +735,8 @@
 
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
-        if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
-            [self.delegate photoBrowser:self photoAtIndex:index selectedChanged:selected];
+        if ([_delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
+            [_delegate photoBrowser:self photoAtIndex:index selectedChanged:selected];
         }
     }
 }
@@ -831,7 +854,7 @@
             }
             
             // Add selected button
-            if (self.displaySelectionButtons) {
+            if (self.displaySelectionButtons && [self photoIsSelectableAtIndex:index]) {
                 UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
                 [selectedButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageSelectedOff.png"] forState:UIControlStateNormal];
                 [selectedButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageSelectedOn.png"] forState:UIControlStateSelected];
@@ -943,8 +966,6 @@
     
     // Notify delegate
     if (index != _previousPageIndex) {
-        if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
-            [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
         _previousPageIndex = index;
     }
     
@@ -1040,6 +1061,9 @@
 	_currentPageIndex = index;
 	if (_currentPageIndex != previousCurrentPage) {
         [self didStartViewingPageAtIndex:index];
+        
+        if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
+            [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
     }
 	
 }
@@ -1221,6 +1245,25 @@
     }];
 
 }
+
+- (void)gridCellTouchedAtIndex:(NSUInteger)index
+{
+    if ([_delegate respondsToSelector:@selector(photoBrowser:gridCellTouchedAtIndex:)]) {
+        [_delegate photoBrowser:self gridCellTouchedAtIndex:index];
+    }
+    
+    BOOL enterToMainView = YES;
+    
+    if ([_delegate respondsToSelector:@selector(photoBrowser:shouldEnterMainViewFromGridWithIndex:)]) {
+        enterToMainView = [_delegate photoBrowser:self shouldEnterMainViewFromGridWithIndex:index];
+    }
+    
+    if (enterToMainView) {
+        [self setCurrentPhotoIndex:index];
+        [self hideGrid];
+    }
+}
+
 
 #pragma mark - Control Hiding / Showing
 
@@ -1420,6 +1463,9 @@
         if (!_viewIsActive)
             [self tilePages]; // Force tiling if view is not visible
     }
+    
+    if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
+        [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
 }
 
 #pragma mark - Misc
@@ -1451,10 +1497,10 @@
         if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
             
             // If they have defined a delegate method then just message them
-            if ([self.delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
+            if ([_delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
                 
                 // Let delegate handle things
-                [self.delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
+                [_delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
                 
             } else {
                 

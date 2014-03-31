@@ -146,6 +146,7 @@
     }
 }
 
+
 #pragma mark - Collection View
 
 - (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section {
@@ -160,7 +161,7 @@
     id <MWPhoto> photo = [_browser thumbPhotoAtIndex:indexPath.row];
     cell.photo = photo;
     cell.gridController = self;
-    cell.selectionMode = _selectionMode;
+    cell.selectionMode = _selectionMode && [_browser photoIsSelectableAtIndex:indexPath.row];
     cell.isSelected = [_browser photoIsSelectedAtIndex:indexPath.row];
     cell.index = indexPath.row;
     UIImage *img = [_browser imageForPhoto:photo];
@@ -173,8 +174,7 @@
 }
 
 - (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [_browser setCurrentPhotoIndex:indexPath.row];
-    [_browser hideGrid];
+    [_browser gridCellTouchedAtIndex:indexPath.row];
 }
 
 - (void)collectionView:(PSTCollectionView *)collectionView didEndDisplayingCell:(PSTCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -201,5 +201,6 @@
     CGFloat margin = [self getMargin];
     return UIEdgeInsetsMake(margin, margin, margin, margin);
 }
+
 
 @end
