@@ -72,7 +72,7 @@
 
 - (BOOL)isEqual:(MWPhoto *)other
 {
-    return [self.image isEqual:other.image]; // Hash comparison
+    return [self.image isEqual:other.image] || [self.photoURL isEqual:other.photoURL]; // Hash comparison
 }
 
 
