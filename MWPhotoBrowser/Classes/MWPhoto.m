@@ -72,7 +72,7 @@
 
 - (BOOL)isEqual:(MWPhoto *)other
 {
-    return [p.image isEqual:photo.image]; // Hash comparison
+    return [self.image isEqual:other.image]; // Hash comparison
 }
 
 
