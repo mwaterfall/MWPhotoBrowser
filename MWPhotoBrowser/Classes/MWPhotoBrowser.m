@@ -831,7 +831,7 @@
         [_recycledPages removeObject:[_recycledPages anyObject]];
 	
 	// Add missing pages
-	for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
+	for (NSUInteger index = (NSUInteger)iFirstIndex; index < (NSUInteger)iLastIndex; index++) {
 		if (![self isDisplayingPageForIndex:index]) {
             
             // Add new page
