@@ -68,14 +68,6 @@
 }
 
 
-#pragma mark - Operations
-
-- (BOOL)isEqual:(MWPhoto *)other
-{
-    return [self.image isEqual:other.image] || [self.photoURL isEqual:other.photoURL]; // Hash comparison
-}
-
-
 #pragma mark - MWPhoto Protocol Methods
 
 - (UIImage *)underlyingImage {
