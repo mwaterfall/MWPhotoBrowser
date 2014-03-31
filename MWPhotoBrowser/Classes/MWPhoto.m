@@ -67,6 +67,15 @@
 	return self;
 }
 
+
+#pragma mark - Operations
+
+- (BOOL)isEqual:(MWPhoto *)other
+{
+    return [p.image isEqual:photo.image]; // Hash comparison
+}
+
+
 #pragma mark - MWPhoto Protocol Methods
 
 - (UIImage *)underlyingImage {
