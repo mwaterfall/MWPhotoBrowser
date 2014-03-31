@@ -39,6 +39,7 @@
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser gridCellTouchedAtIndex:(NSUInteger)index;
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser shouldEnterMainViewFromGridWithIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didTapOnImageWithIndex:(NSUInteger)index;
 @end
 
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
