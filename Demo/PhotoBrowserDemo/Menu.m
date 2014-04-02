@@ -1036,7 +1036,11 @@
 	// Create browser
 	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     browser.displayActionButton = displayActionButton;
-    browser.displayNavArrows = displayNavArrows;
+    
+    browser.navigationToolbarType = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone
+        ? MWPhotoBrowserNavigationToolbarTypeButtons
+        : MWPhotoBrowserNavigationToolbarTypeScrubber;
+    
     browser.displaySelectionButtons = displaySelectionButtons;
     browser.alwaysShowControls = displaySelectionButtons;
     browser.zoomPhotosToFill = YES;

@@ -17,6 +17,7 @@
 
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
+    NSOperation *_photoLoadOperation;
         
 }
 
@@ -96,6 +97,8 @@
 // Set the underlyingImage
 - (void)performLoadUnderlyingImageAndNotify {
     
+    __weak typeof(self) weakSelf = self;
+    
     // Get underlying image
     if (_image) {
         
@@ -107,48 +110,44 @@
         
         // Check what type of url it is
         if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
-            
-            // Load from asset library async
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                @autoreleasepool {
-                    @try {
-                        ALAssetsLibrary *assetslibrary = [[ALAssetsLibrary alloc] init];
-                        [assetslibrary assetForURL:_photoURL
-                                       resultBlock:^(ALAsset *asset){
-                                           ALAssetRepresentation *rep = [asset defaultRepresentation];
-                                           CGImageRef iref = [rep fullScreenImage];
-                                           if (iref) {
-                                               self.underlyingImage = [UIImage imageWithCGImage:iref];
-                                           }
-                                           [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                                       }
-                                      failureBlock:^(NSError *error) {
-                                          self.underlyingImage = nil;
-                                          MWLog(@"Photo from asset library error: %@",error);
-                                          [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                                      }];
-                    } @catch (NSException *e) {
-                        MWLog(@"Photo from asset library error: %@", e);
-                        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                    }
-                }
-            });
+
+            _photoLoadOperation = [NSBlockOperation blockOperationWithBlock:^{
+    
+                ALAssetsLibrary *assetslibrary = [[ALAssetsLibrary alloc] init];
+                [assetslibrary assetForURL:_photoURL
+                               resultBlock:^(ALAsset *asset){
+                                   
+                                   ALAssetRepresentation *rep = [asset defaultRepresentation];
+                                   CGImageRef iref = [rep fullScreenImage];
+                                   if (iref) {
+                                       weakSelf.underlyingImage = [UIImage imageWithCGImage:iref];
+                                       [weakSelf imageLoadingComplete];
+                                   }
+                                   
+                               }
+                              failureBlock:^(NSError *error) {
+                                  
+                                  weakSelf.underlyingImage = nil;
+                                  MWLog(@"Photo from asset library error: %@",error);
+                                  [weakSelf imageLoadingComplete];
+                                  
+                              }];
+                
+            }];
+            [_photoLoadOperation start];
             
         } else if ([_photoURL isFileReferenceURL]) {
             
-            // Load from local file async
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                @autoreleasepool {
-                    @try {
-                        self.underlyingImage = [UIImage imageWithContentsOfFile:_photoURL.path];
-                        if (!_underlyingImage) {
-                            MWLog(@"Error loading photo from path: %@", _photoURL.path);
-                        }
-                    } @finally {
-                        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                    }
+            _photoLoadOperation = [NSBlockOperation blockOperationWithBlock:^{
+                
+                weakSelf.underlyingImage = [UIImage imageWithContentsOfFile:_photoURL.path];
+                if (!_underlyingImage) {
+                    MWLog(@"Error loading photo from path: %@", _photoURL.path);
                 }
-            });
+                [weakSelf imageLoadingComplete];
+                
+            }];
+            [_photoLoadOperation start];
             
         } else {
             
@@ -212,6 +211,11 @@
 - (void)cancelAnyLoading {
     if (_webImageOperation) {
         [_webImageOperation cancel];
+        _loadingInProgress = NO;
+    }
+    
+    if (_photoLoadOperation) {
+        [_photoLoadOperation cancel];
         _loadingInProgress = NO;
     }
 }

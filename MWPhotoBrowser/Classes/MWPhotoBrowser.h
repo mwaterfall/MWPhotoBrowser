@@ -19,6 +19,12 @@
 #define MWLog(x, ...)
 #endif
 
+typedef NS_ENUM(NSInteger, MWPhotoBrowserNavigationToolbarType) {
+    MWPhotoBrowserNavigationToolbarTypeNone,
+    MWPhotoBrowserNavigationToolbarTypeButtons,
+    MWPhotoBrowserNavigationToolbarTypeScrubber
+};
+
 @class MWPhotoBrowser;
 
 @protocol MWPhotoBrowserDelegate <NSObject>
@@ -43,7 +49,7 @@
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
-@property (nonatomic) BOOL displayNavArrows;
+@property (nonatomic, assign) MWPhotoBrowserNavigationToolbarType navigationToolbarType;
 @property (nonatomic) BOOL displayActionButton;
 @property (nonatomic) BOOL displaySelectionButtons;
 @property (nonatomic) BOOL alwaysShowControls;

@@ -86,6 +86,11 @@
 }
 
 - (void)prepareForReuse {
+    
+    if ([_photo respondsToSelector:@selector(cancelAnyLoading)]) {
+        [_photo cancelAnyLoading];
+    }
+    
     [self hideImageFailure];
     self.photo = nil;
     self.captionView = nil;
