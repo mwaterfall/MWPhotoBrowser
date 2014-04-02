@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>631EE198-6638-4A0C-A31D-7645B837BA52</string>
+	<string>DDF31D47-32FA-46E1-B9DA-53C641DAC145</string>
 	<key>IDESourceControlProjectName</key>
 	<string>MWPhotoBrowser</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>0113F294-09B6-4113-B0E2-40706AF32DBD</key>
-		<string>ssh://github.com/mwaterfall/MWPhotoBrowser.git</string>
+		<key>ED8D380B-81F6-4CE7-8306-8582B2CF5211</key>
+		<string>https://github.com/AL333Z/MWPhotoBrowser.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>MWPhotoBrowser/MWPhotoBrowser.xcodeproj/project.xcworkspace</string>
+	<string>MWPhotoBrowser.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>0113F294-09B6-4113-B0E2-40706AF32DBD</key>
-		<string>../../..</string>
+		<key>ED8D380B-81F6-4CE7-8306-8582B2CF5211</key>
+		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/mwaterfall/MWPhotoBrowser.git</string>
+	<string>https://github.com/AL333Z/MWPhotoBrowser.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>0113F294-09B6-4113-B0E2-40706AF32DBD</string>
+	<string>ED8D380B-81F6-4CE7-8306-8582B2CF5211</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0113F294-09B6-4113-B0E2-40706AF32DBD</string>
+			<string>ED8D380B-81F6-4CE7-8306-8582B2CF5211</string>
 			<key>IDESourceControlWCCName</key>
 			<string>MWPhotoBrowser</string>
 		</dict>

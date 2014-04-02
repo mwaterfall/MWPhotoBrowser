@@ -15,6 +15,10 @@
 #define PADDING                  10
 #define ACTION_SHEET_OLD_ACTIONS 2000
 
+@interface MWPhotoBrowser () <NIPhotoScrubberViewDataSource, NIPhotoScrubberViewDelegate>
+
+@end
+
 @implementation MWPhotoBrowser
 
 #pragma mark - Init
@@ -66,7 +70,7 @@
     _currentPageIndex = 0;
     _previousPageIndex = NSUIntegerMax;
     _displayActionButton = YES;
-    _displayNavArrows = NO;
+    _navigationToolbarType = MWPhotoBrowserNavigationToolbarTypeNone;
     _zoomPhotosToFill = YES;
     _performingLayout = NO; // Reset on view did appear
     _rotating = NO;
@@ -173,8 +177,7 @@
     _toolbar.barStyle = UIBarStyleBlackTranslucent;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
-    // Toolbar Items
-    if (self.displayNavArrows) {
+    if (self.navigationToolbarType == MWPhotoBrowserNavigationToolbarTypeButtons) {
         NSString *arrowPathFormat;
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
             arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowOutline%@.png";
@@ -184,6 +187,20 @@
         _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Left"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Right"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
+    else if (self.navigationToolbarType == MWPhotoBrowserNavigationToolbarTypeScrubber) {
+        CGRect scrubberFrame = CGRectMake(50, 0,
+                                          _toolbar.bounds.size.width - 100,
+                                          _toolbar.bounds.size.height);
+        _photoScrubberView = [[MW_NIPhotoScrubberView alloc] initWithFrame:scrubberFrame];
+        _photoScrubberView.autoresizingMask = (UIViewAutoresizingFlexibleWidth
+                                              | UIViewAutoresizingFlexibleHeight);
+        _photoScrubberView.dataSource = self;
+        _photoScrubberView.delegate = self;
+        
+        UIBarButtonItem* scrubberItem = [[UIBarButtonItem alloc] initWithCustomView:_photoScrubberView];
+        _photoScrubberViewItem = scrubberItem;
+    }
+    
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
     }
@@ -263,12 +280,18 @@
     }
 
     // Middle - Nav
-    if (_previousButton && _nextButton && numberOfPhotos > 1) {
+    if (self.navigationToolbarType == MWPhotoBrowserNavigationToolbarTypeButtons &&
+        _previousButton && _nextButton && numberOfPhotos > 1) {
         hasItems = YES;
         [items addObject:flexSpace];
         [items addObject:_previousButton];
         [items addObject:flexSpace];
         [items addObject:_nextButton];
+        [items addObject:flexSpace];
+    } else if (self.navigationToolbarType == MWPhotoBrowserNavigationToolbarTypeScrubber &&
+               _photoScrubberViewItem && numberOfPhotos > 1) {
+        [items addObject:flexSpace];
+        [items addObject:_photoScrubberViewItem];
         [items addObject:flexSpace];
     } else {
         [items addObject:flexSpace];
@@ -640,6 +663,10 @@
         [self.view setNeedsLayout];
     }
     
+    if (_photoScrubberView) {
+        [_photoScrubberView setSelectedPhotoIndex:_currentPageIndex];
+        [_photoScrubberView reloadData];
+    }
 }
 
 - (NSUInteger)numberOfPhotos {
@@ -943,6 +970,10 @@
     
     // Notify delegate
     if (index != _previousPageIndex) {
+        if (_photoScrubberView) {
+            [_photoScrubberView setSelectedPhotoIndex:index];
+        }
+        
         if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
             [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
         _previousPageIndex = index;
@@ -1646,5 +1677,26 @@
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma mark - NIPhotoScrubberViewDataSource
+
+- (NSInteger)numberOfPhotosInScrubberView:(MW_NIPhotoScrubberView *)photoScrubberView {
+    return _thumbPhotos.count;
+}
+
+- (UIImage *)photoScrubberView: (MW_NIPhotoScrubberView *)photoScrubberView
+              thumbnailAtIndex: (NSInteger)thumbnailIndex {
+    if (thumbnailIndex < _thumbPhotos.count)
+        return ((MWPhoto *)[self thumbPhotoAtIndex:thumbnailIndex]).image;
+    return nil;
+}
+
+#pragma mark - NIPhotoScrubberViewDelegate
+
+- (void)photoScrubberViewDidChangeSelection:(MW_NIPhotoScrubberView *)photoScrubberView
+{
+    [self setCurrentPhotoIndex:photoScrubberView.selectedPhotoIndex];
+}
+
 
 @end

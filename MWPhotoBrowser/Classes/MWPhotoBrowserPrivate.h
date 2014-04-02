@@ -10,6 +10,7 @@
 #import "MBProgressHUD.h"
 #import "MWGridViewController.h"
 #import "MWZoomingScrollView.h"
+#import "MW_NIPhotoScrubberView.h"
 
 // Declare private methods of browser
 @interface MWPhotoBrowser () {
@@ -33,9 +34,10 @@
 	// Navigation & controls
 	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
-	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton;
+	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton, *_photoScrubberViewItem;
     MBProgressHUD *_progressHUD;
     UIActionSheet *_actionsSheet;
+    MW_NIPhotoScrubberView *_photoScrubberView;
     
     // Grid
     MWGridViewController *_gridController;
