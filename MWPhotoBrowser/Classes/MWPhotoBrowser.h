@@ -48,6 +48,8 @@
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic) NSArray *rightToolbarButtons;   // Additional items
+@property (nonatomic) NSArray *leftToolbarButtons;    // Additional items
 @property (nonatomic) BOOL displaySelectionButtons;
 @property (nonatomic) BOOL alwaysShowControls;
 @property (nonatomic) BOOL enableGrid;

@@ -73,6 +73,8 @@
     _viewIsActive = NO;
     _enableGrid = YES;
     _startOnGrid = NO;
+    _rightToolbarButtons = @[];
+    _leftToolbarButtons = @[];
     _enableSwipeToDismiss = YES;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
@@ -252,14 +254,20 @@
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSMutableArray *items = [[NSMutableArray alloc] init];
 
-    // Left button - Grid
+    // Left button - Custom items & Grid
+    BOOL customItems = _leftToolbarButtons.count > 0;
+    if (customItems) {
+        hasItems = YES;
+        [items addObjectsFromArray:_leftToolbarButtons];
+    }
+    
     if (_enableGrid) {
         hasItems = YES;
         NSString *buttonName = @"UIBarButtonItemGrid";
         if (SYSTEM_VERSION_LESS_THAN(@"7")) buttonName = @"UIBarButtonItemGridiOS6";
         [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"MWPhotoBrowser.bundle/images/%@.png", buttonName]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
-        [items addObject:fixedSpace];
+        if (!customItems) [items addObject:fixedSpace];
     }
 
     // Middle - Nav
@@ -273,15 +281,41 @@
     } else {
         [items addObject:flexSpace];
     }
-
-    // Right - Action
-    if (_actionButton && !(!hasItems && !self.navigationItem.rightBarButtonItem)) {
-        [items addObject:_actionButton];
-    } else {
+    
+    
+    // Right - Custom items & Action
+    customItems = _rightToolbarButtons.count > 0;
+    if (customItems) {
+        hasItems = YES;
+        [items addObjectsFromArray:_rightToolbarButtons];
+    }
+    
+    if (_actionButton) {
+        if (customItems) {
+            if (self.navigationItem.rightBarButtonItem) {     
+                if (self.navigationItem.leftBarButtonItem) {
+                    [items addObject:_actionButton];
+                }
+                else {
+                    self.navigationItem.leftBarButtonItem = _actionButton;
+                }
+            }
+            else {
+                self.navigationItem.rightBarButtonItem = _actionButton;
+            }
+        }
+        else {
+            if (hasItems || self.navigationItem.rightBarButtonItem) {
+                [items addObject:_actionButton];
+            }
+            else {
+                self.navigationItem.rightBarButtonItem = _actionButton;
+            }
+        }
+    }
+    else {
         // We're not showing the toolbar so try and show in top right
-        if (_actionButton)
-            self.navigationItem.rightBarButtonItem = _actionButton;
-        [items addObject:fixedSpace];
+        if (!customItems) [items addObject:fixedSpace];
     }
 
     // Toolbar visibility
