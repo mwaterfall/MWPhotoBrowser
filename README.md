@@ -202,7 +202,7 @@ Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>)
 
 ## Licence
 
-Copyright (c) 2010-2013 Michael Waterfall
+Copyright (c) 2010 Michael Waterfall <michaelwaterfall@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
