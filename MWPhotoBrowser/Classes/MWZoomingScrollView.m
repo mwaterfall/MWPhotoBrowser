@@ -363,7 +363,8 @@
 		// Zoom out
 		[self setZoomScale:self.minimumZoomScale animated:YES];
 		
-	} else {
+	} else if (self.minimumZoomScale != self.maximumZoomScale) {
+        // Only zoom if we have room between our min/max scales
 		
 		// Zoom in to twice the size
         CGFloat newZoomScale = ((self.maximumZoomScale + self.minimumZoomScale) / 2);
