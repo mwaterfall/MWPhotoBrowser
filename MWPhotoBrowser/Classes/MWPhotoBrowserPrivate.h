@@ -44,7 +44,6 @@
     
     // Appearance
     BOOL _previousNavBarHidden;
-    BOOL _previousNavToolbarHidden;
     BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
