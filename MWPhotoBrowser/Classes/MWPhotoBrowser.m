@@ -73,6 +73,7 @@
     _viewIsActive = NO;
     _enableGrid = YES;
     _startOnGrid = NO;
+    _disableProgress = NO;
     _enableSwipeToDismiss = YES;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
@@ -814,7 +815,7 @@
             // Add new page
 			MWZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
-				page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self];
+				page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self disableProgress:self.disableProgress];
 			}
 			[_visiblePages addObject:page];
 			[self configurePage:page forIndex:index];

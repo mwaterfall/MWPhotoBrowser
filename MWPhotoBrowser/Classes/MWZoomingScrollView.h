@@ -21,8 +21,9 @@
 @property (nonatomic) id <MWPhoto> photo;
 @property (nonatomic, weak) MWCaptionView *captionView;
 @property (nonatomic, weak) UIButton *selectedButton;
+@property (nonatomic) BOOL disableProgress;
 
-- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;
+- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser disableProgress:(BOOL)disableProgress;
 - (void)displayImage;
 - (void)displayImageFailure;
 - (void)setMaxMinZoomScalesForCurrentBounds;

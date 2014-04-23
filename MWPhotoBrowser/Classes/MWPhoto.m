@@ -169,6 +169,8 @@
                                                     completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
                                                         if (error) {
                                                             MWLog(@"SDWebImage failed to download image: %@", error);
+                                                            if (self.errorBlock)
+                                                                self.errorBlock(error);
                                                         }
                                                         _webImageOperation = nil;
                                                         self.underlyingImage = image;
