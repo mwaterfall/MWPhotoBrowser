@@ -40,7 +40,8 @@ self.photos = [NSMutableArray array];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
 
-// Create browser
+// Create browser (must be done each time photo browser is
+// displayed. Photo browser objects cannot be re-used)
 MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
 
 // Set options
@@ -201,7 +202,7 @@ Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>)
 
 ## Licence
 
-Copyright (c) 2010-2013 Michael Waterfall
+Copyright (c) 2010 Michael Waterfall <michaelwaterfall@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

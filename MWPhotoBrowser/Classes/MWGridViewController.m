@@ -9,6 +9,7 @@
 #import "MWGridViewController.h"
 #import "MWGridCell.h"
 #import "MWPhotoBrowserPrivate.h"
+#import "MWCommon.h"
 
 @interface MWGridViewController () {
     
@@ -88,8 +89,10 @@
     CGPoint currentContentOffset = self.collectionView.contentOffset;
     
     // Get scroll position to have the current photo on screen
-    NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
-    [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:PSTCollectionViewScrollPositionNone animated:NO];
+    if (_browser.numberOfPhotos > 0) {
+        NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
+        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:PSTCollectionViewScrollPositionNone animated:NO];
+    }
     CGPoint offsetToShowCurrent = self.collectionView.contentOffset;
     
     // Only commit to using the scrolled position if it differs from the initial content offset
@@ -105,7 +108,11 @@
 
 - (void)performLayout {
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+    CGFloat yAdjust = 0;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
+    if (SYSTEM_VERSION_LESS_THAN(@"7") && !self.browser.wantsFullScreenLayout) yAdjust = -20;
+#endif
+    self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter] + yAdjust, 0, 0, 0);
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {

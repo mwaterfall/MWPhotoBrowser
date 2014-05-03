@@ -20,7 +20,6 @@
         
 }
 
-- (void)decompressImageAndFinishLoading;
 - (void)imageLoadingComplete;
 
 @end
@@ -94,16 +93,15 @@
     }
 }
 
-// Set the underlyingImage and call decompressImageAndFinishLoading on the main thread when complete.
-// On error, set underlyingImage to nil and then call decompressImageAndFinishLoading on the main thread.
+// Set the underlyingImage
 - (void)performLoadUnderlyingImageAndNotify {
     
     // Get underlying image
     if (_image) {
         
-        // We have UIImage so decompress
+        // We have UIImage!
         self.underlyingImage = _image;
-        [self decompressImageAndFinishLoading];
+        [self imageLoadingComplete];
         
     } else if (_photoURL) {
         
@@ -122,16 +120,16 @@
                                            if (iref) {
                                                self.underlyingImage = [UIImage imageWithCGImage:iref];
                                            }
-                                           [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                                           [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                                        }
                                       failureBlock:^(NSError *error) {
                                           self.underlyingImage = nil;
                                           MWLog(@"Photo from asset library error: %@",error);
-                                          [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                                          [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                                       }];
                     } @catch (NSException *e) {
                         MWLog(@"Photo from asset library error: %@", e);
-                        [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                     }
                 }
             });
@@ -147,7 +145,7 @@
                             MWLog(@"Error loading photo from path: %@", _photoURL.path);
                         }
                     } @finally {
-                        [self performSelectorOnMainThread:@selector(decompressImageAndFinishLoading) withObject:nil waitUntilDone:NO];
+                        [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                     }
                 }
             });
@@ -159,7 +157,7 @@
                 SDWebImageManager *manager = [SDWebImageManager sharedManager];
                 _webImageOperation = [manager downloadWithURL:_photoURL
                                                       options:0
-                                                     progress:^(NSUInteger receivedSize, long long expectedSize) {
+                                                     progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                                          if (expectedSize > 0) {
                                                              float progress = receivedSize / (float)expectedSize;
                                                              NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -174,12 +172,12 @@
                                                         }
                                                         _webImageOperation = nil;
                                                         self.underlyingImage = image;
-                                                        [self decompressImageAndFinishLoading];
+                                                        [self imageLoadingComplete];
                                                     }];
             } @catch (NSException *e) {
                 MWLog(@"Photo from web: %@", e);
                 _webImageOperation = nil;
-                [self decompressImageAndFinishLoading];
+                [self imageLoadingComplete];
             }
             
         }
@@ -195,26 +193,7 @@
 // Release if we can get it again from path or url
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
-	if (self.underlyingImage) {
-		self.underlyingImage = nil;
-	}
-}
-
-- (void)decompressImageAndFinishLoading {
-    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
-    if (self.underlyingImage) {
-        // Decode image async to avoid lagging when UIKit lazy loads
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            self.underlyingImage = [UIImage decodedImageWithImage:self.underlyingImage];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                // Finish on main thread
-                [self imageLoadingComplete];
-            });
-        });
-    } else {
-        // Failed
-        [self imageLoadingComplete];
-    }
+	self.underlyingImage = nil;
 }
 
 - (void)imageLoadingComplete {

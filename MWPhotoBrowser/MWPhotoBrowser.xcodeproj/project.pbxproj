@@ -34,6 +34,7 @@
 		0E17D77C17FAEADE0094ABF6 /* UIImage+WebP.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */; };
 		0E17D77D17FAEADE0094ABF6 /* UIImageView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */; };
 		0E17D77E17FAEADE0094ABF6 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */; };
+		0E3CF61A18CF321F000EC5F2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E3CF61918CF321F000EC5F2 /* MapKit.framework */; };
 		0E3D5899180467550000E3A0 /* MWGridViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E3D5897180467550000E3A0 /* MWGridViewController.h */; };
 		0E3D589A180467550000E3A0 /* MWGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3D5898180467550000E3A0 /* MWGridViewController.m */; };
 		0E3D58B8180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E3D589C180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h */; };
@@ -73,6 +74,10 @@
 		0E8515CA17FCB05B00FE1EF3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
 		0EFEA24D17FB08B400E451B6 /* MWCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EFEA24B17FB08B400E451B6 /* MWCommon.h */; };
+		2615E44B18CD57C700447857 /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2615E44918CD57C700447857 /* NSData+ImageContentType.h */; };
+		2615E44C18CD57C700447857 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2615E44A18CD57C700447857 /* NSData+ImageContentType.m */; };
+		2615E44F18CD57E500447857 /* MKAnnotationView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */; };
+		2615E45018CD57E500447857 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -120,6 +125,7 @@
 		0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+WebP.m"; path = "Libraries/SDWebImage/SDWebImage/UIImage+WebP.m"; sourceTree = SOURCE_ROOT; };
 		0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImageView+WebCache.h"; path = "Libraries/SDWebImage/SDWebImage/UIImageView+WebCache.h"; sourceTree = SOURCE_ROOT; };
 		0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+WebCache.m"; path = "Libraries/SDWebImage/SDWebImage/UIImageView+WebCache.m"; sourceTree = SOURCE_ROOT; };
+		0E3CF61918CF321F000EC5F2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0E3D5897180467550000E3A0 /* MWGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWGridViewController.h; path = Classes/MWGridViewController.h; sourceTree = SOURCE_ROOT; };
 		0E3D5898180467550000E3A0 /* MWGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWGridViewController.m; path = Classes/MWGridViewController.m; sourceTree = SOURCE_ROOT; };
 		0E3D589C180474330000E3A0 /* NSIndexPath+PSTCollectionViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+PSTCollectionViewAdditions.h"; sourceTree = "<group>"; };
@@ -159,6 +165,10 @@
 		0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		0EFEA24B17FB08B400E451B6 /* MWCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWCommon.h; path = Classes/MWCommon.h; sourceTree = SOURCE_ROOT; };
+		2615E44918CD57C700447857 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+ImageContentType.h"; path = "Libraries/SDWebImage/SDWebImage/NSData+ImageContentType.h"; sourceTree = SOURCE_ROOT; };
+		2615E44A18CD57C700447857 /* NSData+ImageContentType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+ImageContentType.m"; path = "Libraries/SDWebImage/SDWebImage/NSData+ImageContentType.m"; sourceTree = SOURCE_ROOT; };
+		2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MKAnnotationView+WebCache.h"; path = "Libraries/SDWebImage/SDWebImage/MKAnnotationView+WebCache.h"; sourceTree = SOURCE_ROOT; };
+		2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MKAnnotationView+WebCache.m"; path = "Libraries/SDWebImage/SDWebImage/MKAnnotationView+WebCache.m"; sourceTree = SOURCE_ROOT; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F96CB14AF704100F8389A /* MWPhotoBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWPhotoBrowser-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -186,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E3CF61A18CF321F000EC5F2 /* MapKit.framework in Frameworks */,
 				0E8515CA17FCB05B00FE1EF3 /* AssetsLibrary.framework in Frameworks */,
 				0E8515C417FC780500FE1EF3 /* QuartzCore.framework in Frameworks */,
 				0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */,
@@ -264,6 +275,7 @@
 		4C6F96C614AF704100F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0E3CF61918CF321F000EC5F2 /* MapKit.framework */,
 				0E8515C917FCB05B00FE1EF3 /* AssetsLibrary.framework */,
 				0E8515C317FC780500FE1EF3 /* QuartzCore.framework */,
 				0EA380321573EA4B003F4582 /* ImageIO.framework */,
@@ -314,7 +326,7 @@
 			children = (
 				0E3D589B180474330000E3A0 /* PSTCollectionView (1.2) */,
 				0E8515BE17FC77D200FE1EF3 /* DACircularProgress (675f395) */,
-				4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */,
+				4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */,
 				4C6F96F114AF70F500F8389A /* SDWebImage (3.5) */,
 			);
 			name = Libraries;
@@ -350,17 +362,21 @@
 				0E17D75F17FAEADE0094ABF6 /* UIImage+WebP.m */,
 				0E17D76017FAEADE0094ABF6 /* UIImageView+WebCache.h */,
 				0E17D76117FAEADE0094ABF6 /* UIImageView+WebCache.m */,
+				2615E44918CD57C700447857 /* NSData+ImageContentType.h */,
+				2615E44A18CD57C700447857 /* NSData+ImageContentType.m */,
+				2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */,
+				2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */,
 			);
 			name = "SDWebImage (3.5)";
 			sourceTree = "<group>";
 		};
-		4C6F96F214AF70FA00F8389A /* MBProgressHUD (3d5c3cc) */ = {
+		4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */ = {
 			isa = PBXGroup;
 			children = (
 				4C6F96F414AF710800F8389A /* MBProgressHUD.h */,
 				4C6F96F514AF710800F8389A /* MBProgressHUD.m */,
 			);
-			name = "MBProgressHUD (3d5c3cc)";
+			name = "MBProgressHUD (0.8)";
 			sourceTree = "<group>";
 		};
 		4C6F97E114AF7CCE00F8389A /* Supporting Files */ = {
@@ -395,6 +411,7 @@
 				4C6F96E414AF70BD00F8389A /* MWPhoto.h in Headers */,
 				4C6F96E614AF70BD00F8389A /* MWPhotoBrowser.h in Headers */,
 				0E3D58CC180474330000E3A0 /* PSTGridLayoutInfo.h in Headers */,
+				2615E44F18CD57E500447857 /* MKAnnotationView+WebCache.h in Headers */,
 				0E17D76A17FAEADE0094ABF6 /* SDWebImageDecoder.h in Headers */,
 				0E17D77917FAEADE0094ABF6 /* UIImage+MultiFormat.h in Headers */,
 				0E17D76E17FAEADE0094ABF6 /* SDWebImageDownloaderOperation.h in Headers */,
@@ -419,6 +436,7 @@
 				0E17D77317FAEADE0094ABF6 /* SDWebImagePrefetcher.h in Headers */,
 				0E3D58D2180474330000E3A0 /* PSTGridLayoutSection.h in Headers */,
 				0E17D76C17FAEADE0094ABF6 /* SDWebImageDownloader.h in Headers */,
+				2615E44B18CD57C700447857 /* NSData+ImageContentType.h in Headers */,
 				0E17D77517FAEADE0094ABF6 /* UIButton+WebCache.h in Headers */,
 				0E17D76617FAEADE0094ABF6 /* SDImageCache.h in Headers */,
 			);
@@ -450,7 +468,7 @@
 		4C6F96BB14AF704100F8389A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 4C6F96BE14AF704100F8389A /* Build configuration list for PBXProject "MWPhotoBrowser" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -489,6 +507,7 @@
 				0E17D77C17FAEADE0094ABF6 /* UIImage+WebP.m in Sources */,
 				4C6F96E514AF70BD00F8389A /* MWPhoto.m in Sources */,
 				0E17D76F17FAEADE0094ABF6 /* SDWebImageDownloaderOperation.m in Sources */,
+				2615E45018CD57E500447857 /* MKAnnotationView+WebCache.m in Sources */,
 				0E17D76B17FAEADE0094ABF6 /* SDWebImageDecoder.m in Sources */,
 				0E17D77E17FAEADE0094ABF6 /* UIImageView+WebCache.m in Sources */,
 				4C6F96E714AF70BD00F8389A /* MWPhotoBrowser.m in Sources */,
@@ -507,6 +526,7 @@
 				0E17D77117FAEADE0094ABF6 /* SDWebImageManager.m in Sources */,
 				4C6F96F714AF710800F8389A /* MBProgressHUD.m in Sources */,
 				0E3D58C4180474330000E3A0 /* PSTCollectionViewFlowLayout.m in Sources */,
+				2615E44C18CD57C700447857 /* NSData+ImageContentType.m in Sources */,
 				0E3D58BD180474330000E3A0 /* PSTCollectionViewCell.m in Sources */,
 				0E8515C217FC77D200FE1EF3 /* DACircularProgressView.m in Sources */,
 				0E17D76717FAEADE0094ABF6 /* SDImageCache.m in Sources */,
@@ -520,12 +540,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				SDKROOT = iphoneos;
@@ -540,10 +569,6 @@
 				DSTROOT = /tmp/MWPhotoBrowser.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MWPhotoBrowser-Prefix.pch";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -553,7 +578,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -564,10 +594,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -576,12 +611,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				SDKROOT = iphoneos;
@@ -596,10 +640,6 @@
 				DSTROOT = /tmp/MWPhotoBrowser.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MWPhotoBrowser-Prefix.pch";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -612,10 +652,6 @@
 				DSTROOT = /tmp/MWPhotoBrowser.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MWPhotoBrowser-Prefix.pch";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};

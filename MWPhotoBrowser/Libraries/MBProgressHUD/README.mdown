@@ -1,5 +1,4 @@
-MBProgressHUD
-=============
+# MBProgressHUD [![Build Status](https://travis-ci.org/matej/MBProgressHUD.png)](https://travis-ci.org/matej/MBProgressHUD)
 
 MBProgressHUD is an iOS drop-in class that displays a translucent HUD with an indicator and/or labels while work is being done in a background thread. The HUD is meant as a replacement for the undocumented, private UIKit UIProgressHUD with some additional features. 
 
@@ -11,10 +10,9 @@ MBProgressHUD is an iOS drop-in class that displays a translucent HUD with an in
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/6-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/6.png)
 [![](http://dl.dropbox.com/u/378729/MBProgressHUD/7-thumb.png)](http://dl.dropbox.com/u/378729/MBProgressHUD/7.png)
 
-Requirements
-============
+## Requirements
 
-MBProgressHUD works on any iOS version and is compatible with both ARC and non-ARC projects. It depends on the following Apple frameworks:
+MBProgressHUD works on any iOS version and is compatible with both ARC and non-ARC projects. It depends on the following Apple frameworks, which should already be included with most Xcode templates:
 
 * Foundation.framework
 * UIKit.framework
@@ -22,31 +20,38 @@ MBProgressHUD works on any iOS version and is compatible with both ARC and non-A
 
 You will need LLVM 3.0 or later in order to build MBProgressHUD. 
 
-Adding MBProgressHUD to your project
-====================================
+## Adding MBProgressHUD to your project
 
-The simplest way to add the MBProgressHUD to your project is to directly add the `MBProgressHUD.h` and `MBProgressHUD.m` source files to your project.
+### Cocoapods
 
-1. Download the latest code version from the repository (you can simply use the Download Source button and get the zip or tar archive of the master branch).
-2. Extract the archive.
-3. Open your project in Xcode, than drag and drop `MBProgressHUD.h` and `MBProgressHUD.m` to your classes group (in the Groups & Files view). 
-4. Make sure to select Copy items when asked. 
+[CocoaPods](http://cocoapods.org) is the recommended way to add MBProgressHUD to your project.
 
-If you have a git tracked project, you can add MBProgressHUD as a submodule to your project. 
+1. Add a pod entry for MBProgressHUD to your Podfile `pod 'MBProgressHUD', '~> 0.8'`
+2. Install the pod(s) by running `pod install`.
+3. Include MBProgressHUD wherever you need it with `#import "MBProgressHUD.h"`.
 
-1. Move inside your git tracked project.
-2. Add MBProgressHUD as a submodule using `git submodule add git://github.com/matej/MBProgressHUD.git MBProgressHUD` .
-3. Open your project in Xcode, than drag and drop `MBProgressHUD.h` and `MBProgressHUD.m` to your classes group (in the Groups & Files view). 
-4. Don't select Copy items and select a suitable Reference type (relative to project should work fine most of the time). 
+### Source files
 
-You can also add MBProgressHUD as a static library to your workspace. See [this article](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library) for details. 
+Alternatively you can directly add the `MBProgressHUD.h` and `MBProgressHUD.m` source files to your project.
 
-Usage
-=====
+1. Download the [latest code version](https://github.com/matej/MBProgressHUD/archive/master.zip) or add the repository as a git submodule to your git-tracked project. 
+2. Open your project in Xcode, then drag and drop `MBProgressHUD.h` and `MBProgressHUD.m` onto your project (use the "Product Navigator view"). Make sure to select Copy items when asked if you extracted the code archive outside of your project. 
+3. Include MBProgressHUD wherever you need it with `#import "MBProgressHUD.h"`.
 
-The main guideline you need to follow when dealing with MBProgressHUD while running long-running tasks is keeping the main thread work-free, so the UI can be updated promptly. The recommended way of using MBProgressHUD is therefore to set it up on the main thread and than spinning the task, that you want to perform, off onto a new thread. 
+### Static library
 
-```Objective-C
+You can also add MBProgressHUD as a static library to your project or workspace. 
+
+1. Download the [latest code version](https://github.com/matej/MBProgressHUD/downloads) or add the repository as a git submodule to your git-tracked project. 
+2. Open your project in Xcode, then drag and drop `MBProgressHUD.xcodeproj` onto your project or workspace (use the "Product Navigator view"). 
+3. Select your target and go to the Build phases tab. In the Link Binary With Libraries section select the add button. On the sheet find and add `libMBProgressHUD.a`. You might also need to add `MBProgressHUD` to the Target Dependencies list. 
+4. Include MBProgressHUD wherever you need it with `#import <MBProgressHUD/MBProgressHUD.h>`.
+
+## Usage
+
+The main guideline you need to follow when dealing with MBProgressHUD while running long-running tasks is keeping the main thread work-free, so the UI can be updated promptly. The recommended way of using MBProgressHUD is therefore to set it up on the main thread and then spinning the task, that you want to perform, off onto a new thread. 
+
+```objective-c
 [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 	// Do something...
@@ -58,22 +63,22 @@ dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
 If you need to configure the HUD you can do this by using the MBProgressHUD reference that showHUDAddedTo:animated: returns. 
 
-```Objective-C
+```objective-c
 MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 hud.mode = MBProgressHUDModeAnnularDeterminate;
 hud.labelText = @"Loading";
 [self doSomethingInBackgroundWithProgressCallback:^(float progress) {
 	hud.progress = progress;
 } completionCallback:^{
-	[MBProgressHUD hideHUDForView:self.view animated:YES];
+	[hud hide:YES];
 }];
 ```
 
-UI updates should always be done on the main thread. Some MBProgressHUD setters are hoverer considered "thread safe" and can be called from background threads. Those also include `setMode:`, `setCustomView:`, `setLabelText:`, `setLabelFont:`, `setDetailsLabelText:`, `setDetailsLabelFont:` and `setProgress:`.
+UI updates should always be done on the main thread. Some MBProgressHUD setters are however considered "thread safe" and can be called from background threads. Those also include `setMode:`, `setCustomView:`, `setLabelText:`, `setLabelFont:`, `setDetailsLabelText:`, `setDetailsLabelFont:` and `setProgress:`.
 
 If you need to run your long-running task in the main thread, you should perform it with a slight delay, so UIKit will have enough time to update the UI (i.e., draw the HUD) before you block the main thread with your task.
 
-```Objective-C
+```objective-c
 [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC);
 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -86,76 +91,11 @@ You should be aware that any HUD updates issued inside the above block won't be 
 
 For more examples, including how to use MBProgressHUD with asynchronous operations such as NSURLConnection, take a look at the bundled demo project. Extensive API documentation is provided in the header file (MBProgressHUD.h).
 
-License
-=======
 
-This code is distributed under the terms and conditions of the MIT license. 
+## License
 
-Copyright (c) 2009-2012 Matej Bukovinski
+This code is distributed under the terms and conditions of the [MIT license](LICENSE). 
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+## Change-log
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Change-log
-==========
-
-**Version 0.5** @ 22.03.12
-
-- Major source code modernization and cleanup (KVO, layout code, instance vars, etc.).
-- New annular determinate mode.
-- New text only mode. 
-- Added a static library project and Xcode 4 workspace. 
-- Added methods to find and return HUD(s) on a view.
-- Various bug fixes.
-- Various demo project enhancements (hi-res rescues, new samples). 
-
-IMPORTANT: Requires LLVM 3+.
-
-**Version 0.41** @ 03.01.12
-
-- Support for ARC.
-
-**Version 0.4** @ 25.07.10
-
-- Different animation modes. Default set to zoom.
-- Class convenience methods (tadelv - http://github.com/tadelv).
-- Autorotation when added to a UIWindow (wuf810 - http://github.com/wuf810).
-- Extended demo app. 
-- Several smaller fixes.
-
-**Version 0.33** @ 27.03.10
-
-- Custom view operation mode added.
-- Fixed a memory leak.
-
-**Version 0.32** @ 4.01.10
-
-- Added minShowTime, graceTime, xOffset, yOffset.
-- Various fixes.
-
-**Version 0.31** @ 8.10.09
-
-- Fix for touch through during the fade-out animation.
-
-**Version 0.3** @ 30.9.09
-
-- Added show: and hide: methods.
-- Now using UIViews layoutSubviews to automate layout calls.
-- Added some floors to round pixel positions and thereby prevent unsharp views.
-- Some additional documentation and code cleanup. 
-
-**Version 0.2** @ 21.7.09
-
-- Added determinate progress mode and switching capabilities between determinate and indeterminate modes. 
-- Various bug-fixes.
-
-**Version 0.11** @ 2.6.09.
-
-- Updated labelText and detailsLabelText properties to support text modifications while the HUD is being shown. 
-
-**Version 0.1** @ 2.4.09
-
-- Initial release.
+A brief summary of each MBProgressHUD release can be found on the [wiki](https://github.com/matej/MBProgressHUD/wiki/Change-log). 

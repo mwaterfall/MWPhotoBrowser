@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E17D70117FAE1A80094ABF6 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0E17D70017FAE1A80094ABF6 /* Default-568h@2x.png */; };
+		0E3CF61C18CF322F000EC5F2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E3CF61B18CF322F000EC5F2 /* MapKit.framework */; };
 		0E3D588F180456580000E3A0 /* photo1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0E3D5887180456580000E3A0 /* photo1.jpg */; };
 		0E3D5890180456580000E3A0 /* photo2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0E3D5888180456580000E3A0 /* photo2.jpg */; };
 		0E3D5891180456580000E3A0 /* photo3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0E3D5889180456580000E3A0 /* photo3.jpg */; };
@@ -58,6 +59,7 @@
 
 /* Begin PBXFileReference section */
 		0E17D70017FAE1A80094ABF6 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		0E3CF61B18CF322F000EC5F2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0E3D5887180456580000E3A0 /* photo1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = photo1.jpg; path = Photos/photo1.jpg; sourceTree = "<group>"; };
 		0E3D5888180456580000E3A0 /* photo2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = photo2.jpg; path = Photos/photo2.jpg; sourceTree = "<group>"; };
 		0E3D5889180456580000E3A0 /* photo3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = photo3.jpg; path = Photos/photo3.jpg; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E3CF61C18CF322F000EC5F2 /* MapKit.framework in Frameworks */,
 				0E8515D017FCC34700FE1EF3 /* AssetsLibrary.framework in Frameworks */,
 				0E8515C617FC781600FE1EF3 /* QuartzCore.framework in Frameworks */,
 				0E76FFF21573FE25000EE5CA /* libMWPhotoBrowser.a in Frameworks */,
@@ -142,6 +145,7 @@
 		4C6F979014AF734900F8389A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0E3CF61B18CF322F000EC5F2 /* MapKit.framework */,
 				0E8515CF17FCC34700FE1EF3 /* AssetsLibrary.framework */,
 				0E8515C517FC781600FE1EF3 /* QuartzCore.framework */,
 				0EA380341573EA53003F4582 /* ImageIO.framework */,
@@ -237,7 +241,7 @@
 		4C6F978414AF734800F8389A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				TargetAttributes = {
 					4C6F978C14AF734800F8389A = {
 						DevelopmentTeam = VK94X636H2;
@@ -344,7 +348,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -380,7 +383,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -416,7 +418,6 @@
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -438,7 +439,6 @@
 				GCC_PREFIX_HEADER = "PhotoBrowserDemo/PhotoBrowserDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "PhotoBrowserDemo/PhotoBrowserDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

@@ -44,7 +44,6 @@
     
     // Appearance
     BOOL _previousNavBarHidden;
-    BOOL _previousNavToolbarHidden;
     BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
@@ -55,6 +54,7 @@
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
     
     // Misc
+    BOOL _hasBelongedToViewController;
     BOOL _isVCBasedStatusBarAppearance;
     BOOL _statusBarShouldBeHidden;
     BOOL _displayActionButton;
