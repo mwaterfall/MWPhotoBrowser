@@ -15,7 +15,6 @@
     
     UIImageView *_imageView;
     UIImageView *_loadingError;
-	DACircularProgressView *_loadingIndicator;
     UIButton *_selectedButton;
     
 }
@@ -26,9 +25,6 @@
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        
-        // Grey background
-        self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
         
         // Image
         _imageView = [UIImageView new];
