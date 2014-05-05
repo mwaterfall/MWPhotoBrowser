@@ -190,22 +190,24 @@
         
     } else if (_urlRequest) {
         @try {
-            _webImageOperation = [[SDWebImageDownloaderOperation alloc] initWithRequest:_urlRequest
-                                                                                options:0
-                                                                               progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                                                                   [self fetchImageProgressWithReceivedSize:receivedSize
+            SDWebImageDownloaderOperation *operation = [[SDWebImageDownloaderOperation alloc] initWithRequest:_urlRequest
+                                                                                                      options:0
+                                                                                                     progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                                                                                                         [self fetchImageProgressWithReceivedSize:receivedSize
                                                                                                                expectedSize:expectedSize];
-                                                                               } completed:^(UIImage *image, NSData *data, NSError *error, BOOL finished) {
-                                                                                   if (error) {
-                                                                                       MWLog(@"SDWebImage failed to download image: %@", error);
-                                                                                   }
-                                                                                   _webImageOperation = nil;
-                                                                                   self.underlyingImage = image;
-                                                                                   [self imageLoadingComplete];
-                                                                               } cancelled:^{
-                                                                                   _webImageOperation = nil;
-                                                                                   [self imageLoadingComplete];
-                                                                               }];
+                                                                                                     } completed:^(UIImage *image, NSData *data, NSError *error, BOOL finished) {
+                                                                                                         if (error) {
+                                                                                                             MWLog(@"SDWebImage failed to download image: %@", error);
+                                                                                                         }
+                                                                                                         _webImageOperation = nil;
+                                                                                                         self.underlyingImage = image;
+                                                                                                         [self imageLoadingComplete];
+                                                                                                     } cancelled:^{
+                                                                                                         _webImageOperation = nil;
+                                                                                                         [self imageLoadingComplete];
+                                                                                                     }];
+            [operation start];
+            _webImageOperation = operation;
         } @catch (NSException *e) {
             MWLog(@"Photo from web: %@", e);
             _webImageOperation = nil;
