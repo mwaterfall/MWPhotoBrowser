@@ -11,6 +11,7 @@
 #import "SDWebImageDecoder.h"
 #import "SDWebImageManager.h"
 #import "SDWebImageOperation.h"
+#import "SDWebImageDownloaderOperation.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
 @interface MWPhoto () {
@@ -43,6 +44,10 @@
 	return [[MWPhoto alloc] initWithURL:url];
 }
 
++ (MWPhoto *)photoWithRequest:(NSURLRequest*)request {
+    return [[MWPhoto alloc] initWithRequest:request];
+}
+
 #pragma mark - Init
 
 - (id)initWithImage:(UIImage *)image {
@@ -65,6 +70,13 @@
 		_photoURL = [url copy];
 	}
 	return self;
+}
+
+- (id)initWithRequest:(NSURLRequest *)request {
+    if ((self = [super init])) {
+        _urlRequest = [request copy];
+    }
+    return self;
 }
 
 #pragma mark - MWPhoto Protocol Methods
@@ -150,6 +162,29 @@
                 }
             });
             
+        } else if (_urlRequest) {
+            @try {
+                _webImageOperation = [[SDWebImageDownloaderOperation alloc] initWithRequest:_urlRequest
+                                                                                    options:0
+                                                                                   progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                    [self fetchImageProgressWithReceivedSize:receivedSize
+                                                expectedSize:expectedSize];
+                } completed:^(UIImage *image, NSData *data, NSError *error, BOOL finished) {
+                    if (error) {
+                        MWLog(@"SDWebImage failed to download image: %@", error);
+                    }
+                    _webImageOperation = nil;
+                    self.underlyingImage = image;
+                    [self imageLoadingComplete];
+                } cancelled:^{
+                    _webImageOperation = nil;
+                    [self imageLoadingComplete];
+                }];
+            } @catch (NSException *e) {
+                MWLog(@"Photo from web: %@", e);
+                _webImageOperation = nil;
+                [self imageLoadingComplete];
+            }
         } else {
             
             // Load async from web (using SDWebImage)
@@ -158,13 +193,7 @@
                 _webImageOperation = [manager downloadWithURL:_photoURL
                                                       options:0
                                                      progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                                         if (expectedSize > 0) {
-                                                             float progress = receivedSize / (float)expectedSize;
-                                                             NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                   [NSNumber numberWithFloat:progress], @"progress",
-                                                                                   self, @"photo", nil];
-                                                             [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
-                                                         }
+                                                         [self fetchImageProgressWithReceivedSize:receivedSize expectedSize:expectedSize];
                                                      }
                                                     completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
                                                         if (error) {
@@ -179,7 +208,7 @@
                 _webImageOperation = nil;
                 [self imageLoadingComplete];
             }
-            
+
         }
         
     } else {
@@ -187,6 +216,16 @@
         // Failed - no source
         @throw [NSException exceptionWithName:nil reason:nil userInfo:nil];
         
+    }
+}
+
+- (void) fetchImageProgressWithReceivedSize:(NSInteger)receivedSize expectedSize:(NSInteger)expectedSize {
+    if (expectedSize > 0) {
+        float progress = receivedSize / (float)expectedSize;
+        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSNumber numberWithFloat:progress], @"progress",
+                              self, @"photo", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
     }
 }
 
