@@ -155,8 +155,12 @@
             // Load async from web (using SDWebImage)
             @try {
                 SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                SDWebImageOptions options = 0;
+                if (self.retryFailedDownload) {
+                    options |= SDWebImageRetryFailed;
+                }
                 _webImageOperation = [manager downloadWithURL:_photoURL
-                                                      options:0
+                                                      options:options
                                                      progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                                          if (expectedSize > 0) {
                                                              float progress = receivedSize / (float)expectedSize;
