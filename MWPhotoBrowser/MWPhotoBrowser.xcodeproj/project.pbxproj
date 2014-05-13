@@ -327,12 +327,12 @@
 				0E3D589B180474330000E3A0 /* PSTCollectionView (1.2) */,
 				0E8515BE17FC77D200FE1EF3 /* DACircularProgress (675f395) */,
 				4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */,
-				4C6F96F114AF70F500F8389A /* SDWebImage (3.5) */,
+				4C6F96F114AF70F500F8389A /* SDWebImage (3.6) */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
 		};
-		4C6F96F114AF70F500F8389A /* SDWebImage (3.5) */ = {
+		4C6F96F114AF70F500F8389A /* SDWebImage (3.6) */ = {
 			isa = PBXGroup;
 			children = (
 				0E17D74717FAEADE0094ABF6 /* NSData+GIF.h */,
@@ -367,7 +367,7 @@
 				2615E44D18CD57E500447857 /* MKAnnotationView+WebCache.h */,
 				2615E44E18CD57E500447857 /* MKAnnotationView+WebCache.m */,
 			);
-			name = "SDWebImage (3.5)";
+			name = "SDWebImage (3.6)";
 			sourceTree = "<group>";
 		};
 		4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */ = {
