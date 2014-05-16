@@ -2,9 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "container:MWPhotoBrowser/MWPhotoBrowser.xcodeproj">
+      location = "group:Demo/PhotoBrowserDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Demo/PhotoBrowserDemo.xcodeproj">
+      location = "group:MWPhotoBrowser/MWPhotoBrowser.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>
