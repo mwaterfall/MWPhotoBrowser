@@ -1,0 +1,21 @@
+PODS:
+  - DACircularProgress (2.2.0)
+  - MBProgressHUD (0.8)
+  - PSTCollectionView (1.2.0)
+  - SDWebImage (3.5.4):
+    - SDWebImage/Core
+  - SDWebImage/Core (3.5.4)
+
+DEPENDENCIES:
+  - DACircularProgress
+  - MBProgressHUD (~> 0.8)
+  - PSTCollectionView (~> 1.2)
+  - SDWebImage (~> 3.5.4)
+
+SPEC CHECKSUMS:
+  DACircularProgress: 659d6fd11b5fc099c13ba9350239d9dca324916a
+  MBProgressHUD: 2bbc6f470111daf7f3eaa4eb12b8cbf01c4c0622
+  PSTCollectionView: fb2ad2790c6efa306b2caf10315b2c1464d1f5c6
+  SDWebImage: 1a62010700adbba823b621fc217906739dbf6aa5
+
+COCOAPODS: 0.32.1
