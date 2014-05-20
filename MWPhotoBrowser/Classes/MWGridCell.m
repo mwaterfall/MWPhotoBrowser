@@ -45,7 +45,7 @@
         [_selectedButton setImage:nil forState:UIControlStateNormal];
         [_selectedButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageSelectedSmallOff.png"] forState:UIControlStateNormal];
         [_selectedButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageSelectedSmallOn.png"] forState:UIControlStateSelected];
-        [_selectedButton addTarget:self action:@selector(selectionButtonPressed) forControlEvents:UIControlEventTouchDown];
+        [_selectedButton addTarget:self action:@selector(selectionButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         _selectedButton.hidden = YES;
         _selectedButton.frame = CGRectMake(0, 0, 44, 44);
         [self addSubview:_selectedButton];
