@@ -163,7 +163,10 @@
                                                              NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
                                                                                    [NSNumber numberWithFloat:progress], @"progress",
                                                                                    self, @"photo", nil];
-                                                             [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+                                                             
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+                                                             });
                                                          }
                                                      }
                                                     completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
