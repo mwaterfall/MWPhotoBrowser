@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>631EE198-6638-4A0C-A31D-7645B837BA52</string>
+	<string>F9703109-0630-42F4-B719-980ED4CF2447</string>
 	<key>IDESourceControlProjectName</key>
 	<string>MWPhotoBrowser</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>0113F294-09B6-4113-B0E2-40706AF32DBD</key>
-		<string>ssh://github.com/mwaterfall/MWPhotoBrowser.git</string>
+		<key>8102C5FC-599F-4524-82A4-065A3E00F7BB</key>
+		<string>https://github.com/RebornSoul/MWPhotoBrowser.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>MWPhotoBrowser/MWPhotoBrowser.xcodeproj/project.xcworkspace</string>
+	<string>MWPhotoBrowser.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>0113F294-09B6-4113-B0E2-40706AF32DBD</key>
-		<string>../../..</string>
+		<key>8102C5FC-599F-4524-82A4-065A3E00F7BB</key>
+		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/mwaterfall/MWPhotoBrowser.git</string>
+	<string>https://github.com/RebornSoul/MWPhotoBrowser.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>0113F294-09B6-4113-B0E2-40706AF32DBD</string>
+	<string>8102C5FC-599F-4524-82A4-065A3E00F7BB</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0113F294-09B6-4113-B0E2-40706AF32DBD</string>
+			<string>8102C5FC-599F-4524-82A4-065A3E00F7BB</string>
 			<key>IDESourceControlWCCName</key>
 			<string>MWPhotoBrowser</string>
 		</dict>
