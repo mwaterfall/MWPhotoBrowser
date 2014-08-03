@@ -67,6 +67,14 @@
     BOOL _viewHasAppearedInitially;
     CGPoint _currentGridContentOffset;
     
+    // FBPB specific
+    UIBarButtonItem *_likeButton, *_likesButton;
+    UILabel *_likesLabel;
+    
+    CGPoint _originalScrollViewOrigin;
+    CGPoint _startLocation;
+    // END FBPB
+    
 }
 
 // Properties

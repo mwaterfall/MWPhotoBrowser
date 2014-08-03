@@ -26,6 +26,16 @@
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
 
+// FBPB specific
+- (NSInteger)likesForPhotoAtIndex:(NSUInteger)index;
+- (bool)likedForPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser toggleLikePhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser displayCommentsForPhotoAtIndex:(NSUInteger)index withSegue:(UIStoryboardSegue *)segue;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didDisplayPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index;
+- (void)scrollToPhotoAtIndex:(NSUInteger)index;
+// END FBPB
+
 @optional
 
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
@@ -36,6 +46,10 @@
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
+
+// FBPB specific
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser likePhotoAtIndex:(NSUInteger)index;
+// END FBPB
 
 @end
 
@@ -67,5 +81,12 @@
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
+
+// FBPB specific
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *commentsButton;
+- (IBAction)commentsButtonPressed:(id)sender;
+- (void)updateLikesForPhotoIndex:(NSUInteger)index;
+- (void)swiped:(UIPanGestureRecognizer *)sender;
+// END FBPB
 
 @end
