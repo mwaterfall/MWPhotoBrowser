@@ -456,9 +456,19 @@
 }
 
 - (void)willMoveToParentViewController:(UIViewController *)parent {
+    [super willMoveToParentViewController:parent];
+    
     if (parent && _hasBelongedToViewController) {
         [NSException raise:@"MWPhotoBrowser Instance Reuse" format:@"MWPhotoBrowser instances cannot be reused."];
     }
+    
+    // FBPB specific
+    
+    // Check if popping back to album or friend
+    if (parent == nil) {
+        [_delegate scrollToPhotoAtIndex:(NSUInteger)_currentPageIndex];
+    }
+    // FBPB END
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent {
@@ -1688,14 +1698,6 @@
 }
 
 // FBPB specific
-- (void)willMoveToParentViewController:(UIViewController *)parent {
-    [super willMoveToParentViewController:parent];
-
-    // Check if popping back to album or friend
-    if (parent == nil) {
-        [_delegate scrollToPhotoAtIndex:(NSUInteger)_currentPageIndex];
-    }
-}
 
 - (void)likeButtonPressed:(id)sender {
     [_delegate photoBrowser:self toggleLikePhotoAtIndex:_currentPageIndex];
