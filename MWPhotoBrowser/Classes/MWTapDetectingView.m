@@ -10,8 +10,6 @@
 
 @implementation MWTapDetectingView
 
-@synthesize tapDelegate;
-
 - (id)init {
 	if ((self = [super init])) {
 		self.userInteractionEnabled = YES;
@@ -42,38 +40,22 @@
 		default:
 			break;
 	}
-	// Doesnt work in iOS 3
-	//	switch (tapCount) {
-	//		case 1:
-	//			[self performSelector:@selector(handleSingleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		case 2:
-	//			[NSObject cancelPreviousPerformRequestsWithTarget:self];
-	//			[self performSelector:@selector(handleDoubleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		case 3:
-	//			[NSObject cancelPreviousPerformRequestsWithTarget:self];
-	//			[self performSelector:@selector(handleTripleTap:) withObject:touch afterDelay:0.2];
-	//			break;
-	//		default:
-	//			break;
-	//	}
 	[[self nextResponder] touchesEnded:touches withEvent:event];
 }
 
 - (void)handleSingleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:singleTapDetected:)])
-		[tapDelegate view:self singleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:singleTapDetected:)])
+		[_tapDelegate view:self singleTapDetected:touch];
 }
 
 - (void)handleDoubleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:doubleTapDetected:)])
-		[tapDelegate view:self doubleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:doubleTapDetected:)])
+		[_tapDelegate view:self doubleTapDetected:touch];
 }
 
 - (void)handleTripleTap:(UITouch *)touch {
-	if ([tapDelegate respondsToSelector:@selector(view:tripleTapDetected:)])
-		[tapDelegate view:self tripleTapDetected:touch];
+	if ([_tapDelegate respondsToSelector:@selector(view:tripleTapDetected:)])
+		[_tapDelegate view:self tripleTapDetected:touch];
 }
 
 @end

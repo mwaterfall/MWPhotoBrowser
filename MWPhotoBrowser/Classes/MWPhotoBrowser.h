@@ -19,34 +19,53 @@
 #define MWLog(x, ...)
 #endif
 
-// Delgate
 @class MWPhotoBrowser;
+
 @protocol MWPhotoBrowserDelegate <NSObject>
+
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
-- (id<MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
+
 @optional
+
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
+- (NSString *)photoBrowser:(MWPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didDisplayPhotoAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index;
+- (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
+- (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
+
 @end
 
-// MWPhotoBrowser
-@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate> {
-    __weak id <MWPhotoBrowserDelegate> _delegate;
-}
+@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
-// Properties
-@property (nonatomic, weak) id <MWPhotoBrowserDelegate> delegate;
+@property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
+@property (nonatomic) BOOL zoomPhotosToFill;
+@property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic) BOOL displaySelectionButtons;
+@property (nonatomic) BOOL alwaysShowControls;
+@property (nonatomic) BOOL enableGrid;
+@property (nonatomic) BOOL enableSwipeToDismiss;
+@property (nonatomic) BOOL startOnGrid;
+@property (nonatomic) NSUInteger delayToHideElements;
+@property (nonatomic, readonly) NSUInteger currentIndex;
 
 // Init
-- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated)); // Depreciated
+- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
 
 // Reloads the photo browser and refetches data
 - (void)reloadData;
 
 // Set page that photo browser starts on
-- (void)setInitialPageIndex:(NSUInteger)index;
+- (void)setCurrentPhotoIndex:(NSUInteger)index;
+- (void)setInitialPageIndex:(NSUInteger)index  __attribute__((deprecated("Use setCurrentPhotoIndex: instead"))); // Depreciated
+
+// Navigation
+- (void)showNextPhotoAnimated:(BOOL)animated;
+- (void)showPreviousPhotoAnimated:(BOOL)animated;
 
 @end
-
-
