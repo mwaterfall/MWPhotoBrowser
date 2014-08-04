@@ -145,7 +145,7 @@
     if (!_enableGrid) _startOnGrid = NO;
 	
 	// View
-	self.view.backgroundColor = [UIColor blackColor];
+	self.view.backgroundColor = [UIColor whiteColor];
     self.view.clipsToBounds = YES;
 	
 	// Setup paging scrolling view
@@ -156,13 +156,13 @@
 	_pagingScrollView.delegate = self;
 	_pagingScrollView.showsHorizontalScrollIndicator = NO;
 	_pagingScrollView.showsVerticalScrollIndicator = NO;
-	_pagingScrollView.backgroundColor = [UIColor blackColor];
+	_pagingScrollView.backgroundColor = [UIColor whiteColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
 	
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-    _toolbar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+//    _toolbar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
     if ([_toolbar respondsToSelector:@selector(setBarTintColor:)]) {
         _toolbar.barTintColor = nil;
     }
@@ -170,7 +170,7 @@
         [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
         [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsLandscapePhone];
     }
-    _toolbar.barStyle = UIBarStyleBlackTranslucent;
+//    _toolbar.barStyle = UIBarStyleBlackTranslucent;
     _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     
     // Toolbar Items
@@ -186,7 +186,20 @@
     }
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
+
+        // FBPB specific
+        _likeButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Like"] style:UIBarButtonItemStylePlain target:self action:@selector(likeButtonPressed:)];
+        _likesLabel = [[UILabel alloc] initWithFrame:CGRectMake(5.f, 5.f, 20.f, 20.f)];
+        _likesButton = [[UIBarButtonItem alloc] initWithCustomView:_likesLabel];
+        //_commentsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"comments"] style:UIBarButtonItemStylePlain target:self action:@selector(commentsButtonPressed:)];
+        // END FBPB
     }
+    
+    // FBPB specific
+    // add swipe down gesture to close window
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(swiped:)];
+    [self.view addGestureRecognizer:panGesture];
+    // END FBPB
     
     // Update
     [self reloadData];
@@ -251,7 +264,18 @@
     fixedSpace.width = 32; // To balance action button
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     NSMutableArray *items = [[NSMutableArray alloc] init];
+    
+    // FBPB specific
+    bool displayLikeButton = [_delegate respondsToSelector:@selector(photoBrowser:toggleLikePhotoAtIndex:)];
+    bool displayLikesButton = [_delegate respondsToSelector:@selector(likesForPhotoAtIndex:)];
+    bool displayCommentsButton = [_delegate respondsToSelector:@selector(photoBrowser:displayCommentsForPhotoAtIndex:withSegue:)];
 
+    if (_displayActionButton && !displayLikeButton && !displayCommentsButton) [items addObject:fixedSpace];
+    if (displayLikeButton) [items addObject:_likeButton];
+    if (displayLikesButton) [items addObject:_likesButton];
+    if (displayCommentsButton) [items addObject:_commentsButton];
+    // END FBPB
+    
     // Left button - Grid
     if (_enableGrid) {
         hasItems = YES;
@@ -259,7 +283,7 @@
         if (SYSTEM_VERSION_LESS_THAN(@"7")) buttonName = @"UIBarButtonItemGridiOS6";
         [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"MWPhotoBrowser.bundle/images/%@.png", buttonName]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
-        [items addObject:fixedSpace];
+//        [items addObject:fixedSpace];
     }
 
     // Middle - Nav
@@ -432,9 +456,19 @@
 }
 
 - (void)willMoveToParentViewController:(UIViewController *)parent {
+    [super willMoveToParentViewController:parent];
+    
     if (parent && _hasBelongedToViewController) {
         [NSException raise:@"MWPhotoBrowser Instance Reuse" format:@"MWPhotoBrowser instances cannot be reused."];
     }
+    
+    // FBPB specific
+    
+    // Check if popping back to album or friend
+    if (parent == nil) {
+        [_delegate scrollToPhotoAtIndex:(NSUInteger)_currentPageIndex];
+    }
+    // FBPB END
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent {
@@ -446,13 +480,13 @@
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+//    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
         navBar.shadowImage = nil;
     }
     navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
+//    navBar.barStyle = UIBarStyleBlackTranslucent;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
         [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
@@ -1087,6 +1121,11 @@
 	_nextButton.enabled = (_currentPageIndex < numberOfPhotos - 1);
     _actionButton.enabled = [[self photoAtIndex:_currentPageIndex] underlyingImage] != nil;
 	
+    // FBPB specific
+    [self updateLikesForPhotoIndex:_currentPageIndex];
+
+    [_delegate photoBrowser:self didDisplayPhotoAtIndex:_currentPageIndex];
+    // END FBPB
 }
 
 - (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated {
@@ -1461,13 +1500,13 @@
         id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
         if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
             
-            // If they have defined a delegate method then just message them
-            if ([self.delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
-                
+            // DISABLED: I ONLY WANT TO BE NOTIFIED. If they have defined a delegate method then just message them
+            //if ([self.delegate respondsToSelector:@selector(photoBrowser:actionButtonPressedForPhotoAtIndex:)]) {
+            
                 // Let delegate handle things
                 [self.delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
                 
-            } else {
+            //} else {
                 
                 // Handle default actions
                 if (SYSTEM_VERSION_LESS_THAN(@"6")) {
@@ -1483,7 +1522,7 @@
                                                                otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil];
                     }
                     _actionsSheet.tag = ACTION_SHEET_OLD_ACTIONS;
-                    _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+//                    _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
                     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
                         [_actionsSheet showFromBarButtonItem:sender animated:YES];
                     } else {
@@ -1519,7 +1558,7 @@
                     
                 }
                 
-            }
+            //}
             
             // Keep controls hidden
             [self setControlsHidden:NO animated:YES permanent:YES];
@@ -1657,5 +1696,56 @@
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+// FBPB specific
+
+- (void)likeButtonPressed:(id)sender {
+    [_delegate photoBrowser:self toggleLikePhotoAtIndex:_currentPageIndex];
+}
+
+- (void)updateLikesForPhotoIndex:(NSUInteger)index {
+    if ([_delegate respondsToSelector:@selector(likesForPhotoAtIndex:)]) {
+        NSInteger likes = [_delegate likesForPhotoAtIndex:index];
+
+        if (likes >= 500) {
+            _likesLabel.text = @"500+";
+        } else {
+            _likesLabel.text = [NSString stringWithFormat:@"%d", likes];
+        }
+    }
+    if ([_delegate respondsToSelector:@selector(likedForPhotoAtIndex:)]) {
+        _likeButton.image = ([_delegate likedForPhotoAtIndex:index]) ? [UIImage imageNamed:@"LikeFill"] : [UIImage imageNamed:@"Like"];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    [_delegate photoBrowser:self displayCommentsForPhotoAtIndex:_currentPageIndex withSegue:segue];
+}
+
+- (void)commentsButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:@"openComments" sender:sender];
+}
+
+- (void)swiped:(UIPanGestureRecognizer *)sender {
+    CGPoint currentLocation = [sender locationInView:self.view];
+    CGFloat dy = currentLocation.y - _startLocation.y;
+    
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        _originalScrollViewOrigin = _pagingScrollView.bounds.origin;
+        _startLocation = [sender locationInView:self.view];
+    }
+    else if (sender.state == UIGestureRecognizerStateEnded) {
+        if (abs(dy) > 80.0) {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            [UIView animateWithDuration:1.0/80.0*dy delay:0.0 usingSpringWithDamping:0.5 initialSpringVelocity:0.0 options:0 animations:^{
+                _pagingScrollView.bounds = CGRectMake(_originalScrollViewOrigin.x, _originalScrollViewOrigin.y, _pagingScrollView.bounds.size.width, _pagingScrollView.bounds.size.height);
+            } completion:nil];
+        }
+    } else {
+        _pagingScrollView.bounds = CGRectMake(_originalScrollViewOrigin.x, _originalScrollViewOrigin.y-dy, _pagingScrollView.bounds.size.width, _pagingScrollView.bounds.size.height);
+    }
+}
+// END FBPB
 
 @end
