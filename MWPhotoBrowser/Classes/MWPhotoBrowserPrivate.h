@@ -47,6 +47,7 @@
     BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
+    NSDictionary *_previousNavBarTitleAttributes;
     UIColor *_previousNavBarTintColor;
     UIColor *_previousNavBarBarTintColor;
     UIBarButtonItem *_previousViewControllerBackButton;
