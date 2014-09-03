@@ -1515,7 +1515,11 @@
                         [weakSelf hideControlsAfterDelay];
                         [weakSelf hideProgressHUD:YES];
                     }];
-                    [self presentViewController:self.activityViewController animated:YES completion:nil];
+					UIViewController *presenter = self;
+					if ([_delegate respondsToSelector:@selector(presenterForModalViewControllers)]) {
+						presenter = [_delegate presenterForModalViewControllers];
+					}
+                    [presenter presentViewController:self.activityViewController animated:YES completion:nil];
                     
                 }
                 
@@ -1643,7 +1647,11 @@
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
         }
-        [self presentViewController:emailer animated:YES completion:nil];
+		UIViewController *presenter = self;
+		if ([_delegate respondsToSelector:@selector(presenterForModalViewControllers)]) {
+			presenter = [_delegate presenterForModalViewControllers];
+		}
+        [presenter presentViewController:emailer animated:YES completion:nil];
         [self hideProgressHUD:NO];
     }
 }
@@ -1655,7 +1663,7 @@
                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil];
 		[alert show];
     }
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [controller.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
