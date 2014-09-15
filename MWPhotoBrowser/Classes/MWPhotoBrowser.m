@@ -1515,6 +1515,10 @@
                         [weakSelf hideControlsAfterDelay];
                         [weakSelf hideProgressHUD:YES];
                     }];
+                    // iOS 8 - Set the Anchor Point for the popover
+                    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+                        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
+                    }
                     [self presentViewController:self.activityViewController animated:YES completion:nil];
                     
                 }
