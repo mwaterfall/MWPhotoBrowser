@@ -75,6 +75,7 @@
     _startOnGrid = NO;
     _enableSwipeToDismiss = YES;
     _delayToHideElements = 5;
+    _enableStatusBarControl = YES;
     _visiblePages = [[NSMutableSet alloc] init];
     _recycledPages = [[NSMutableSet alloc] init];
     _photos = [[NSMutableArray alloc] init];
@@ -182,7 +183,9 @@
             arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrow%@.png";
         }
         _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Left"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
+        _previousButton.accessibilityLabel = [NSBundle mw_localizedStringForKey:@"Previous photo"];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Right"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
+        _nextButton.accessibilityLabel = [NSBundle mw_localizedStringForKey:@"Next photo"];
     }
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
@@ -216,7 +219,7 @@
     // Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
-        _doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
+        _doneButton = [[UIBarButtonItem alloc] initWithTitle:[NSBundle mw_localizedStringForKey:@"Done"] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
         // Set appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
             [_doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -349,28 +352,30 @@
 	[super viewWillAppear:animated];
     
     // Status bar
-    if ([UIViewController instancesRespondToSelector:@selector(prefersStatusBarHidden)]) {
-        _leaveStatusBarAlone = [self presentingViewControllerPrefersStatusBarHidden];
-    } else {
-        _leaveStatusBarAlone = [UIApplication sharedApplication].statusBarHidden;
-    }
-    if (CGRectEqualToRect([[UIApplication sharedApplication] statusBarFrame], CGRectZero)) {
-        // If the frame is zero then definitely leave it alone
-        _leaveStatusBarAlone = YES;
-    }
-    BOOL fullScreen = YES;
+    if (self.enableStatusBarControl) {
+        if ([UIViewController instancesRespondToSelector:@selector(prefersStatusBarHidden)]) {
+            _leaveStatusBarAlone = [self presentingViewControllerPrefersStatusBarHidden];
+        } else {
+            _leaveStatusBarAlone = [UIApplication sharedApplication].statusBarHidden;
+        }
+        if (CGRectEqualToRect([[UIApplication sharedApplication] statusBarFrame], CGRectZero)) {
+            // If the frame is zero then definitely leave it alone
+            _leaveStatusBarAlone = YES;
+        }
+        BOOL fullScreen = YES;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
+        if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
 #endif
-    if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
-        if (SYSTEM_VERSION_LESS_THAN(@"7")) {
+        if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+            if (SYSTEM_VERSION_LESS_THAN(@"7")) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
 #pragma clang diagnostic push
-        } else {
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
+            } else {
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
+            }
         }
     }
     
@@ -413,12 +418,14 @@
     [self setControlsHidden:NO animated:NO permanent:YES];
     
     // Status bar
-    BOOL fullScreen = YES;
+    if (self.enableStatusBarControl) {
+        BOOL fullScreen = YES;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
+        if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
 #endif
-    if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
+        if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
+        }
     }
     
 	// Super
@@ -1062,13 +1069,13 @@
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
         if (_gridController.selectionMode) {
-            self.title = NSLocalizedString(@"Select Photos", nil);
+            self.title = [NSBundle mw_localizedStringForKey:@"Select Photos"];
         } else {
             NSString *photosText;
             if (numberOfPhotos == 1) {
-                photosText = NSLocalizedString(@"photo", @"Used in the context: '1 photo'");
+                photosText = [NSBundle mw_localizedStringForKey:@"photo"];
             } else {
-                photosText = NSLocalizedString(@"photos", @"Used in the context: '3 photos'");
+                photosText = [NSBundle mw_localizedStringForKey:@"photos"];
             }
             self.title = [NSString stringWithFormat:@"%lu %@", (unsigned long)numberOfPhotos, photosText];
         }
@@ -1076,7 +1083,7 @@
         if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
-            self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedString(@"of", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
+            self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), [NSBundle mw_localizedStringForKey:@"of"], (unsigned long)numberOfPhotos];
         }
 	} else {
 		self.title = nil;
@@ -1475,12 +1482,12 @@
                     // Old handling of activities with action sheet
                     if ([MFMailComposeViewController canSendMail]) {
                         _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                               cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                               otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), NSLocalizedString(@"Email", nil), nil];
+                                                               cancelButtonTitle:[NSBundle mw_localizedStringForKey:@"Cancel"] destructiveButtonTitle:nil
+                                                               otherButtonTitles:[NSBundle mw_localizedStringForKey:@"Save"], [NSBundle mw_localizedStringForKey:@"Copy"], [NSBundle mw_localizedStringForKey:@"Email"], nil];
                     } else {
                         _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                               cancelButtonTitle:NSLocalizedString(@"Cancel", nil) destructiveButtonTitle:nil
-                                                               otherButtonTitles:NSLocalizedString(@"Save", nil), NSLocalizedString(@"Copy", nil), nil];
+                                                               cancelButtonTitle:[NSBundle mw_localizedStringForKey:@"Cancel"] destructiveButtonTitle:nil
+                                                               otherButtonTitles:[NSBundle mw_localizedStringForKey:@"Save"], [NSBundle mw_localizedStringForKey:@"Copy"], nil];
                     }
                     _actionsSheet.tag = ACTION_SHEET_OLD_ACTIONS;
                     _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
@@ -1596,7 +1603,7 @@
 - (void)savePhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedString(@"Saving", @"Displayed with ellipsis as 'Saving...' when an item is in the process of being saved")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , [NSBundle mw_localizedStringForKey:@"Saving"]]];
         [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1609,14 +1616,14 @@
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    [self showProgressHUDCompleteMessage: error ? NSLocalizedString(@"Failed", @"Informing the user a process has failed") : NSLocalizedString(@"Saved", @"Informing the user an item has been saved")];
+    [self showProgressHUDCompleteMessage: error ? [NSBundle mw_localizedStringForKey:@"Failed"] : [NSBundle mw_localizedStringForKey:@"Saved"]];
     [self hideControlsAfterDelay]; // Continue as normal...
 }
 
 - (void)copyPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedString(@"Copying", @"Displayed with ellipsis as 'Copying...' when an item is in the process of being copied")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , [NSBundle mw_localizedStringForKey:@"Copying"]]];
         [self performSelector:@selector(actuallyCopyPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1625,7 +1632,7 @@
     if ([photo underlyingImage]) {
         [[UIPasteboard generalPasteboard] setData:UIImagePNGRepresentation([photo underlyingImage])
                                 forPasteboardType:@"public.png"];
-        [self showProgressHUDCompleteMessage:NSLocalizedString(@"Copied", @"Informing the user an item has finished copying")];
+        [self showProgressHUDCompleteMessage:[NSBundle mw_localizedStringForKey:@"Copied"]];
         [self hideControlsAfterDelay]; // Continue as normal...
     }
 }
@@ -1633,7 +1640,7 @@
 - (void)emailPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedString(@"Preparing", @"Displayed with ellipsis as 'Preparing...' when an item is in the process of being prepared")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , [NSBundle mw_localizedStringForKey:@"Preparing"]]];
         [self performSelector:@selector(actuallyEmailPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1642,7 +1649,7 @@
     if ([photo underlyingImage]) {
         MFMailComposeViewController *emailer = [[MFMailComposeViewController alloc] init];
         emailer.mailComposeDelegate = self;
-        [emailer setSubject:NSLocalizedString(@"Photo", nil)];
+        [emailer setSubject:[NSBundle mw_localizedStringForKey:@"Photo"]];
         [emailer addAttachmentData:UIImagePNGRepresentation([photo underlyingImage]) mimeType:@"png" fileName:@"Photo.png"];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
@@ -1654,9 +1661,9 @@
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     if (result == MFMailComposeResultFailed) {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Email", nil)
-                                                         message:NSLocalizedString(@"Email failed to send. Please try again.", nil)
-                                                        delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSBundle mw_localizedStringForKey:@"Email"]
+                                                         message:[NSBundle mw_localizedStringForKey:@"Email failed to send. Please try again."]
+                                                        delegate:nil cancelButtonTitle:[NSBundle mw_localizedStringForKey:@"Dismiss"] otherButtonTitles:nil];
 		[alert show];
     }
     [self dismissViewControllerAnimated:YES completion:nil];
