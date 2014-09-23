@@ -1515,6 +1515,13 @@
                         [weakSelf hideControlsAfterDelay];
                         [weakSelf hideProgressHUD:YES];
                     }];
+
+                    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+                        UIPopoverPresentationController *popover = self.activityViewController.popoverPresentationController;
+                        popover.barButtonItem = _actionButton;
+                        popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
+                    }
+                    
                     [self presentViewController:self.activityViewController animated:YES completion:nil];
                     
                 }
