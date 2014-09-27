@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, readonly) UIImage *image;
 @property (nonatomic, readonly) NSURL *photoURL;
+@property (nonatomic, strong) NSString *referer;
 @property (nonatomic, readonly) NSString *filePath  __attribute__((deprecated("Use photoURL"))); // Depreciated
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
@@ -29,4 +30,3 @@
 - (id)initWithFilePath:(NSString *)path  __attribute__((deprecated("Use initWithURL: with a file URL"))); // Depreciated
 
 @end
-

@@ -155,6 +155,9 @@
             // Load async from web (using SDWebImage)
             @try {
                 SDWebImageManager *manager = [SDWebImageManager sharedManager];
+                if (self.referer) {
+                    [manager.imageDownloader setValue:self.referer forHTTPHeaderField:@"Referer"];
+                }
                 _webImageOperation = [manager downloadImageWithURL:_photoURL
                                                            options:0
                                                           progress:^(NSInteger receivedSize, NSInteger expectedSize) {
