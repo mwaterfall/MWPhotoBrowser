@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E17D76417FAEADE0094ABF6 /* NSData+GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E17D74717FAEADE0094ABF6 /* NSData+GIF.h */; };
+		0E17D76517FAEADE0094ABF6 /* NSData+GIF.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D74817FAEADE0094ABF6 /* NSData+GIF.m */; };
 		0E17D76617FAEADE0094ABF6 /* SDImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E17D74917FAEADE0094ABF6 /* SDImageCache.h */; };
 		0E17D76717FAEADE0094ABF6 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E17D74A17FAEADE0094ABF6 /* SDImageCache.m */; };
 		0E17D76817FAEADE0094ABF6 /* SDWebImageCompat.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E17D74B17FAEADE0094ABF6 /* SDWebImageCompat.h */; };
@@ -96,6 +98,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E17D74717FAEADE0094ABF6 /* NSData+GIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+GIF.h"; path = "Libraries/SDWebImage/SDWebImage/NSData+GIF.h"; sourceTree = SOURCE_ROOT; };
+		0E17D74817FAEADE0094ABF6 /* NSData+GIF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+GIF.m"; path = "Libraries/SDWebImage/SDWebImage/NSData+GIF.m"; sourceTree = SOURCE_ROOT; };
 		0E17D74917FAEADE0094ABF6 /* SDImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDImageCache.h; path = Libraries/SDWebImage/SDWebImage/SDImageCache.h; sourceTree = SOURCE_ROOT; };
 		0E17D74A17FAEADE0094ABF6 /* SDImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDImageCache.m; path = Libraries/SDWebImage/SDWebImage/SDImageCache.m; sourceTree = SOURCE_ROOT; };
 		0E17D74B17FAEADE0094ABF6 /* SDWebImageCompat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDWebImageCompat.h; path = Libraries/SDWebImage/SDWebImage/SDWebImageCompat.h; sourceTree = SOURCE_ROOT; };
@@ -331,6 +335,8 @@
 		4C6F96F114AF70F500F8389A /* SDWebImage (3.5) */ = {
 			isa = PBXGroup;
 			children = (
+				0E17D74717FAEADE0094ABF6 /* NSData+GIF.h */,
+				0E17D74817FAEADE0094ABF6 /* NSData+GIF.m */,
 				0E17D74917FAEADE0094ABF6 /* SDImageCache.h */,
 				0E17D74A17FAEADE0094ABF6 /* SDImageCache.m */,
 				0E17D74B17FAEADE0094ABF6 /* SDWebImageCompat.h */,
@@ -392,6 +398,7 @@
 				0E8515C117FC77D200FE1EF3 /* DACircularProgressView.h in Headers */,
 				0E3D58BF180474330000E3A0 /* PSTCollectionViewController.h in Headers */,
 				0E17D76817FAEADE0094ABF6 /* SDWebImageCompat.h in Headers */,
+				0E17D76417FAEADE0094ABF6 /* NSData+GIF.h in Headers */,
 				0E3D58C7180474330000E3A0 /* PSTCollectionViewLayout+Internals.h in Headers */,
 				0E17D77B17FAEADE0094ABF6 /* UIImage+WebP.h in Headers */,
 				0E17D77217FAEADE0094ABF6 /* SDWebImageOperation.h in Headers */,
@@ -461,7 +468,7 @@
 		4C6F96BB14AF704100F8389A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 4C6F96BE14AF704100F8389A /* Build configuration list for PBXProject "MWPhotoBrowser" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -504,6 +511,7 @@
 				0E17D76B17FAEADE0094ABF6 /* SDWebImageDecoder.m in Sources */,
 				0E17D77E17FAEADE0094ABF6 /* UIImageView+WebCache.m in Sources */,
 				4C6F96E714AF70BD00F8389A /* MWPhotoBrowser.m in Sources */,
+				0E17D76517FAEADE0094ABF6 /* NSData+GIF.m in Sources */,
 				0E3D58CF180474330000E3A0 /* PSTGridLayoutItem.m in Sources */,
 				0E17D76D17FAEADE0094ABF6 /* SDWebImageDownloader.m in Sources */,
 				0E3D58D718047B600000E3A0 /* MWGridCell.m in Sources */,
@@ -537,10 +545,8 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -577,10 +583,8 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -612,10 +616,8 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

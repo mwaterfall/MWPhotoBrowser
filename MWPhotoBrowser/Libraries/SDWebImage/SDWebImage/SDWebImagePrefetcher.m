@@ -8,10 +8,6 @@
 
 #import "SDWebImagePrefetcher.h"
 
-#if !defined(DEBUG) && !defined (SD_VERBOSE)
-#define NSLog(...)
-#endif
-
 @interface SDWebImagePrefetcher ()
 
 @property (strong, nonatomic) SDWebImageManager *manager;
@@ -56,7 +52,7 @@
 - (void)startPrefetchingAtIndex:(NSUInteger)index {
     if (index >= self.prefetchURLs.count) return;
     self.requestedCount++;
-    [self.manager downloadImageWithURL:self.prefetchURLs[index] options:self.options progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+    [self.manager downloadWithURL:self.prefetchURLs[index] options:self.options progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
         if (!finished) return;
         self.finishedCount++;
 
@@ -64,13 +60,17 @@
             if (self.progressBlock) {
                 self.progressBlock(self.finishedCount,[self.prefetchURLs count]);
             }
-            NSLog(@"Prefetched %@ out of %@", @(self.finishedCount), @(self.prefetchURLs.count));
+#ifdef SD_VERBOSE
+            NSLog(@"Prefetched %d out of %d", self.finishedCount, self.prefetchURLs.count);
+#endif
         }
         else {
             if (self.progressBlock) {
                 self.progressBlock(self.finishedCount,[self.prefetchURLs count]);
             }
-            NSLog(@"Prefetched %@ out of %@ (Failed)", @(self.finishedCount), @(self.prefetchURLs.count));
+#ifdef SD_VERBOSE
+            NSLog(@"Prefetched %d out of %d (Failed)", self.finishedCount, [self.prefetchURLs count]);
+#endif
 
             // Add last failed
             self.skippedCount++;
@@ -84,11 +84,9 @@
         }
 
         if (self.prefetchURLs.count > self.requestedCount) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self startPrefetchingAtIndex:self.requestedCount];
-            });
+            [self startPrefetchingAtIndex:self.requestedCount];
         }
-        else if (self.finishedCount == self.requestedCount) {
+        else if (self.finishedCount + self.skippedCount == self.requestedCount) {
             [self reportStatus];
             if (self.completionBlock) {
                 self.completionBlock(self.finishedCount, self.skippedCount);
@@ -100,7 +98,9 @@
 
 - (void)reportStatus {
     NSUInteger total = [self.prefetchURLs count];
-    NSLog(@"Finished prefetching (%@ successful, %@ skipped, timeElasped %.2f)", @(total - self.skippedCount), @(self.skippedCount), CFAbsoluteTimeGetCurrent() - self.startedTime);
+#ifdef SD_VERBOSE
+    NSLog(@"Finished prefetching (%d successful, %d skipped, timeElasped %.2f)", total - self.skippedCount, self.skippedCount, CFAbsoluteTimeGetCurrent() - self.startedTime);
+#endif
     if ([self.delegate respondsToSelector:@selector(imagePrefetcher:didFinishWithTotalCount:skippedCount:)]) {
         [self.delegate imagePrefetcher:self
                didFinishWithTotalCount:(total - self.skippedCount)
