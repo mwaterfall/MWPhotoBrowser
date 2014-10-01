@@ -6,6 +6,7 @@
 //
 //
 
+#import <MediaPlayer/MediaPlayer.h>
 #import "MWGridViewController.h"
 #import "MWGridCell.h"
 #import "MWPhotoBrowserPrivate.h"
@@ -158,6 +159,10 @@
         cell = [[MWGridCell alloc] init];
     }
     id <MWPhoto> photo = [_browser thumbPhotoAtIndex:indexPath.row];
+    
+    if([(MWPhoto*)photo isVideo])cell.isVideo=YES;
+    else cell.isVideo=NO;
+    
     cell.photo = photo;
     cell.gridController = self;
     cell.selectionMode = _selectionMode;
@@ -173,8 +178,20 @@
 }
 
 - (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [_browser setCurrentPhotoIndex:indexPath.row];
-    [_browser hideGrid];
+    
+    id <MWPhoto> archive = [_browser photoAtIndex:indexPath.row];
+    
+    if([(MWPhoto*)archive isVideo]){
+    
+        NSURL *movieURL=[(MWPhoto*)archive photoURL];
+        MPMoviePlayerViewController *moviePlayerController =[[MPMoviePlayerViewController alloc] initWithContentURL:movieURL];
+        [self presentMoviePlayerViewControllerAnimated:moviePlayerController];
+        [moviePlayerController.moviePlayer play];
+        
+    }else{
+        [_browser setCurrentPhotoIndex:indexPath.row];
+        [_browser hideGrid];
+    }
 }
 
 - (void)collectionView:(PSTCollectionView *)collectionView didEndDisplayingCell:(PSTCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {

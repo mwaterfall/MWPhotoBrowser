@@ -34,9 +34,21 @@
 	return [[MWPhoto alloc] initWithImage:image];
 }
 
++ (MWPhoto *)videoWithImage:(UIImage *)image {
+    MWPhoto *video=[MWPhoto alloc];
+    video.isVideo=YES;
+    return [video initWithImage:image];
+}
+
 // Deprecated
 + (MWPhoto *)photoWithFilePath:(NSString *)path {
     return [MWPhoto photoWithURL:[NSURL fileURLWithPath:path]];
+}
+
++ (MWPhoto *)videoWithURL:(NSURL *)url {
+    MWPhoto *video=[MWPhoto alloc];
+    video.isVideo=YES;
+    return [video initWithURL:url];
 }
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {

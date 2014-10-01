@@ -14,6 +14,7 @@
 @interface MWGridCell () {
     
     UIImageView *_imageView;
+    UIImageView *_imageVideoIconView;
     UIImageView *_loadingError;
 	DACircularProgressView *_loadingIndicator;
     UIButton *_selectedButton;
@@ -37,6 +38,14 @@
         _imageView.clipsToBounds = YES;
         _imageView.autoresizesSubviews = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self addSubview:_imageView];
+        
+        // Image video icon
+        _imageVideoIconView = [UIImageView new];
+        _imageVideoIconView.frame = CGRectMake(0,0, 15, 10);
+        _imageVideoIconView.contentMode = UIViewContentModeBottomLeft;
+        [_imageVideoIconView setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageVideo.png"]];
+        _imageVideoIconView.hidden=YES;
+        [self addSubview:_imageVideoIconView];
         
         // Selection button
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -91,6 +100,8 @@
                                          _loadingIndicator.frame.size.height);
     _selectedButton.frame = CGRectMake(self.bounds.size.width - _selectedButton.frame.size.width - 0,
                                        0, _selectedButton.frame.size.width, _selectedButton.frame.size.height);
+    
+    _imageVideoIconView.frame = CGRectMake(10,self.bounds.size.height- _imageVideoIconView.frame.size.height-10, _imageVideoIconView.frame.size.width, _imageVideoIconView.frame.size.height);
 }
 
 #pragma mark - Cell
@@ -99,6 +110,7 @@
     _photo = nil;
     _gridController = nil;
     _imageView.image = nil;
+    _imageVideoIconView.hidden=YES;
     _loadingIndicator.progress = 0;
     _selectedButton.hidden = YES;
     [self hideImageFailure];
@@ -126,6 +138,15 @@
     [self hideImageFailure];
 }
 
+#pragma mark - Video
+- (void)setIsVideo:(BOOL)isVideo {
+    _isVideo = isVideo;
+    if(isVideo){
+        _imageVideoIconView.hidden=NO;
+    }else{
+        _imageVideoIconView.hidden=YES;
+    }
+}
 #pragma mark - Selection
 
 - (void)setSelectionMode:(BOOL)selectionMode {
