@@ -50,6 +50,7 @@ browser.displayNavArrows = NO; // Whether to display left and right nav arrows o
 browser.displaySelectionButtons = NO; // Whether selection buttons are shown on each image (defaults to NO)
 browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be initially zoomed to fill (defaults to YES)
 browser.alwaysShowControls = NO; // Allows to control whether the bars and controls are always visible or whether they fade away to show the photo full (defaults to NO)
+browser.hideControlsWhenDragging = YES; // Whether the bars and controls hide when swiping between photos (defaults to YES)
 browser.enableGrid = YES; // Whether to allow the viewing of all the photo thumbnails on a grid (defaults to YES)
 browser.startOnGrid = NO; // Whether to start on the grid of thumbnails instead of the first photo (defaults to NO)
 browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
