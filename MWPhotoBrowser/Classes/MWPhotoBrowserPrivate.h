@@ -44,6 +44,7 @@
     
     // Appearance
     BOOL _previousNavBarHidden;
+    BOOL _previousNavToolbarHidden;
     BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
     UIStatusBarStyle _previousStatusBarStyle;
@@ -109,6 +110,7 @@
 // Grid
 - (void)showGrid:(BOOL)animated;
 - (void)hideGrid;
+- (void)gridCellTouchedAtIndex:(NSUInteger)index;
 
 // Controls
 - (void)cancelControlHiding;
@@ -122,6 +124,7 @@
 - (id<MWPhoto>)photoAtIndex:(NSUInteger)index;
 - (id<MWPhoto>)thumbPhotoAtIndex:(NSUInteger)index;
 - (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
+- (BOOL)photoIsSelectableAtIndex:(NSInteger)index;
 - (BOOL)photoIsSelectedAtIndex:(NSUInteger)index;
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index;
 - (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo;

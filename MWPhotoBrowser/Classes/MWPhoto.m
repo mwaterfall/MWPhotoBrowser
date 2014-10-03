@@ -67,6 +67,7 @@
 	return self;
 }
 
+
 #pragma mark - MWPhoto Protocol Methods
 
 - (UIImage *)underlyingImage {

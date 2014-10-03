@@ -354,6 +354,9 @@
 #pragma mark - Tap Detection
 
 - (void)handleSingleTap:(CGPoint)touchPoint {
+    if ([_photoBrowser.delegate respondsToSelector:@selector(photoBrowser:didTapOnImageWithIndex:)]) {
+        [_photoBrowser.delegate photoBrowser:_photoBrowser didTapOnImageWithIndex:_photoBrowser.currentIndex];
+    }
 	[_photoBrowser performSelector:@selector(toggleControls) withObject:nil afterDelay:0.2];
 }
 
