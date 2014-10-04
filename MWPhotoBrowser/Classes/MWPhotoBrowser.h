@@ -51,6 +51,7 @@
 @property (nonatomic) BOOL enableSwipeToDismiss;
 @property (nonatomic) BOOL startOnGrid;
 @property (nonatomic) NSUInteger delayToHideElements;
+@property (nonatomic) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 // Init
