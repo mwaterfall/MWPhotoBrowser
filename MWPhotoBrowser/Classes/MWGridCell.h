@@ -18,6 +18,7 @@
 @property (nonatomic) id <MWPhoto> photo;
 @property (nonatomic) BOOL selectionMode;
 @property (nonatomic) BOOL isSelected;
+@property (nonatomic) BOOL isVideo;
 
 - (void)displayImage;
 
