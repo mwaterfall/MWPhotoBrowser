@@ -160,10 +160,14 @@
     }
     id <MWPhoto> photo = [_browser thumbPhotoAtIndex:indexPath.row];
     
-    if([(MWPhoto*)photo isVideo])cell.isVideo=YES;
-    else cell.isVideo=NO;
-    
     cell.photo = photo;
+    
+    if([(MWPhoto*)photo isVideo]){
+        cell.isVideo = YES;
+    }else{
+        cell.isVideo = NO;
+    }
+    
     cell.gridController = self;
     cell.selectionMode = _selectionMode;
     cell.isSelected = [_browser photoIsSelectedAtIndex:indexPath.row];

@@ -13,6 +13,7 @@
 
 @interface MWGridCell () {
     
+    UILabel *_labelDuration;
     UIImageView *_imageView;
     UIImageView *_imageVideoIconView;
     UIImageView *_loadingError;
@@ -41,11 +42,20 @@
         
         // Image video icon
         _imageVideoIconView = [UIImageView new];
-        _imageVideoIconView.frame = CGRectMake(0,0, 15, 10);
+        _imageVideoIconView.frame = CGRectMake(0, 0,15, 10);
         _imageVideoIconView.contentMode = UIViewContentModeBottomLeft;
         [_imageVideoIconView setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageVideo.png"]];
         _imageVideoIconView.hidden=YES;
         [self addSubview:_imageVideoIconView];
+        
+        //label duration
+        _labelDuration=[UILabel new];
+        _labelDuration.textAlignment=NSTextAlignmentRight;
+        _labelDuration.textColor=[UIColor whiteColor];
+        _labelDuration.minimumScaleFactor=0.0;
+        _labelDuration.font=[UIFont systemFontOfSize:11.0];
+        _labelDuration.frame = CGRectMake(self.frame.size.width-60, self.frame.size.height-22, 50, 15);
+        [self addSubview:_labelDuration];
         
         // Selection button
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -139,14 +149,24 @@
 }
 
 #pragma mark - Video
-- (void)setIsVideo:(BOOL)isVideo {
+- (void)setIsVideo:(BOOL)isVideo{
     _isVideo = isVideo;
     if(isVideo){
         _imageVideoIconView.hidden=NO;
+        _labelDuration.hidden=NO;
+        NSNumber *duration=[(MWPhoto*)_photo duration];
+        NSLog(@"dur:%@",duration);
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[duration doubleValue]];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"mm:ss"];
+        _labelDuration.text=[formatter stringFromDate:date];
+        
     }else{
         _imageVideoIconView.hidden=YES;
+        _labelDuration.hidden=YES;
     }
 }
+
 #pragma mark - Selection
 
 - (void)setSelectionMode:(BOOL)selectionMode {
