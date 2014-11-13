@@ -118,6 +118,7 @@
 	if (_photo && _photoImageView.image == nil) {
 		
 		// Reset
+		self.scrollEnabled = false;
 		self.maximumZoomScale = 1;
 		self.minimumZoomScale = 1;
 		self.zoomScale = 1;
