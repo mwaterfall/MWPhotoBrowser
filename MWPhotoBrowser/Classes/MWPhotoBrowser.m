@@ -449,8 +449,10 @@
     navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
-        navBar.shadowImage = nil;
     }
+	if ([navBar respondsToSelector:@selector(setShadowImage:)]) {
+		navBar.shadowImage = nil;
+	}
     navBar.translucent = YES;
     navBar.barStyle = UIBarStyleBlackTranslucent;
     if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
@@ -464,6 +466,9 @@
     if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
         _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     }
+	if ([UINavigationBar instancesRespondToSelector:@selector(shadowImage)]) {
+		_previousNavigationBarShadowImage = self.navigationController.navigationBar.shadowImage;
+	}
     _previousNavBarTranslucent = self.navigationController.navigationBar.translucent;
     _previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
     _previousNavBarHidden = self.navigationController.navigationBarHidden;
@@ -483,6 +488,9 @@
         if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
             navBar.barTintColor = _previousNavBarBarTintColor;
         }
+		if ([UINavigationBar instancesRespondToSelector:@selector(setShadowImage:)]) {
+			navBar.shadowImage = _previousNavigationBarShadowImage;
+		}
         navBar.barStyle = _previousNavBarStyle;
         if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
             [navBar setBackgroundImage:_previousNavigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
