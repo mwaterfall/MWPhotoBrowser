@@ -50,6 +50,7 @@
     UIColor *_previousNavBarTintColor;
     UIColor *_previousNavBarBarTintColor;
     UIBarButtonItem *_previousViewControllerBackButton;
+	UIImage *_previousNavigationBarShadowImage;
     UIImage *_previousNavigationBarBackgroundImageDefault;
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
     
