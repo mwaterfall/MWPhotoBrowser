@@ -89,7 +89,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 7;
+    NSInteger rows = 9;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -143,9 +143,19 @@
             cell.detailTextLabel.text = @"showing grid first";
             break;
         }
-		case 7: {
+        case 7: {
             cell.textLabel.text = @"Library photos";
             cell.detailTextLabel.text = @"photos from device library";
+            break;
+        }
+        case 8: {
+            cell.textLabel.text = @"Slideshow";
+            cell.detailTextLabel.text = @"Slideshow";
+            break;
+        }
+        case 9: {
+            cell.textLabel.text = @"Slideshow";
+            cell.detailTextLabel.text = @"Slideshow from Web";
             break;
         }
 		default: break;
@@ -168,6 +178,7 @@
     BOOL displayNavArrows = NO;
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
+    BOOL slideshow = NO;
 	switch (indexPath.row) {
 		case 0:
             // Photos
@@ -223,6 +234,7 @@
             displayNavArrows = YES;
 			break;
         }
+        case 8:
 		case 3:
 		case 4: {
             // Photos
@@ -245,7 +257,8 @@
 			[thumbs addObject:photo];
             // Options
             displayActionButton = NO;
-            displaySelectionButtons = YES;
+            displaySelectionButtons = indexPath.row != 8;
+            slideshow = indexPath.row == 8;
             startOnGrid = indexPath.row == 4;
             enableGrid = NO;
 			break;
@@ -265,7 +278,8 @@
 			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_q.jpg"]]];
             // Options
 			break;
-		case 6:
+        case 6:
+        case 9:
             // Photos & thumbs
             photo = [MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3779/9522424255_28a5a9d99c_b.jpg"]];
             photo.caption = @"Tube";
@@ -1016,7 +1030,8 @@
             [photos addObject:photo];
             [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm2.static.flickr.com/1235/1010416375_fe91e5ce22_q.jpg"]]];
             // Options
-            startOnGrid = YES;
+            startOnGrid = indexPath.row == 6;
+            slideshow = indexPath.row == 9;
 			break;
 		case 7: {
             @synchronized(_assets) {
@@ -1047,6 +1062,16 @@
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = YES;
     [browser setCurrentPhotoIndex:0];
+    
+    if (slideshow) {
+        browser.loopSlides = YES;
+        browser.startOnSlideShow = YES;
+        browser.displayPlayPauseButton = YES;
+        browser.displayNavArrows = YES;
+        browser.enableGrid = YES;
+        browser.alwaysShowCaption = YES;
+        browser.secondsPerSlide = 3.5;
+    }
     
     // Reset selections
     if (displaySelectionButtons) {
