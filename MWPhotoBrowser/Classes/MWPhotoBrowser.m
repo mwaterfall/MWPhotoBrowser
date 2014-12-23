@@ -67,6 +67,11 @@
     _previousPageIndex = NSUIntegerMax;
     _displayActionButton = YES;
     _displayNavArrows = NO;
+    _displayPlayPauseButton = NO;
+    _secondsPerSlide = 2.5f;
+    _loopSlides = NO;
+    _startOnSlideShow = NO;
+    _alwaysShowCaption = NO;
     _zoomPhotosToFill = YES;
     _performingLayout = NO; // Reset on view did appear
     _rotating = NO;
@@ -184,6 +189,12 @@
         _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Left"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Right"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
+    
+    if (self.displayPlayPauseButton) {
+        _playButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(playSlideshow)];
+        _pauseButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause target:self action:@selector(pauseSlideshow)];
+    }
+    
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
     }
@@ -263,7 +274,24 @@
     }
 
     // Middle - Nav
-    if (_previousButton && _nextButton && numberOfPhotos > 1) {
+    if (_playButton && _pauseButton && numberOfPhotos > 1) {
+        hasItems = YES;
+        
+        [items addObject:flexSpace];
+        if (_previousButton) {
+            [items addObject:_previousButton];
+            [items addObject:flexSpace];
+        }
+        
+        [items addObject:_playButton];
+        
+        if (_nextButton) {
+            [items addObject:flexSpace];
+            [items addObject:_nextButton];
+        }
+        [items addObject:flexSpace];
+    }
+    else if (_previousButton && _nextButton && numberOfPhotos > 1) {
         hasItems = YES;
         [items addObject:flexSpace];
         [items addObject:_previousButton];
@@ -318,6 +346,8 @@
     _toolbar = nil;
     _previousButton = nil;
     _nextButton = nil;
+    _playButton = nil;
+    _pauseButton = nil;
     _progressHUD = nil;
     [super viewDidUnload];
 }
@@ -385,6 +415,10 @@
     
     // Initial appearance
     if (!_viewHasAppearedInitially) {
+        if (_startOnSlideShow && [self numberOfPhotos] > 1) {
+            [self playSlideshow];
+        }
+        
         if (_startOnGrid) {
             [self showGrid:NO];
         }
@@ -411,6 +445,8 @@
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // Cancel any pending toggles from taps
     [self setControlsHidden:NO animated:NO permanent:YES];
+    
+    [self pauseSlideshow];
     
     // Status bar
     BOOL fullScreen = YES;
@@ -696,7 +732,7 @@
             if ([photo caption]) captionView = [[MWCaptionView alloc] initWithPhoto:photo];
         }
     }
-    captionView.alpha = [self areControlsHidden] ? 0 : 1; // Initial alpha
+    captionView.alpha = ([self areControlsHidden] && !_alwaysShowCaption) ? 0 : 1; // Initial alpha
     return captionView;
 }
 
@@ -997,7 +1033,7 @@
     CGRect pageFrame = [self frameForPageAtIndex:index];
     CGSize captionSize = [captionView sizeThatFits:CGSizeMake(pageFrame.size.width, 0)];
     CGRect captionFrame = CGRectMake(pageFrame.origin.x,
-                                     pageFrame.size.height - captionSize.height - (_toolbar.superview?_toolbar.frame.size.height:0),
+                                     pageFrame.size.height - captionSize.height - (_toolbar.superview && _toolbar.alpha == 1?_toolbar.frame.size.height:0),
                                      pageFrame.size.width,
                                      captionSize.height);
     return CGRectIntegral(captionFrame);
@@ -1047,6 +1083,10 @@
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// Hide controls when dragging begins
 	[self setControlsHidden:YES animated:YES permanent:NO];
+
+    if (self.displayPlayPauseButton) {
+        [self pauseSlideshow];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -1083,8 +1123,8 @@
 	}
 	
 	// Buttons
-	_previousButton.enabled = (_currentPageIndex > 0);
-	_nextButton.enabled = (_currentPageIndex < numberOfPhotos - 1);
+	_previousButton.enabled = (_currentPageIndex > 0 || _loopSlides);
+	_nextButton.enabled = (_currentPageIndex < numberOfPhotos - 1 || _loopSlides);
     _actionButton.enabled = [[self photoAtIndex:_currentPageIndex] underlyingImage] != nil;
 	
 }
@@ -1103,6 +1143,31 @@
 	
 }
 
+- (void) replaceToolbarButton:(UIBarButtonItem*)target withButton:(UIBarButtonItem*)dest {
+    NSMutableArray *items = [NSMutableArray arrayWithArray:_toolbar.items];
+    
+    NSUInteger index = [items indexOfObject:target];
+    
+    if (index != NSNotFound) {
+        [items replaceObjectAtIndex:index withObject:dest];
+        [_toolbar setItems:items animated:true];
+    }
+}
+- (void)nextSlideshowSlide {
+    [self showNextPhotoAnimated:YES];
+    [self performSelector:@selector(nextSlideshowSlide) withObject:nil afterDelay:_secondsPerSlide];
+}
+- (void)playSlideshow {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(nextSlideshowSlide) object:nil];
+    [self nextSlideshowSlide];
+    [self replaceToolbarButton:_playButton withButton:_pauseButton];
+    [self hideControlsAfterDelay:self.secondsPerSlide - 1];
+}
+- (void)pauseSlideshow {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(nextSlideshowSlide) object:nil];
+    [self replaceToolbarButton:_pauseButton withButton:_playButton];
+}
+
 - (void)gotoPreviousPage {
     [self showPreviousPhotoAnimated:NO];
 }
@@ -1111,10 +1176,18 @@
 }
 
 - (void)showPreviousPhotoAnimated:(BOOL)animated {
+    if (_loopSlides && _currentPageIndex == 0) {
+        _currentPageIndex = [self numberOfPhotos];
+    }
+    
     [self jumpToPageAtIndex:_currentPageIndex-1 animated:animated];
 }
 
 - (void)showNextPhotoAnimated:(BOOL)animated {
+    if (_loopSlides && (_currentPageIndex + 1) >= [self numberOfPhotos]) {
+        _currentPageIndex = -1;
+    }
+    
     [self jumpToPageAtIndex:_currentPageIndex+1 animated:animated];
 }
 
@@ -1340,10 +1413,10 @@
                     // Pass any index, all we're interested in is the Y
                     CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
                     captionFrame.origin.x = v.frame.origin.x; // Reset X
-                    if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animatonOffset);
+                    if (hidden && !_alwaysShowCaption) captionFrame = CGRectOffset(captionFrame, 0, animatonOffset);
                     v.frame = captionFrame;
                 }
-                v.alpha = alpha;
+                v.alpha = _alwaysShowCaption?1:alpha;
             }
         }
         
@@ -1387,16 +1460,23 @@
 }
 
 // Enable/disable control visiblity timer
-- (void)hideControlsAfterDelay {
+- (void)hideControlsAfterDelay:(NSUInteger) localDelay {
 	if (![self areControlsHidden]) {
         [self cancelControlHiding];
-		_controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:self.delayToHideElements target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
+		_controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:localDelay target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
 	}
 }
+- (void)hideControlsAfterDelay {
+    [self hideControlsAfterDelay:self.delayToHideElements];
+}
+
 
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
-- (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
+- (void)toggleControls {
+    [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO];
+    [self pauseSlideshow];
+}
 
 #pragma mark - Properties
 

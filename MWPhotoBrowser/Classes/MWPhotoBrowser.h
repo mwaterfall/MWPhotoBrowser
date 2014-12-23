@@ -44,9 +44,14 @@
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
+@property (nonatomic) BOOL displayPlayPauseButton;
+@property (nonatomic) NSTimeInterval secondsPerSlide;
+@property (nonatomic) BOOL loopSlides;
+@property (nonatomic) BOOL startOnSlideShow;
 @property (nonatomic) BOOL displayActionButton;
 @property (nonatomic) BOOL displaySelectionButtons;
 @property (nonatomic) BOOL alwaysShowControls;
+@property (nonatomic) BOOL alwaysShowCaption;
 @property (nonatomic) BOOL enableGrid;
 @property (nonatomic) BOOL enableSwipeToDismiss;
 @property (nonatomic) BOOL startOnGrid;
