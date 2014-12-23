@@ -415,7 +415,7 @@
     
     // Initial appearance
     if (!_viewHasAppearedInitially) {
-        if (_startOnSlideShow) {
+        if (_startOnSlideShow && [self numberOfPhotos] > 1) {
             [self playSlideshow];
         }
         

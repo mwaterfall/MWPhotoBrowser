@@ -89,7 +89,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 9;
+    NSInteger rows = 10;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -156,6 +156,11 @@
         case 9: {
             cell.textLabel.text = @"Slideshow";
             cell.detailTextLabel.text = @"Slideshow from Web";
+            break;
+        }
+        case 10: {
+            cell.textLabel.text = @"Slideshow with single photo";
+            cell.detailTextLabel.text = @"Slideshow with single photo";
             break;
         }
 		default: break;
@@ -1042,6 +1047,14 @@
                 }
             }
 			break;
+        case 10:
+            // Photos
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
+            photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
+            [photos addObject:photo];
+            // Options
+            slideshow = YES;
+            break;
         }
 		default: break;
 	}
