@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MWPhotoProtocol.h"
+#import "SDWebImageManager.h"
 
 // This class models a photo/image and it's caption
 // If you want to handle photos, caching, decompression
@@ -18,6 +19,8 @@
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, readonly) UIImage *image;
 @property (nonatomic, readonly) NSURL *photoURL;
+@property (nonatomic) SDWebImageOptions options;
+
 @property (nonatomic, readonly) NSString *filePath  __attribute__((deprecated("Use photoURL"))); // Depreciated
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
