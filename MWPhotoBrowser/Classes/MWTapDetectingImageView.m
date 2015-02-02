@@ -10,27 +10,50 @@
 
 @implementation MWTapDetectingImageView
 
-- (id)initWithFrame:(CGRect)frame {
-	if ((self = [super initWithFrame:frame])) {
-		self.userInteractionEnabled = YES;
+#pragma mark Init
+- (instancetype)init
+{
+    if (self = [self initWithFrame:CGRectZero])
+    {}
+    
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+	if (self = [super initWithFrame:frame])
+    {
+        self.userInteractionEnabled = YES;
+        
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        [self addGestureRecognizer:longPress];
 	}
+    
 	return self;
 }
 
-- (id)initWithImage:(UIImage *)image {
-	if ((self = [super initWithImage:image])) {
-		self.userInteractionEnabled = YES;
+- (instancetype)initWithImage:(UIImage *)image
+{
+	if (self = [self initWithFrame:CGRectZero])
+    {
+		self.image = image;
 	}
+    
 	return self;
 }
 
-- (id)initWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage {
-	if ((self = [super initWithImage:image highlightedImage:highlightedImage])) {
-		self.userInteractionEnabled = YES;
+- (id)initWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage
+{
+	if (self = [self initWithFrame:CGRectZero])
+    {
+		self.image = image;
+        self.highlightedImage = highlightedImage;
 	}
+    
 	return self;
 }
 
+#pragma mark Touch events
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	NSUInteger tapCount = touch.tapCount;
@@ -64,5 +87,14 @@
 	if ([_tapDelegate respondsToSelector:@selector(imageView:tripleTapDetected:)])
 		[_tapDelegate imageView:self tripleTapDetected:touch];
 }
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)longPress
+{
+    if (_tapDelegate && [_tapDelegate respondsToSelector:@selector(longPressDetectedOnImageView:)])
+    {
+        [_tapDelegate longPressDetectedOnImageView:self];
+    }
+}
+
 
 @end
