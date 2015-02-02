@@ -328,6 +328,7 @@
 		4C6F96F014AF70E800F8389A /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				A99800D61A7F76A70002221E /* ALAssetsLibrary-CustomPhotoAlbum */,
 				0E3D589B180474330000E3A0 /* PSTCollectionView (1.2) */,
 				0E8515BE17FC77D200FE1EF3 /* DACircularProgress (675f395) */,
 				4C6F96F214AF70FA00F8389A /* MBProgressHUD (0.8) */,
@@ -393,6 +394,14 @@
 			name = "Supporting Files";
 			path = MWPhotoBrowser;
 			sourceTree = "<group>";
+		};
+		A99800D61A7F76A70002221E /* ALAssetsLibrary-CustomPhotoAlbum */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "ALAssetsLibrary-CustomPhotoAlbum";
+			path = "Libraries/ALAssetsLibrary-CustomPhotoAlbum";
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
