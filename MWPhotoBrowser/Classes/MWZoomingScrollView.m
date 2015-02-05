@@ -231,7 +231,6 @@
 	// Reset
 	self.maximumZoomScale = 1;
 	self.minimumZoomScale = 1;
-	self.zoomScale = 1;
 	
 	// Bail if no image
 	if (_photoImageView.image == nil) return;
