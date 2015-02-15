@@ -15,7 +15,8 @@
 
 // Private methods and properties
 @interface MWZoomingScrollView () {
-    
+	CGFloat previousZoomScale;
+	BOOL skippedZoomScaleReset;
     MWPhotoBrowser __weak *_photoBrowser;
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
@@ -333,6 +334,13 @@
 	return _photoImageView;
 }
 
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+{
+	if (previousZoomScale < 0.65) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"ZoomOutAndGoBack" object:nil];
+	}
+}
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	[_photoBrowser cancelControlHiding];
 }
@@ -349,6 +357,18 @@
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
     [self setNeedsLayout];
     [self layoutIfNeeded];
+	if (scrollView.zoomScale == 1) {
+		if (skippedZoomScaleReset) {
+			previousZoomScale = scrollView.zoomScale;
+		} else {
+			skippedZoomScaleReset = YES;
+		}
+	} else  {
+		skippedZoomScaleReset = NO;
+		previousZoomScale = scrollView.zoomScale;
+	}
+	
+	NSLog(@"%f", previousZoomScale);
 }
 
 #pragma mark - Tap Detection
