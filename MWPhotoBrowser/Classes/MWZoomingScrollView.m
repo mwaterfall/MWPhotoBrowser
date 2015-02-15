@@ -367,8 +367,6 @@
 		skippedZoomScaleReset = NO;
 		previousZoomScale = scrollView.zoomScale;
 	}
-	
-	NSLog(@"%f", previousZoomScale);
 }
 
 #pragma mark - Tap Detection
