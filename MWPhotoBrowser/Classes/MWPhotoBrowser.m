@@ -1249,8 +1249,7 @@
             if (!_isVCBasedStatusBarAppearance) {
                 
                 // Non-view controller based
-                [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
-                
+				
             } else {
                 
                 // View controller based so animate away
@@ -1281,7 +1280,6 @@
                 }
                 
                 // Status Bar
-                [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated?UIStatusBarAnimationFade:UIStatusBarAnimationNone];
                 
                 // Get status bar height if visible
                 if (![UIApplication sharedApplication].statusBarHidden) {
