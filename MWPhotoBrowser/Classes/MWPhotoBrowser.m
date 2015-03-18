@@ -640,6 +640,7 @@
         [self.view setNeedsLayout];
     }
     
+    _toolbar.hidden = _gridController ? true : false;
 }
 
 - (NSUInteger)numberOfPhotos {
