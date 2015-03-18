@@ -27,6 +27,7 @@
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithFilePath:(NSString *)path  __attribute__((deprecated("Use initWithURL: with a file URL"))); // Depreciated
+- (id)init NS_DESIGNATED_INITIALIZER;
 
 @end
 
