@@ -56,9 +56,7 @@
     } else {
         _isVCBasedStatusBarAppearance = YES; // default
     }
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) self.wantsFullScreenLayout = YES;
-#endif
+    
     self.hidesBottomBarWhenPushed = YES;
     _hasBelongedToViewController = NO;
     _photoCount = NSNotFound;
@@ -175,12 +173,7 @@
     
     // Toolbar Items
     if (self.displayNavArrows) {
-        NSString *arrowPathFormat;
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
-            arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowOutline%@.png";
-        } else {
-            arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrow%@.png";
-        }
+        NSString *arrowPathFormat = @"MWPhotoBrowser.bundle/images/UIBarButtonItemArrowOutline%@.png";;
         _previousButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Left"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:arrowPathFormat, @"Right"]] style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
@@ -256,7 +249,6 @@
     if (_enableGrid) {
         hasItems = YES;
         NSString *buttonName = @"UIBarButtonItemGrid";
-        if (SYSTEM_VERSION_LESS_THAN(@"7")) buttonName = @"UIBarButtonItemGridiOS6";
         [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"MWPhotoBrowser.bundle/images/%@.png", buttonName]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
         [items addObject:fixedSpace];
@@ -295,7 +287,7 @@
     }
     if (hideToolbar) {
         [_toolbar removeFromSuperview];
-    } else {
+    } else if (_toolbar.superview != self.view) {
         [self.view addSubview:_toolbar];
     }
     
@@ -359,19 +351,9 @@
         _leaveStatusBarAlone = YES;
     }
     BOOL fullScreen = YES;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
-#endif
     if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
-        if (SYSTEM_VERSION_LESS_THAN(@"7")) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
-#pragma clang diagnostic push
-        } else {
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
-        }
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
     }
     
     // Navigation bar appearance
@@ -414,9 +396,6 @@
     
     // Status bar
     BOOL fullScreen = YES;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
-#endif
     if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
@@ -640,6 +619,9 @@
         [self.view setNeedsLayout];
     }
     
+    if(_gridController) {
+        [_gridController.collectionView reloadData];
+    }
 }
 
 - (NSUInteger)numberOfPhotos {
@@ -1266,9 +1248,6 @@
             // iOS < 7
             // Status bar and nav bar positioning
             BOOL fullScreen = YES;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-            if (SYSTEM_VERSION_LESS_THAN(@"7")) fullScreen = self.wantsFullScreenLayout;
-#endif
             if (fullScreen) {
                 
                 // Need to get heights and set nav bar position to overcome display issues

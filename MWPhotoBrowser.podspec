@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
         :git => 'https://github.com/mwaterfall/MWPhotoBrowser.git',
         :tag => '1.4.1'
     }
-    s.platform = :ios, '5.1.1'
+    s.platform = :ios, '7.0'
     s.source_files = 'MWPhotoBrowser/Classes/*.{h,m}'
     s.resources = 'MWPhotoBrowser/MWPhotoBrowser.bundle'
     s.requires_arc = true
@@ -39,5 +39,4 @@ Pod::Spec.new do |s|
     s.dependency 'SDWebImage', '~> 3.7'
     s.dependency 'MBProgressHUD', '~> 0.8'
     s.dependency 'DACircularProgress'
-    s.dependency 'PSTCollectionView', '~> 1.2'
 end
