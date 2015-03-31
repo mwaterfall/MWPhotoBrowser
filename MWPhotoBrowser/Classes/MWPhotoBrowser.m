@@ -56,7 +56,7 @@
     } else {
         _isVCBasedStatusBarAppearance = YES; // default
     }
-    
+    self.dontModifyStatusBar = NO;
     self.hidesBottomBarWhenPushed = YES;
     _hasBelongedToViewController = NO;
     _photoCount = NSNotFound;
@@ -351,7 +351,7 @@
         _leaveStatusBarAlone = YES;
     }
     BOOL fullScreen = YES;
-    if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if (!self.dontModifyStatusBar && !_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         _previousStatusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
     }
@@ -396,7 +396,7 @@
     
     // Status bar
     BOOL fullScreen = YES;
-    if (!_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    if (!self.dontModifyStatusBar && !_leaveStatusBarAlone && fullScreen && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
     
