@@ -41,6 +41,16 @@
             _columns = 3, _columnsL = 4;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
+        } else if([UIScreen mainScreen].bounds.size.height == 667) {
+            // iPhone 6
+            _columns = 4, _columnsL = 7;
+            _margin = 0, _gutter = 1;
+            _marginL = 1, _gutterL = 2;
+        } else if([UIScreen mainScreen].bounds.size.height == 736) {
+            // iPHone 6+
+            _columns = 5, _columnsL = 8;
+            _margin = 0, _gutter = 1;
+            _marginL = 1, _gutterL = 2;
         } else {
             // iPhone 4 inch
             _columns = 3, _columnsL = 5;
