@@ -30,16 +30,16 @@
 
 #pragma mark - Class Methods
 
-+ (MWPhoto *)photoWithImage:(UIImage *)image {
++ (instancetype)photoWithImage:(UIImage *)image {
 	return [[MWPhoto alloc] initWithImage:image];
 }
 
 // Deprecated
-+ (MWPhoto *)photoWithFilePath:(NSString *)path {
++ (instancetype)photoWithFilePath:(NSString *)path {
     return [MWPhoto photoWithURL:[NSURL fileURLWithPath:path]];
 }
 
-+ (MWPhoto *)photoWithURL:(NSURL *)url {
++ (instancetype)photoWithURL:(NSURL *)url {
 	return [[MWPhoto alloc] initWithURL:url];
 }
 
