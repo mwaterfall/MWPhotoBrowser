@@ -30,23 +30,26 @@
         _margin = 0, _gutter = 1;
         _marginL = 0, _gutterL = 1;
         
+        CGFloat height = [UIScreen mainScreen].bounds.size.height;
+        CGFloat width = [UIScreen mainScreen].bounds.size.width;
+        
         // For pixel perfection...
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             // iPad
             _columns = 6, _columnsL = 8;
             _margin = 1, _gutter = 2;
             _marginL = 1, _gutterL = 2;
-        } else if ([UIScreen mainScreen].bounds.size.height == 480) {
+        } else if (height == 480 || width == 480) {
             // iPhone 3.5 inch
             _columns = 3, _columnsL = 4;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
-        } else if([UIScreen mainScreen].bounds.size.height == 667) {
+        } else if(height == 667 || width == 667) {
             // iPhone 6
             _columns = 4, _columnsL = 7;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
-        } else if([UIScreen mainScreen].bounds.size.height == 736) {
+        } else if(height == 736 || width == 736) {
             // iPHone 6+
             _columns = 5, _columnsL = 8;
             _margin = 0, _gutter = 1;
@@ -129,7 +132,7 @@
 #pragma mark - Layout
 
 - (CGFloat)getColumns {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _columns;
     } else {
         return _columnsL;
@@ -137,7 +140,7 @@
 }
 
 - (CGFloat)getMargin {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _margin;
     } else {
         return _marginL;
@@ -145,7 +148,7 @@
 }
 
 - (CGFloat)getGutter {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _gutter;
     } else {
         return _gutterL;
