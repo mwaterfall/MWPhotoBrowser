@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MWPhoto.h"
 #import "MWGridViewController.h"
-#import "PSTCollectionView.h"
 
-@interface MWGridCell : PSTCollectionViewCell {}
+@interface MWGridCell : UICollectionViewCell {}
 
 @property (nonatomic, weak) MWGridViewController *gridController;
 @property (nonatomic) NSUInteger index;
