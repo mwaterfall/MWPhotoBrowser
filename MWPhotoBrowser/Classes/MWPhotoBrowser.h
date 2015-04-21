@@ -12,6 +12,8 @@
 #import "MWPhotoProtocol.h"
 #import "MWCaptionView.h"
 
+//testing a change
+
 // Debug Logging
 #if 0 // Set to 1 to enable debug logging
 #define MWLog(x, ...) NSLog(x, ## __VA_ARGS__);
