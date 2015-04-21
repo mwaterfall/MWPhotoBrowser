@@ -54,9 +54,6 @@
 
 @property (nonatomic) BOOL willPresentModally;
 
-// Views
-@property (nonatomic, strong) UIScrollView *pagingScrollView;
-
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;

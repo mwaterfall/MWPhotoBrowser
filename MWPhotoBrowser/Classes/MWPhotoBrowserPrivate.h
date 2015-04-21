@@ -23,6 +23,9 @@
     NSMutableArray *_photos;
     NSMutableArray *_thumbPhotos;
 	NSArray *_depreciatedPhotoData; // Depreciated
+    
+    // Views
+    UIScrollView *_pagingScrollView;
 	
 	// Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;
