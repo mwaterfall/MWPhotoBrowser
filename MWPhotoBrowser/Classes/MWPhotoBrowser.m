@@ -225,7 +225,7 @@
             CGFloat finalY = firstY;
             CGFloat animationDuration = MIN((firstY/velocityY) / 5.0, 0.5);
             
-            NSLog(@"the duration is: %f", animationDuration);
+            //NSLog(@"the duration is: %f", animationDuration);
             
             [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 [[panGesture view] setCenter:CGPointMake(finalX, finalY)];
