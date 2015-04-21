@@ -14,14 +14,18 @@
 // Declare private methods of browser
 @interface MWPhotoBrowser () {
     
+    //Pan Gesture
+    CGFloat firstX;
+    CGFloat firstY;
+    
 	// Data
     NSUInteger _photoCount;
     NSMutableArray *_photos;
     NSMutableArray *_thumbPhotos;
 	NSArray *_depreciatedPhotoData; // Depreciated
-	
-	// Views
-	UIScrollView *_pagingScrollView;
+    
+    // Views
+    UIScrollView *_pagingScrollView;
 	
 	// Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;

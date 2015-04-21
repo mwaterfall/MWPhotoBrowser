@@ -73,7 +73,6 @@
     _viewIsActive = NO;
     _enableGrid = YES;
     _startOnGrid = NO;
-    _enableSwipeToDismiss = YES;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
     _recycledPages = [[NSMutableSet alloc] init];
@@ -191,16 +190,67 @@
     // Update
     [self reloadData];
     
-    // Swipe to dismiss
-    if (_enableSwipeToDismiss) {
-        UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(doneButtonPressed:)];
-        swipeGesture.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
-        [self.view addGestureRecognizer:swipeGesture];
+    if (self.willPresentModally) {
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+        [panGesture setMinimumNumberOfTouches:1];
+        [panGesture setMaximumNumberOfTouches:1];
+        [self.navigationController.view addGestureRecognizer:panGesture];
     }
     
 	// Super
     [super viewDidLoad];
 	
+}
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)panGesture
+{
+    [self.view bringSubviewToFront:[panGesture view]];
+    CGPoint translatedPoint = [panGesture translationInView:self.view];
+    if ([panGesture state] == UIGestureRecognizerStateBegan) {
+        firstX = [[panGesture view] center].x;
+        firstY = [[panGesture view] center].y;
+        [self setControlsHidden:NO animated:YES permanent:NO];
+    }
+    
+    translatedPoint = CGPointMake(firstX, firstY+translatedPoint.y);
+    self.presentingViewController.view.alpha = (panGesture.view.frame.origin.y / panGesture.view.bounds.size.height) * 0.7 + 0.3;
+    
+    [[panGesture view] setCenter:translatedPoint];
+    
+    if ([panGesture state] == UIGestureRecognizerStateEnded) {
+        if (panGesture.view.frame.origin.y <= panGesture.view.bounds.size.height/4) {
+            CGFloat velocityY = (0.2*[panGesture velocityInView:self.view].y); //points/second
+            
+            CGFloat finalX = firstX;
+            CGFloat finalY = firstY;
+            CGFloat animationDuration = MIN((firstY/velocityY) / 5.0, 0.5);
+            
+            //NSLog(@"the duration is: %f", animationDuration);
+            
+            [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                [[panGesture view] setCenter:CGPointMake(finalX, finalY)];
+            } completion:^(BOOL finished) {
+                [self setControlsHidden:NO animated:YES permanent:NO];
+            }];
+        }
+        else {
+            CGFloat velocityY = (0.2*[panGesture velocityInView:self.view].y); //points/second
+            
+            CGFloat finalX = firstX;
+            CGFloat finalY = firstY + panGesture.view.bounds.size.height; //translatedPoint.y + velocityY;// translatedPoint.y + (.35*[(UIPanGestureRecognizer*)sender velocityInView:self.view].y);
+            
+            CGFloat animationDuration = MIN(((panGesture.view.bounds.size.height - firstY)/velocityY) / 5.0, 0.5);
+            
+            NSLog(@"the duration is: %f", animationDuration);
+            
+            [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                [[panGesture view] setCenter:CGPointMake(finalX, finalY)];
+                self.presentingViewController.view.alpha = 1.0;
+            } completion:^(BOOL finished) {
+                [self doneButtonPressed:nil];
+            }];
+        }
+    }
 }
 
 - (void)performLayout {

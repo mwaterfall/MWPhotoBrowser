@@ -1045,7 +1045,6 @@
 #endif
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
-    browser.enableSwipeToDismiss = YES;
     [browser setCurrentPhotoIndex:0];
     
     // Reset selections
@@ -1062,8 +1061,10 @@
         [self.navigationController pushViewController:browser animated:YES];
     } else {
         // Modal
+        browser.willPresentModally = YES;
         UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:browser];
         nc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        nc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
         [self presentViewController:nc animated:YES completion:nil];
     }
     
