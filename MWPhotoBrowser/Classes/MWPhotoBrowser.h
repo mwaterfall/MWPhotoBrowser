@@ -54,11 +54,8 @@
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 @property (nonatomic) BOOL hideToolbar;
-@property (nonatomic) BOOL enableTapToDismiss;
-@property (nonatomic) BOOL hideStatusBar;
 @property (nonatomic) CGRect thumbnailFrame;
 @property (nonatomic, copy) NSString *thumbnailImageKey;
-@property (nonatomic) BOOL displaySendButton;
 @property (nonatomic, strong) NSNumber *maximumSelectionsCount;
 @property (nonatomic, copy) void (^sendButtonHandler)(id sender);
 
