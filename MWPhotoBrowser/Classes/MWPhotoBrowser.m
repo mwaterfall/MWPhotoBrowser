@@ -15,6 +15,12 @@
 #define PADDING                  10
 #define ACTION_SHEET_OLD_ACTIONS 2000
 
+@interface MWPhotoBrowser ()
+
+@property (nonatomic) NSUInteger isSelectedCount;
+
+@end
+
 @implementation MWPhotoBrowser
 
 #pragma mark - Init
@@ -81,6 +87,15 @@
     _thumbPhotos = [[NSMutableArray alloc] init];
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
+    
+    _isSelectedCount = 0;
+    _hideToolbar = NO;
+    _enableTapToDismiss = NO;
+    _hideStatusBar = NO;
+    _thumbnailFrame = CGRectNull;
+    _thumbnailImageKey = nil;
+    _displaySendButton = NO;
+    
     if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
@@ -240,6 +255,11 @@
         _previousViewControllerBackButton = previousViewController.navigationItem.leftBarButtonItem; // remember previous
         previousViewController.navigationItem.leftBarButtonItem = newBackButton;
         previousViewController.navigationItem.hidesBackButton = YES;
+        
+        if (self.displaySendButton) {
+            UIBarButtonItem *sendButton = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(handleSendButton:)];
+            self.navigationItem.rightBarButtonItem = sendButton;
+        }
     }
 
     // Toolbar items
@@ -290,7 +310,7 @@
             break;
         }
     }
-    if (hideToolbar) {
+    if (hideToolbar || self.hideToolbar) {
         [_toolbar removeFromSuperview];
     } else {
         [self.view addSubview:_toolbar];
@@ -421,6 +441,10 @@
 	// Super
 	[super viewWillDisappear:animated];
     
+    if (self.navigationController.viewControllers.count > 1)
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -442,17 +466,18 @@
 
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
+    navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? UIColorFromHex(kColor01) : nil;
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
-        navBar.shadowImage = nil;
     }
+    
     navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
-    if ([[UINavigationBar class] respondsToSelector:@selector(appearance)]) {
-        [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-        [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
+    
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)])
+    {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
 }
 
@@ -709,8 +734,27 @@
 
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
+        
+        if (!IsEmpty(self.maximumSelectionsCount)) {
+            if (selected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
+                
+                if (_gridController) {
+                    [_gridController.collectionView reloadData];
+                }
+                
+                [self showMaximumSelectionsCountAlertView];
+                return;
+            }
+        }
+        
         if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
             [self.delegate photoBrowser:self photoAtIndex:index selectedChanged:selected];
+        }
+        
+        if (selected) {
+            self.isSelectedCount++;
+        } else {
+            self.isSelectedCount--;
         }
     }
 }
@@ -1119,6 +1163,14 @@
 
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
+    
+    if (!IsEmpty(self.maximumSelectionsCount)) {
+        if (!selectedButton.isSelected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
+            [self showMaximumSelectionsCountAlertView];
+            return;
+        }
+    }
+    
     selectedButton.selected = !selectedButton.selected;
     NSUInteger index = NSUIntegerMax;
     for (MWZoomingScrollView *page in _visiblePages) {
@@ -1364,6 +1416,11 @@
 }
 
 - (BOOL)prefersStatusBarHidden {
+    
+    if (self.hideStatusBar) {
+        return YES;
+    }
+
     if (!_leaveStatusBarAlone) {
         return _statusBarShouldBeHidden;
     } else {
@@ -1393,7 +1450,13 @@
 
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
-- (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
+- (void)toggleControls {
+    if (self.enableTapToDismiss) {
+        [self dismissViewController];
+    } else {
+        [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO];
+    }
+}
 
 #pragma mark - Properties
 
@@ -1670,6 +1733,58 @@
             [self showGrid:YES];
         }
     }
+}
+
+- (void)handleSendButton:(id)sender
+{
+    if (self.sendButtonHandler) {
+        self.sendButtonHandler(sender);
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)dismissViewController
+{
+    if (CGRectIsNull(self.thumbnailFrame) || IsEmpty(self.thumbnailImageKey)) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        WEAKESELF
+        
+        UIImage *image = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:self.thumbnailImageKey];
+        if (IsEmpty(image)) {
+            [self dismissViewControllerAnimated:YES completion:^{
+                weakSelf.thumbnailFrame = CGRectNull;
+                weakSelf.thumbnailImageKey = nil;
+            }];
+        } else {
+            UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+            UIImageView *tempView = [[UIImageView alloc] initWithImage:image];
+            CGFloat height = (kScreenWidth / image.size.width) * image.size.height;
+            tempView.bounds = CGRectMake(0, 0, kScreenWidth, height);
+            tempView.center = keyWindow.center;
+            [keyWindow addSubview:tempView];
+            
+            [UIView animateWithDuration:0.3f animations:^{
+                tempView.frame = weakSelf.thumbnailFrame;
+            } completion:^(BOOL finished) {
+                [tempView removeFromSuperview];
+            }];
+            
+            [self dismissViewControllerAnimated:NO completion:^{
+                weakSelf.thumbnailFrame = CGRectNull;
+                weakSelf.thumbnailImageKey = nil;
+            }];
+        }
+    }
+}
+
+- (void)showMaximumSelectionsCountAlertView
+{
+    NSString *message = [NSString stringWithFormat:@"你最多只能选择%@张照片", self.maximumSelectionsCount];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:message delegate:self cancelButtonTitle:@"我知道了" otherButtonTitles:nil];
+
+    [alertView show];
 }
 
 @end
