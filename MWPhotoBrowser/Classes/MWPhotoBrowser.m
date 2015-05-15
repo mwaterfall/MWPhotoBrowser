@@ -1662,4 +1662,17 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - Customized
+
+- (void)popViewControllerAnimated:(BOOL)animated
+{
+    if ([self.navigationController.viewControllers objectAtIndex:0] != self) {
+        if (_gridController) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        } else {
+            [self showGrid:YES];
+        }
+    }
+}
+
 @end
