@@ -95,6 +95,7 @@
     _thumbnailFrame = CGRectNull;
     _thumbnailImageKey = nil;
     _displaySendButton = NO;
+    _maximumSelectionsCount = @9;
     
     if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
         self.automaticallyAdjustsScrollViewInsets = NO;
@@ -738,16 +739,14 @@
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
         
-        if (!IsEmpty(self.maximumSelectionsCount)) {
-            if (selected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
-                
-                if (_gridController) {
-                    [_gridController.collectionView reloadData];
-                }
-                
-                [self showMaximumSelectionsCountAlertView];
-                return;
+        if (selected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
+            
+            if (_gridController) {
+                [_gridController.collectionView reloadData];
             }
+            
+            [self showMaximumSelectionsCountAlertView];
+            return;
         }
         
         if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
@@ -1106,7 +1105,8 @@
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
         if (_gridController.selectionMode) {
-            self.title = NSLocalizedString(@"Select Photos", nil);
+            NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.maximumSelectionsCount];
+            self.title = title;
         } else {
             NSString *photosText;
             if (numberOfPhotos == 1) {
@@ -1167,11 +1167,9 @@
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
     
-    if (!IsEmpty(self.maximumSelectionsCount)) {
-        if (!selectedButton.isSelected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
-            [self showMaximumSelectionsCountAlertView];
-            return;
-        }
+    if (!selectedButton.isSelected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
+        [self showMaximumSelectionsCountAlertView];
+        return;
     }
     
     selectedButton.selected = !selectedButton.selected;
