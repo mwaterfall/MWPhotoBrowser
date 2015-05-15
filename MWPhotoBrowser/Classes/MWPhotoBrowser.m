@@ -252,9 +252,11 @@
         [backButton addTarget:self action:@selector(popViewController) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
         
+        self.navigationItem.leftBarButtonItem = newBackButton;
+        self.navigationItem.hidesBackButton = YES;
+        
         _previousViewControllerBackButton = previousViewController.navigationItem.leftBarButtonItem; // remember previous
         previousViewController.navigationItem.leftBarButtonItem = newBackButton;
-        previousViewController.navigationItem.hidesBackButton = YES;
         
         if (self.displaySendButton) {
             UIBarButtonItem *sendButton = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(handleSendButton:)];
