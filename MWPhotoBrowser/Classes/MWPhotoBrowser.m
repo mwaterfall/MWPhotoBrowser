@@ -423,6 +423,7 @@
     // Controls
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // Cancel any pending toggles from taps
+    _displaySelectionButtons = YES;
     [self setControlsHidden:NO animated:NO permanent:YES];
     
     // Status bar
