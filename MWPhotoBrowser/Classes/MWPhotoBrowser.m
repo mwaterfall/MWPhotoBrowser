@@ -230,19 +230,16 @@
     } else {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
-        NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
-        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
-        // Appearance
-        if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
-            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-        }
-        _previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
-        previousViewController.navigationItem.backBarButtonItem = newBackButton;
+        
+        UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackNormal.png"] forState:UIControlStateNormal];
+        [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackHighlighted.png"] forState:UIControlStateHighlighted];
+        [backButton addTarget:self action:@selector(popViewController) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+        
+        _previousViewControllerBackButton = previousViewController.navigationItem.leftBarButtonItem; // remember previous
+        previousViewController.navigationItem.leftBarButtonItem = newBackButton;
+        previousViewController.navigationItem.hidesBackButton = YES;
     }
 
     // Toolbar items
@@ -491,7 +488,7 @@
         // Restore back button if we need to
         if (_previousViewControllerBackButton) {
             UIViewController *previousViewController = [self.navigationController topViewController]; // We've disappeared so previous is now top
-            previousViewController.navigationItem.backBarButtonItem = _previousViewControllerBackButton;
+            previousViewController.navigationItem.leftBarButtonItem = _previousViewControllerBackButton;
             _previousViewControllerBackButton = nil;
         }
     }
@@ -1664,7 +1661,7 @@
 
 #pragma mark - Customized
 
-- (void)popViewControllerAnimated:(BOOL)animated
+- (void)popViewController
 {
     if ([self.navigationController.viewControllers objectAtIndex:0] != self) {
         if (_gridController) {
