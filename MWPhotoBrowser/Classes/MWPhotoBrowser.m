@@ -247,6 +247,7 @@
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         
         UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        backButton.frame = CGRectMake(0, 0, 27, 27);
         [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackNormal.png"] forState:UIControlStateNormal];
         [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackHighlighted.png"] forState:UIControlStateHighlighted];
         [backButton addTarget:self action:@selector(popViewController) forControlEvents:UIControlEventTouchUpInside];
