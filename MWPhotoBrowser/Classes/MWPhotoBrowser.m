@@ -90,9 +90,9 @@
     
     _isSelectedCount = 0;
     _hideToolbar = NO;
-    _thumbnailFrame = CGRectNull;
-    _thumbnailImageKey = nil;
-    _maximumSelectionsCount = @9;
+    _currentThumbnailFrame = CGRectNull;
+    _currentThumbnailImageKey = nil;
+    _selectionMaximum = @9;
     
     if ([self respondsToSelector:@selector(automaticallyAdjustsScrollViewInsets)]){
         self.automaticallyAdjustsScrollViewInsets = NO;
@@ -231,35 +231,31 @@
     backButton.frame = CGRectMake(0, 0, 27, 27);
     [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackNormal.png"] forState:UIControlStateNormal];
     [backButton setImage:[UIImage imageNamed:@"MWPhotoBrowser.bundle/images/UIBarButtonItemBackHighlighted.png"] forState:UIControlStateHighlighted];
-    [backButton addTarget:self action:@selector(popViewController) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [backButton addTarget:self action:@selector(doneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    _doneButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    self.navigationItem.leftBarButtonItem = _doneButton;
     
-    self.navigationItem.leftBarButtonItem = newBackButton;
-    self.navigationItem.hidesBackButton = YES;
-    
-    if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
-        // We're first on stack so show done button
-        _doneButton = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
-        // Set appearance
-        if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
-            [_doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            [_doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
-            [_doneButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-            [_doneButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
-            [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-            [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-        }
-        self.navigationItem.rightBarButtonItem = _doneButton;
-    } else {
+    if ([self.navigationController.viewControllers objectAtIndex:0] != self) {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
-        _previousViewControllerBackButton = previousViewController.navigationItem.leftBarButtonItem; // remember previous
-        previousViewController.navigationItem.leftBarButtonItem = newBackButton;
-        
-        if (_displaySelectionButtons) {
-            UIBarButtonItem *sendButton = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(handleSendButton:)];
-            self.navigationItem.rightBarButtonItem = sendButton;
+        NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
+        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
+        // Appearance
+        if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
+            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
+            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
+            [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
+            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
+            [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         }
+        _previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
+        previousViewController.navigationItem.backBarButtonItem = newBackButton;
+    }
+    
+    if (_displaySelectionButtons) {
+        UIBarButtonItem *sendButton = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(handleSendButton:)];
+        self.navigationItem.rightBarButtonItem = sendButton;
     }
     
     // Toolbar items
@@ -469,11 +465,6 @@
     }
     
     navBar.translucent = YES;
-    
-    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)])
-    {
-        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-    }
 }
 
 - (void)storePreviousNavBarAppearance {
@@ -508,7 +499,7 @@
         // Restore back button if we need to
         if (_previousViewControllerBackButton) {
             UIViewController *previousViewController = [self.navigationController topViewController]; // We've disappeared so previous is now top
-            previousViewController.navigationItem.leftBarButtonItem = _previousViewControllerBackButton;
+            previousViewController.navigationItem.backBarButtonItem = _previousViewControllerBackButton;
             _previousViewControllerBackButton = nil;
         }
     }
@@ -730,13 +721,13 @@
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
         
-        if (selected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
+        if (selected && self.isSelectedCount >= self.selectionMaximum.unsignedIntegerValue) {
             
             if (_gridController) {
                 [_gridController.collectionView reloadData];
             }
             
-            [self showMaximumSelectionsCountAlertView];
+            [self showSelectionMaximumAlertView];
             return;
         }
         
@@ -750,7 +741,7 @@
             self.isSelectedCount--;
         }
         
-        NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.maximumSelectionsCount];
+        NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
         self.title = title;
     }
 }
@@ -1099,7 +1090,7 @@
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
         if (_gridController.selectionMode) {
-            NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.maximumSelectionsCount];
+            NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
             self.title = title;
         } else {
             NSString *title = @"聊天图片";
@@ -1110,7 +1101,7 @@
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
             if (_displaySelectionButtons) {
-                NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.maximumSelectionsCount];
+                NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
                 self.title = title;
             } else {
                 self.title = [NSString stringWithFormat:@"%lu/%lu", (unsigned long)(_currentPageIndex+1), (unsigned long)numberOfPhotos];
@@ -1161,8 +1152,8 @@
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
     
-    if (!selectedButton.isSelected && self.isSelectedCount >= self.maximumSelectionsCount.unsignedIntegerValue) {
-        [self showMaximumSelectionsCountAlertView];
+    if (!selectedButton.isSelected && self.isSelectedCount >= self.selectionMaximum.unsignedIntegerValue) {
+        [self showSelectionMaximumAlertView];
         return;
     }
     
@@ -1481,22 +1472,17 @@
 - (void)doneButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
     if (_doneButton) {
-        // See if we actually just want to show/hide grid
-        if (self.enableGrid) {
-            if (self.startOnGrid && !_gridController) {
-                [self showGrid:YES];
-                return;
-            } else if (!self.startOnGrid && _gridController) {
-                [self hideGrid];
-                return;
-            }
-        }
         // Dismiss view controller
         if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
             // Call delegate method and let them dismiss us
             [_delegate photoBrowserDidFinishModalPresentation:self];
         } else  {
-            [self dismissViewControllerAnimated:YES completion:nil];
+            // See if we actually just want to show/hide grid
+            if (_gridController) {
+                [self dismissViewControllerAnimated:YES completion:nil];
+            } else {
+                [self showGrid:YES];
+            }
         }
     }
 }
@@ -1718,19 +1704,11 @@
 
 #pragma mark - Customized
 
-- (void)popViewController
-{
-    if (_gridController) {
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        [self showGrid:YES];
-    }
-}
-
 - (void)handleSendButton:(id)sender
 {
-    if (self.sendButtonHandler) {
-        self.sendButtonHandler(sender);
+    if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishSelectPhotos:)]) {
+        // Call delegate method and let them dismiss us
+        [_delegate photoBrowserDidFinishSelectPhotos:self];
     }
     
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -1738,16 +1716,16 @@
 
 - (void)dismissViewController
 {
-    if (CGRectIsNull(self.thumbnailFrame) || IsEmpty(self.thumbnailImageKey)) {
+    if (CGRectIsNull(self.currentThumbnailFrame) || IsEmpty(self.currentThumbnailImageKey)) {
         [self dismissViewControllerAnimated:YES completion:nil];
     } else {
         WEAKESELF
         
-        UIImage *image = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:self.thumbnailImageKey];
+        UIImage *image = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:self.currentThumbnailImageKey];
         if (IsEmpty(image)) {
             [self dismissViewControllerAnimated:YES completion:^{
-                weakSelf.thumbnailFrame = CGRectNull;
-                weakSelf.thumbnailImageKey = nil;
+                weakSelf.currentThumbnailFrame = CGRectNull;
+                weakSelf.currentThumbnailImageKey = nil;
             }];
         } else {
             UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
@@ -1758,22 +1736,22 @@
             [keyWindow addSubview:tempView];
             
             [UIView animateWithDuration:0.3f animations:^{
-                tempView.frame = weakSelf.thumbnailFrame;
+                tempView.frame = weakSelf.currentThumbnailFrame;
             } completion:^(BOOL finished) {
                 [tempView removeFromSuperview];
             }];
             
             [self dismissViewControllerAnimated:NO completion:^{
-                weakSelf.thumbnailFrame = CGRectNull;
-                weakSelf.thumbnailImageKey = nil;
+                weakSelf.currentThumbnailFrame = CGRectNull;
+                weakSelf.currentThumbnailImageKey = nil;
             }];
         }
     }
 }
 
-- (void)showMaximumSelectionsCountAlertView
+- (void)showSelectionMaximumAlertView
 {
-    NSString *message = [NSString stringWithFormat:@"你最多只能选择%@张照片", self.maximumSelectionsCount];
+    NSString *message = [NSString stringWithFormat:@"你最多只能选择%@张照片", self.selectionMaximum];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:message delegate:self cancelButtonTitle:@"我知道了" otherButtonTitles:nil];
     
     [alertView show];

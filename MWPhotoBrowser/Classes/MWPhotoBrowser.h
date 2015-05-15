@@ -36,6 +36,7 @@
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
+- (void)photoBrowserDidFinishSelectPhotos:(MWPhotoBrowser *)photoBrowser;
 
 @end
 
@@ -54,10 +55,9 @@
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 @property (nonatomic) BOOL hideToolbar;
-@property (nonatomic) CGRect thumbnailFrame;
-@property (nonatomic, copy) NSString *thumbnailImageKey;
-@property (nonatomic, strong) NSNumber *maximumSelectionsCount;
-@property (nonatomic, copy) void (^sendButtonHandler)(id sender);
+@property (nonatomic) CGRect currentThumbnailFrame;
+@property (nonatomic, copy) NSString *currentThumbnailImageKey;
+@property (nonatomic, strong) NSNumber *selectionMaximum;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
