@@ -17,7 +17,8 @@
 
 @interface MWPhotoBrowser ()
 
-@property (nonatomic) NSUInteger isSelectedCount;
+@property (nonatomic ,strong) NSMutableArray *selectedPhotos;
+
 @property (nonatomic) BOOL hiddenForNavigationBar;
 
 @end
@@ -89,7 +90,7 @@
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
     
-    _isSelectedCount = 0;
+    _selectedPhotos = [NSMutableArray array];
     _hiddenForNavigationBar = NO;
     _hideToolbar = NO;
     _currentThumbnailFrame = CGRectNull;
@@ -112,7 +113,6 @@
     _pagingScrollView.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self releaseAllUnderlyingPhotos:NO];
-    [[SDImageCache sharedImageCache] clearMemory]; // clear memory
 }
 
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
@@ -724,7 +724,7 @@
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
         
-        if (selected && self.isSelectedCount >= self.selectionMaximum.unsignedIntegerValue) {
+        if (selected && _selectedPhotos.count >= self.selectionMaximum.unsignedIntegerValue) {
             
             if (_gridController) {
                 [_gridController.collectionView reloadData];
@@ -738,13 +738,14 @@
             [self.delegate photoBrowser:self photoAtIndex:index selectedChanged:selected];
         }
         
+        MWPhoto *photo = [self photoAtIndex:index];
         if (selected) {
-            self.isSelectedCount++;
+            [_selectedPhotos addObject:photo];
         } else {
-            self.isSelectedCount--;
+            [_selectedPhotos removeObject:photo];
         }
         
-        NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
+        NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(_selectedPhotos.count), self.selectionMaximum];
         self.title = title;
     }
 }
@@ -1097,7 +1098,7 @@
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
         if (_gridController.selectionMode) {
-            NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
+            NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(_selectedPhotos.count), self.selectionMaximum];
             self.title = title;
         } else {
             NSString *title = @"聊天图片";
@@ -1108,7 +1109,7 @@
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
             if (_displaySelectionButtons) {
-                NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(self.isSelectedCount), self.selectionMaximum];
+                NSString *title = [NSString stringWithFormat:@"选择照片(%@/%@)", @(_selectedPhotos.count), self.selectionMaximum];
                 self.title = title;
             } else {
                 self.title = [NSString stringWithFormat:@"%lu/%lu", (unsigned long)(_currentPageIndex+1), (unsigned long)numberOfPhotos];
@@ -1159,7 +1160,7 @@
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
     
-    if (!selectedButton.isSelected && self.isSelectedCount >= self.selectionMaximum.unsignedIntegerValue) {
+    if (!selectedButton.isSelected && _selectedPhotos.count >= self.selectionMaximum.unsignedIntegerValue) {
         [self showSelectionMaximumAlertView];
         return;
     }
@@ -1720,10 +1721,12 @@
 
 - (void)handleSendButton:(id)sender
 {
-    if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishSelectPhotos:)]) {
+    if ([_delegate respondsToSelector:@selector(photoBrowser:didFinishSelectPhotos:)]) {
         // Call delegate method and let them dismiss us
-        [_delegate photoBrowserDidFinishSelectPhotos:self];
+        [_delegate photoBrowser:self didFinishSelectPhotos:_selectedPhotos];
     }
+    
+    [_selectedPhotos removeAllObjects];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
