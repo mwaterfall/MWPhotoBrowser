@@ -18,6 +18,7 @@
 @interface MWPhotoBrowser ()
 
 @property (nonatomic) NSUInteger isSelectedCount;
+@property (nonatomic) BOOL hiddenForNavigationBar;
 
 @end
 
@@ -89,6 +90,7 @@
     _didSavePreviousStateOfNavBar = NO;
     
     _isSelectedCount = 0;
+    _hiddenForNavigationBar = NO;
     _hideToolbar = NO;
     _currentThumbnailFrame = CGRectNull;
     _currentThumbnailImageKey = nil;
@@ -423,7 +425,7 @@
     // Controls
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // Cancel any pending toggles from taps
-    _displaySelectionButtons = YES;
+    _hiddenForNavigationBar = NO;
     [self setControlsHidden:NO animated:NO permanent:YES];
     
     // Status bar
@@ -931,6 +933,10 @@
 // Handle page changes
 - (void)didStartViewingPageAtIndex:(NSUInteger)index {
     
+    if (!_displaySelectionButtons) {
+        _hiddenForNavigationBar = YES;
+    }
+    
     if (![self numberOfPhotos]) {
         // Show controls
         [self setControlsHidden:NO animated:YES permanent:YES];
@@ -1179,6 +1185,8 @@
 
 - (void)showGrid:(BOOL)animated {
     
+    _hiddenForNavigationBar = NO;
+    
     if (_gridController) return;
     
     // Init grid controller
@@ -1221,6 +1229,10 @@
 }
 
 - (void)hideGrid {
+    
+    if (!_displaySelectionButtons) {
+        _hiddenForNavigationBar = YES;
+    }
     
     if (!_gridController) return;
     
@@ -1268,10 +1280,11 @@
     if (![self numberOfPhotos] || _gridController || _alwaysShowControls)
         hidden = NO;
     
-    BOOL hiddenForNavigationBar = hidden;
-    if (!_gridController && !_displaySelectionButtons) {
-        hiddenForNavigationBar = YES;
+    BOOL hiddenForNavigationBar = _hiddenForNavigationBar;
+    if (!hiddenForNavigationBar) {
+        hiddenForNavigationBar = hidden;
     }
+    
     // Cancel any timers
     [self cancelControlHiding];
     
