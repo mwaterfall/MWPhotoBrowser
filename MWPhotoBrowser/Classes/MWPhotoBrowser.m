@@ -437,6 +437,8 @@
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
     }
     
+    [_selectedPhotos removeAllObjects];
+
     // Super
     [super viewWillDisappear:animated];
 }
@@ -1725,8 +1727,6 @@
         // Call delegate method and let them dismiss us
         [_delegate photoBrowser:self didFinishSelectPhotos:_selectedPhotos];
     }
-    
-    [_selectedPhotos removeAllObjects];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
