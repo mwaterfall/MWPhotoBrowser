@@ -508,12 +508,16 @@
 }
 
 - (void)layoutVisiblePages {
+    [self layoutVisiblePagesForInterfaceOrientation:self.interfaceOrientation];
+}
+
+- (void)layoutVisiblePagesForInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
 	// Flag
 	_performingLayout = YES;
 	
 	// Toolbar
-	_toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+	_toolbar.frame = [self frameForToolbarAtOrientation:interfaceOrientation];
     
 	// Remember index
 	NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -593,7 +597,7 @@
 	[self hideControlsAfterDelay];
     
     // Layout
-    [self layoutVisiblePages];
+    [self layoutVisiblePagesForInterfaceOrientation:toInterfaceOrientation];
 	
 }
 
