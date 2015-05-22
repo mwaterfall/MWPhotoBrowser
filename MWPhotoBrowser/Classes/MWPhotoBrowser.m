@@ -446,6 +446,7 @@
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
+    navBar.titleTextAttributes = nil;
     navBar.tintColor = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7") ? [UIColor whiteColor] : nil;
     if ([navBar respondsToSelector:@selector(setBarTintColor:)]) {
         navBar.barTintColor = nil;
@@ -461,6 +462,7 @@
 
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
+    _previousNavBarTitleAttributes = self.navigationController.navigationBar.titleTextAttributes;
     if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
         _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     }
@@ -478,6 +480,7 @@
     if (_didSavePreviousStateOfNavBar) {
         [self.navigationController setNavigationBarHidden:_previousNavBarHidden animated:animated];
         UINavigationBar *navBar = self.navigationController.navigationBar;
+        navBar.titleTextAttributes = _previousNavBarTitleAttributes;
         navBar.tintColor = _previousNavBarTintColor;
         navBar.translucent = _previousNavBarTranslucent;
         if ([UINavigationBar instancesRespondToSelector:@selector(barTintColor)]) {
@@ -505,12 +508,16 @@
 }
 
 - (void)layoutVisiblePages {
+    [self layoutVisiblePagesForInterfaceOrientation:self.interfaceOrientation];
+}
+
+- (void)layoutVisiblePagesForInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
 	// Flag
 	_performingLayout = YES;
 	
 	// Toolbar
-	_toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+	_toolbar.frame = [self frameForToolbarAtOrientation:interfaceOrientation];
     
 	// Remember index
 	NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -590,7 +597,7 @@
 	[self hideControlsAfterDelay];
     
     // Layout
-    [self layoutVisiblePages];
+    [self layoutVisiblePagesForInterfaceOrientation:toInterfaceOrientation];
 	
 }
 
