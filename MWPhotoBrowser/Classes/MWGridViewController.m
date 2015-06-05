@@ -32,6 +32,7 @@
         
         CGSize screenSize = [UIScreen mainScreen].bounds.size;
         CGSize screenSizeFixed = CGSizeMake(MIN(screenSize.width, screenSize.height), MAX(screenSize.width, screenSize.height));
+        
         // For pixel perfection...
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             // iPad
