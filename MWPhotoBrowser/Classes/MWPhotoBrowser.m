@@ -209,7 +209,7 @@
     // Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
-        _doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"Done", @"mwstrings", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
+        _doneButton = [[UIBarButtonItem alloc] initWithTitle:MWLocalize(@"Done") style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
         // Set appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
             [_doneButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -1044,13 +1044,13 @@
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
         if (_gridController.selectionMode) {
-            self.title = NSLocalizedStringFromTable(@"Select Photos", @"mwstrings", nil);
+            self.title = MWLocalize(@"Select Photos");
         } else {
             NSString *photosText;
             if (numberOfPhotos == 1) {
-                photosText = NSLocalizedStringFromTable(@"photo", @"mwstrings", @"Used in the context: '1 photo'");
+                photosText = MWLocalize(@"photo");
             } else {
-                photosText = NSLocalizedStringFromTable(@"photos", @"mwstrings", @"Used in the context: '3 photos'");
+                photosText = MWLocalize(@"photos");
             }
             self.title = [NSString stringWithFormat:@"%lu %@", (unsigned long)numberOfPhotos, photosText];
         }
@@ -1058,7 +1058,7 @@
         if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
-            self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedStringFromTable(@"of", @"mwstrings", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
+            self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), MWLocalize(@"of"), (unsigned long)numberOfPhotos];
         }
 	} else {
 		self.title = nil;
@@ -1454,12 +1454,12 @@
                     // Old handling of activities with action sheet
                     if ([MFMailComposeViewController canSendMail]) {
                         _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                               cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"mwstrings", nil) destructiveButtonTitle:nil
-                                                               otherButtonTitles:NSLocalizedStringFromTable(@"Save", @"mwstrings", nil), NSLocalizedStringFromTable(@"Copy", @"mwstrings", nil), NSLocalizedStringFromTable(@"Email", @"mwstrings", nil), nil];
+                                                               cancelButtonTitle:MWLocalize(@"Cancel") destructiveButtonTitle:nil
+                                                               otherButtonTitles:MWLocalize(@"Save"), MWLocalize(@"Copy"), MWLocalize(@"Email"), nil];
                     } else {
                         _actionsSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self
-                                                               cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"mwstrings", nil) destructiveButtonTitle:nil
-                                                               otherButtonTitles:NSLocalizedStringFromTable(@"Save", @"mwstrings", nil), NSLocalizedStringFromTable(@"Copy", @"mwstrings", nil), nil];
+                                                               cancelButtonTitle:MWLocalize(@"Cancel") destructiveButtonTitle:nil
+                                                               otherButtonTitles:MWLocalize(@"Save"), MWLocalize(@"Copy"), nil];
                     }
                     _actionsSheet.tag = ACTION_SHEET_OLD_ACTIONS;
                     _actionsSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
@@ -1575,7 +1575,7 @@
 - (void)savePhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedStringFromTable(@"Saving", @"mwstrings", @"Displayed with ellipsis as 'Saving...' when an item is in the process of being saved")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , MWLocalize(@"Saving")]];
         [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1588,14 +1588,14 @@
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    [self showProgressHUDCompleteMessage: error ? NSLocalizedStringFromTable(@"Failed", @"mwstrings", @"Informing the user a process has failed") : NSLocalizedStringFromTable(@"Saved", @"mwstrings", @"Informing the user an item has been saved")];
+    [self showProgressHUDCompleteMessage: error ? MWLocalize(@"Failed") : MWLocalize(@"Saved")];
     [self hideControlsAfterDelay]; // Continue as normal...
 }
 
 - (void)copyPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedStringFromTable(@"Copying", @"mwstrings", @"Displayed with ellipsis as 'Copying...' when an item is in the process of being copied")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , MWLocalize(@"Copying")]];
         [self performSelector:@selector(actuallyCopyPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1604,7 +1604,7 @@
     if ([photo underlyingImage]) {
         [[UIPasteboard generalPasteboard] setData:UIImagePNGRepresentation([photo underlyingImage])
                                 forPasteboardType:@"public.png"];
-        [self showProgressHUDCompleteMessage:NSLocalizedStringFromTable(@"Copied", @"mwstrings", @"Informing the user an item has finished copying")];
+        [self showProgressHUDCompleteMessage:MWLocalize(@"Copied")];
         [self hideControlsAfterDelay]; // Continue as normal...
     }
 }
@@ -1612,7 +1612,7 @@
 - (void)emailPhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedStringFromTable(@"Preparing", @"mwstrings", @"Displayed with ellipsis as 'Preparing...' when an item is in the process of being prepared")]];
+        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , MWLocalize(@"Preparing")]];
         [self performSelector:@selector(actuallyEmailPhoto:) withObject:photo afterDelay:0];
     }
 }
@@ -1621,7 +1621,7 @@
     if ([photo underlyingImage]) {
         MFMailComposeViewController *emailer = [[MFMailComposeViewController alloc] init];
         emailer.mailComposeDelegate = self;
-        [emailer setSubject:NSLocalizedStringFromTable(@"Photo", @"mwstrings", nil)];
+        [emailer setSubject:MWLocalize(@"Photo")];
         [emailer addAttachmentData:UIImagePNGRepresentation([photo underlyingImage]) mimeType:@"png" fileName:@"Photo.png"];
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             emailer.modalPresentationStyle = UIModalPresentationPageSheet;
@@ -1633,9 +1633,9 @@
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     if (result == MFMailComposeResultFailed) {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Email", @"mwstrings", nil)
-                                                         message:NSLocalizedStringFromTable(@"Email failed to send. Please try again.", @"mwstrings", nil)
-                                                        delegate:nil cancelButtonTitle:NSLocalizedStringFromTable(@"Dismiss", @"mwstrings", nil) otherButtonTitles:nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:MWLocalize(@"Email")
+                                                         message:MWLocalize(@"Email failed to send. Please try again.")
+                                                        delegate:nil cancelButtonTitle:MWLocalize(@"Dismiss") otherButtonTitles:nil];
 		[alert show];
     }
     [self dismissViewControllerAnimated:YES completion:nil];
