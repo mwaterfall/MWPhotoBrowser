@@ -201,7 +201,7 @@
     // Complete so notify
     _loadingInProgress = NO;
     // Notify on next run loop
-    [self performSelector:@selector(postCompleteNotification) withObject:nil afterDelay:0];
+    [self performSelector:@selector(postCompleteNotification) withObject:nil afterDelay:0 inModes:@[NSRunLoopCommonModes]];
 }
 
 - (void)postCompleteNotification {

@@ -33,16 +33,6 @@ static const CGFloat labelPadding = 10;
             self.barTintColor = nil;
             self.barStyle = UIBarStyleBlackTranslucent;
             [self setBackgroundImage:nil forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
-        } else {
-            // Transparent black with no gloss
-            CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
-            UIGraphicsBeginImageContext(rect.size);
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            CGContextSetFillColorWithColor(context, [[UIColor colorWithWhite:0 alpha:0.6] CGColor]);
-            CGContextFillRect(context, rect);
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            [self setBackgroundImage:image forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
         }
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         [self setupCaption];
@@ -77,24 +67,12 @@ static const CGFloat labelPadding = 10;
     _label.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     _label.opaque = NO;
     _label.backgroundColor = [UIColor clearColor];
-    if (SYSTEM_VERSION_LESS_THAN(@"6")) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        _label.textAlignment = UITextAlignmentCenter;
-        _label.lineBreakMode = UILineBreakModeWordWrap;
-#pragma clang diagnostic pop
-    } else {
-        _label.textAlignment = NSTextAlignmentCenter;
-        _label.lineBreakMode = NSLineBreakByWordWrapping;
-    }
+    _label.textAlignment = NSTextAlignmentCenter;
+    _label.lineBreakMode = NSLineBreakByWordWrapping;
 
     _label.numberOfLines = 0;
     _label.textColor = [UIColor whiteColor];
-    if (SYSTEM_VERSION_LESS_THAN(@"7")) {
-        // Shadow on 6 and below
-        _label.shadowColor = [UIColor blackColor];
-        _label.shadowOffset = CGSizeMake(1, 1);
-    }
+
     _label.font = [UIFont systemFontOfSize:17];
     if ([_photo respondsToSelector:@selector(caption)]) {
         _label.text = [_photo caption] ? [_photo caption] : @" ";

@@ -23,12 +23,15 @@
 @implementation MWGridViewController
 
 - (id)init {
-    if ((self = [super initWithCollectionViewLayout:[PSTCollectionViewFlowLayout new]])) {
+    if ((self = [super initWithCollectionViewLayout:[UICollectionViewFlowLayout new]])) {
         
         // Defaults
         _columns = 3, _columnsL = 4;
         _margin = 0, _gutter = 1;
         _marginL = 0, _gutterL = 1;
+        
+        CGSize screenSize = [UIScreen mainScreen].bounds.size;
+        CGSize screenSizeFixed = CGSizeMake(MIN(screenSize.width, screenSize.height), MAX(screenSize.width, screenSize.height));
         
         // For pixel perfection...
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
@@ -36,9 +39,19 @@
             _columns = 6, _columnsL = 8;
             _margin = 1, _gutter = 2;
             _marginL = 1, _gutterL = 2;
-        } else if ([UIScreen mainScreen].bounds.size.height == 480) {
+        } else if (screenSizeFixed.height == 480) {
             // iPhone 3.5 inch
             _columns = 3, _columnsL = 4;
+            _margin = 0, _gutter = 1;
+            _marginL = 1, _gutterL = 2;
+        } else if(screenSizeFixed.height == 667) {
+            // iPhone 6
+            _columns = 5, _columnsL = 7;
+            _margin = 0, _gutter = 1;
+            _marginL = 1, _gutterL = 2;
+        } else if(screenSizeFixed.height == 736) {
+            // iPHone 6+
+            _columns = 5, _columnsL = 8;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
         } else {
@@ -47,9 +60,9 @@
             _margin = 0, _gutter = 1;
             _marginL = 0, _gutterL = 2;
         }
-
+        
         _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
- 
+        
     }
     return self;
 }
@@ -61,6 +74,18 @@
     [self.collectionView registerClass:[MWGridCell class] forCellWithReuseIdentifier:@"GridCell"];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.backgroundColor = [UIColor blackColor];
+    self.collectionView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    // Get scroll position to have the current photo on screen
+    if (_browser.numberOfPhotos > 0) {
+        NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
+        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -82,36 +107,14 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    // Move to previous content offset
-    if (_initialContentOffset.y != CGFLOAT_MAX) {
-        self.collectionView.contentOffset = _initialContentOffset;
+    if (self.navigationController.navigationBar.translucent) {
+        self.collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(self.navigationController.navigationBar.bounds.size.height+20, 0, 0, 0);
     }
-    CGPoint currentContentOffset = self.collectionView.contentOffset;
-    
-    // Get scroll position to have the current photo on screen
-    if (_browser.numberOfPhotos > 0) {
-        NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
-        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:PSTCollectionViewScrollPositionNone animated:NO];
-    }
-    CGPoint offsetToShowCurrent = self.collectionView.contentOffset;
-    
-    // Only commit to using the scrolled position if it differs from the initial content offset
-    if (!CGPointEqualToPoint(offsetToShowCurrent, currentContentOffset)) {
-        // Use offset to show current
-        self.collectionView.contentOffset = offsetToShowCurrent;
-    } else {
-        // Stick with initial
-        self.collectionView.contentOffset = currentContentOffset;
-    }
-    
 }
 
 - (void)performLayout {
     UINavigationBar *navBar = self.navigationController.navigationBar;
     CGFloat yAdjust = 0;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    if (SYSTEM_VERSION_LESS_THAN(@"7") && !self.browser.wantsFullScreenLayout) yAdjust = -20;
-#endif
     self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter] + yAdjust, 0, 0, 0);
 }
 
@@ -123,7 +126,7 @@
 #pragma mark - Layout
 
 - (CGFloat)getColumns {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _columns;
     } else {
         return _columnsL;
@@ -131,7 +134,7 @@
 }
 
 - (CGFloat)getMargin {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _margin;
     } else {
         return _marginL;
@@ -139,7 +142,7 @@
 }
 
 - (CGFloat)getGutter {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _gutter;
     } else {
         return _gutterL;
@@ -152,7 +155,7 @@
     return [_browser numberOfPhotos];
 }
 
-- (PSTCollectionViewCell *)collectionView:(PSTCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     MWGridCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"GridCell" forIndexPath:indexPath];
     if (!cell) {
         cell = [[MWGridCell alloc] init];
@@ -172,16 +175,16 @@
     return cell;
 }
 
-- (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [_browser setCurrentPhotoIndex:indexPath.row];
     [_browser hideGrid];
 }
 
-- (void)collectionView:(PSTCollectionView *)collectionView didEndDisplayingCell:(PSTCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     [((MWGridCell *)cell).photo cancelAnyLoading];
 }
 
-- (CGSize)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat margin = [self getMargin];
     CGFloat gutter = [self getGutter];
     CGFloat columns = [self getColumns];
@@ -189,15 +192,15 @@
     return CGSizeMake(value, value);
 }
 
-- (CGFloat)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     return [self getGutter];
 }
 
-- (CGFloat)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return [self getGutter];
 }
 
-- (UIEdgeInsets)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     CGFloat margin = [self getMargin];
     return UIEdgeInsetsMake(margin, margin, margin, margin);
 }
