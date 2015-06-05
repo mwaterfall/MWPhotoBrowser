@@ -30,23 +30,25 @@
         _margin = 0, _gutter = 1;
         _marginL = 0, _gutterL = 1;
         
+        CGSize screenSize = [UIScreen mainScreen].bounds.size;
+        CGSize screenSizeFixed = CGSizeMake(MIN(screenSize.width, screenSize.height), MAX(screenSize.width, screenSize.height));
         // For pixel perfection...
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             // iPad
             _columns = 6, _columnsL = 8;
             _margin = 1, _gutter = 2;
             _marginL = 1, _gutterL = 2;
-        } else if ([UIScreen mainScreen].bounds.size.height == 480) {
+        } else if (screenSizeFixed.height == 480) {
             // iPhone 3.5 inch
             _columns = 3, _columnsL = 4;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
-        } else if([UIScreen mainScreen].bounds.size.height == 667) {
+        } else if(screenSizeFixed.height == 667) {
             // iPhone 6
-            _columns = 4, _columnsL = 7;
+            _columns = 5, _columnsL = 7;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
-        } else if([UIScreen mainScreen].bounds.size.height == 736) {
+        } else if(screenSizeFixed.height == 736) {
             // iPHone 6+
             _columns = 5, _columnsL = 8;
             _margin = 0, _gutter = 1;
@@ -57,9 +59,9 @@
             _margin = 0, _gutter = 1;
             _marginL = 0, _gutterL = 2;
         }
-
+        
         _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
- 
+        
     }
     return self;
 }
@@ -71,6 +73,18 @@
     [self.collectionView registerClass:[MWGridCell class] forCellWithReuseIdentifier:@"GridCell"];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.backgroundColor = [UIColor blackColor];
+    self.collectionView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    // Get scroll position to have the current photo on screen
+    if (_browser.numberOfPhotos > 0) {
+        NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
+        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -92,27 +106,9 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    // Move to previous content offset
-    if (_initialContentOffset.y != CGFLOAT_MAX) {
-        self.collectionView.contentOffset = _initialContentOffset;
+    if (self.navigationController.navigationBar.translucent) {
+        self.collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(self.navigationController.navigationBar.bounds.size.height+20, 0, 0, 0);
     }
-    CGPoint currentContentOffset = self.collectionView.contentOffset;
-    
-    // Get scroll position to have the current photo on screen
-    if (_browser.numberOfPhotos > 0) {
-        NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
-    }
-    CGPoint offsetToShowCurrent = self.collectionView.contentOffset;
-    
-    // Only commit to using the scrolled position if it differs from the initial content offset
-    if (!CGPointEqualToPoint(offsetToShowCurrent, currentContentOffset)) {
-        // Use offset to show current
-        self.collectionView.contentOffset = offsetToShowCurrent;
-    } else {
-        // Stick with initial
-        self.collectionView.contentOffset = currentContentOffset;
-    }
-    
 }
 
 - (void)performLayout {
@@ -129,7 +125,7 @@
 #pragma mark - Layout
 
 - (CGFloat)getColumns {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _columns;
     } else {
         return _columnsL;
@@ -137,7 +133,7 @@
 }
 
 - (CGFloat)getMargin {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _margin;
     } else {
         return _marginL;
@@ -145,7 +141,7 @@
 }
 
 - (CGFloat)getGutter {
-    if ((UIInterfaceOrientationIsPortrait(self.interfaceOrientation))) {
+    if ((UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]))) {
         return _gutter;
     } else {
         return _gutterL;
