@@ -17,7 +17,7 @@
 
 - (id)initWithStyle:(UITableViewStyle)style {
     if ((self = [super initWithStyle:style])) {
-		self.title = @"MWPhotoBrowser";
+        self.title = @"MWPhotoBrowser";
         
         // Clear cache for testing
         [[SDImageCache sharedImageCache] clearDisk];
@@ -35,7 +35,7 @@
         UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:_segmentedControl];
         self.navigationItem.rightBarButtonItem = item;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:nil action:nil];
-
+        
         [self loadAssets];
         
     }
@@ -53,20 +53,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Test toolbar hiding
-//    [self setToolbarItems: @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:nil action:nil]]];
-//    [[self navigationController] setToolbarHidden:NO animated:NO];
+    //    [self setToolbarItems: @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:nil action:nil]]];
+    //    [[self navigationController] setToolbarHidden:NO animated:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
-//    self.navigationController.navigationBar.translucent = NO;
-//    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    //    self.navigationController.navigationBar.barTintColor = [UIColor greenColor];
+    //    self.navigationController.navigationBar.translucent = NO;
+    //    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    //    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -89,7 +89,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 7;
+    NSInteger rows = 8;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -98,174 +98,181 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-	// Create
+    // Create
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     cell.accessoryType = _segmentedControl.selectedSegmentIndex == 0 ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
-
+    
     // Configure
-	switch (indexPath.row) {
-		case 0: {
+    switch (indexPath.row) {
+        case 0: {
             cell.textLabel.text = @"Single photo";
             cell.detailTextLabel.text = @"with caption, no grid button";
             break;
         }
-		case 1: {
+        case 1: {
             cell.textLabel.text = @"Multiple photos";
             cell.detailTextLabel.text = @"with captions";
             break;
         }
-		case 2: {
+        case 2: {
             cell.textLabel.text = @"Multiple photo grid";
             cell.detailTextLabel.text = @"showing grid first, nav arrows enabled";
             break;
         }
-		case 3: {
+        case 3: {
             cell.textLabel.text = @"Photo selections";
             cell.detailTextLabel.text = @"selection enabled";
             break;
         }
-		case 4: {
+        case 4: {
             cell.textLabel.text = @"Photo selection grid";
             cell.detailTextLabel.text = @"selection enabled, start at grid";
             break;
         }
-		case 5: {
+        case 5: {
             cell.textLabel.text = @"Web photos";
             cell.detailTextLabel.text = @"photos from web";
             break;
         }
-		case 6: {
+        case 6: {
             cell.textLabel.text = @"Web photo grid";
             cell.detailTextLabel.text = @"showing grid first";
             break;
         }
-		case 7: {
+        case 7: {
+            cell.textLabel.text = @"Web photo grid with Modal";
+            cell.detailTextLabel.text = @"showing grid first and image in MODAL style";
+            break;
+        }
+        case 8: {
             cell.textLabel.text = @"Library photos";
             cell.detailTextLabel.text = @"photos from device library";
             break;
         }
-		default: break;
-	}
+        default: break;
+    }
     return cell;
-	
+    
 }
 
 #pragma mark -
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	// Browser
-	NSMutableArray *photos = [[NSMutableArray alloc] init];
-	NSMutableArray *thumbs = [[NSMutableArray alloc] init];
+    
+    // Browser
+    NSMutableArray *photos = [[NSMutableArray alloc] init];
+    NSMutableArray *thumbs = [[NSMutableArray alloc] init];
     MWPhoto *photo;
     BOOL displayActionButton = YES;
     BOOL displaySelectionButtons = NO;
     BOOL displayNavArrows = NO;
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
-	switch (indexPath.row) {
-		case 0:
+    BOOL displayPicturesInModalView = NO;
+    switch (indexPath.row) {
+        case 0:
             // Photos
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
             photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
-			[photos addObject:photo];
+            [photos addObject:photo];
             // Options
             enableGrid = NO;
-			break;
-		case 1: {
+            break;
+        case 1: {
             // Photos
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo5" ofType:@"jpg"]]];
             photo.caption = @"Fireworks";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
             photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
             photo.caption = @"York Floods";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4" ofType:@"jpg"]]];
             photo.caption = @"Campervan";
-			[photos addObject:photo];
+            [photos addObject:photo];
             // Options
             enableGrid = NO;
-			break;
+            break;
         }
-		case 2: {
+        case 2: {
             // Photos
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo5" ofType:@"jpg"]]];
             photo.caption = @"White Tower";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
             photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
             photo.caption = @"York Floods";
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4" ofType:@"jpg"]]];
             photo.caption = @"Campervan";
-			[photos addObject:photo];
+            [photos addObject:photo];
             // Thumbs
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo5t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo2t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo4t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             // Options
             startOnGrid = YES;
             displayNavArrows = YES;
-			break;
+            break;
         }
-		case 3:
-		case 4: {
+        case 3:
+        case 4: {
             // Photos
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4" ofType:@"jpg"]]];
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo1" ofType:@"jpg"]]];
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
-			[photos addObject:photo];
+            [photos addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
-			[photos addObject:photo];
+            [photos addObject:photo];
             // Thumbs
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo1t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3t" ofType:@"jpg"]]];
-			[thumbs addObject:photo];
+            [thumbs addObject:photo];
             // Options
             displayActionButton = NO;
             displaySelectionButtons = YES;
             startOnGrid = indexPath.row == 4;
             enableGrid = NO;
-			break;
+            break;
         }
-		case 5:
+        case 5:
             // Photos
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"]]];
-			[photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_b.jpg"]]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"]]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"]]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"]]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"]]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_b.jpg"]]];
             // Thumbs
-			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_q.jpg"]]];
-			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_q.jpg"]]];
-			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_q.jpg"]]];
-			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_q.jpg"]]];
-			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_q.jpg"]]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_q.jpg"]]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_q.jpg"]]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_q.jpg"]]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_q.jpg"]]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_q.jpg"]]];
             // Options
-			break;
-		case 6:
+            break;
+        case 6:
+        case 7:
             // Photos & thumbs
             photo = [MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3779/9522424255_28a5a9d99c_b.jpg"]];
             photo.caption = @"Tube";
@@ -1017,8 +1024,9 @@
             [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm2.static.flickr.com/1235/1010416375_fe91e5ce22_q.jpg"]]];
             // Options
             startOnGrid = YES;
-			break;
-		case 7: {
+            if (indexPath.row == 7) displayPicturesInModalView = YES;
+            break;
+        case 8: {
             @synchronized(_assets) {
                 NSMutableArray *copy = [_assets copy];
                 for (ALAsset *asset in copy) {
@@ -1026,15 +1034,15 @@
                     [thumbs addObject:[MWPhoto photoWithImage:[UIImage imageWithCGImage:asset.thumbnail]]];
                 }
             }
-			break;
+            break;
         }
-		default: break;
-	}
+        default: break;
+    }
     self.photos = photos;
     self.thumbs = thumbs;
-	
-	// Create browser
-	MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+    
+    // Create browser
+    MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     browser.displayActionButton = displayActionButton;
     browser.displayNavArrows = displayNavArrows;
     browser.displaySelectionButtons = displaySelectionButtons;
@@ -1044,6 +1052,7 @@
     browser.wantsFullScreenLayout = YES;
 #endif
     browser.enableGrid = enableGrid;
+    browser.displayPicturesInModalViewWithGrid = displayPicturesInModalView;
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = YES;
     [browser setCurrentPhotoIndex:0];
@@ -1068,36 +1077,36 @@
     }
     
     // Release
-	
-	// Deselect
-	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    // Deselect
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     // Test reloading of data after delay
     double delayInSeconds = 3;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-    
-//        // Test removing an object
-//        [_photos removeLastObject];
-//        [browser reloadData];
-//    
-//        // Test all new
-//        [_photos removeAllObjects];
-//        [_photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
-//        [browser reloadData];
-//    
-//        // Test changing photo index
-//        [browser setCurrentPhotoIndex:9];
-    
-//        // Test updating selections
-//        _selections = [NSMutableArray new];
-//        for (int i = 0; i < [self numberOfPhotosInPhotoBrowser:browser]; i++) {
-//            [_selections addObject:[NSNumber numberWithBool:YES]];
-//        }
-//        [browser reloadData];
+        
+        //        // Test removing an object
+        //        [_photos removeLastObject];
+        //        [browser reloadData];
+        //
+        //        // Test all new
+        //        [_photos removeAllObjects];
+        //        [_photos addObject:[MWPhoto photoWithFilePath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
+        //        [browser reloadData];
+        //
+        //        // Test changing photo index
+        //        [browser setCurrentPhotoIndex:9];
+        
+        //        // Test updating selections
+        //        _selections = [NSMutableArray new];
+        //        for (int i = 0; i < [self numberOfPhotosInPhotoBrowser:browser]; i++) {
+        //            [_selections addObject:[NSNumber numberWithBool:YES]];
+        //        }
+        //        [browser reloadData];
         
     });
-
+    
 }
 
 #pragma mark - MWPhotoBrowserDelegate
@@ -1161,7 +1170,7 @@
     
     // Run in the background as it takes a while to get all assets from the library
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
+        
         NSMutableArray *assetGroups = [[NSMutableArray alloc] init];
         NSMutableArray *assetURLDictionaries = [[NSMutableArray alloc] init];
         

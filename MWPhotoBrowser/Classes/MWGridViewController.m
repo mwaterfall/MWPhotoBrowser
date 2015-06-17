@@ -47,9 +47,9 @@
             _margin = 0, _gutter = 1;
             _marginL = 0, _gutterL = 2;
         }
-
+        
         _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
- 
+        
     }
     return self;
 }
@@ -174,6 +174,7 @@
 
 - (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [_browser setCurrentPhotoIndex:indexPath.row];
+    [_browser showCloseButton:_browser.displayPicturesInModalViewWithGrid];
     [_browser hideGrid];
 }
 
