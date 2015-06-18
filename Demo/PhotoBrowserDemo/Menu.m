@@ -174,6 +174,7 @@
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
     BOOL displayPicturesInModalView = NO;
+    UISwipeGestureRecognizerDirection swipeToDismissDirections = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
     switch (indexPath.row) {
         case 0:
             // Photos
@@ -1025,6 +1026,7 @@
             // Options
             startOnGrid = YES;
             if (indexPath.row == 7) displayPicturesInModalView = YES;
+            if (indexPath.row == 7) swipeToDismissDirections = UISwipeGestureRecognizerDirectionDown;
             break;
         case 8: {
             @synchronized(_assets) {
@@ -1055,6 +1057,7 @@
     browser.displayPicturesInModalViewWithGrid = displayPicturesInModalView;
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = YES;
+    browser.swipeToDismissDirections = swipeToDismissDirections;
     [browser setCurrentPhotoIndex:0];
     
     // Reset selections

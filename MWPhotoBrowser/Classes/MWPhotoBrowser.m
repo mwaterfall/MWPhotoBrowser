@@ -74,6 +74,7 @@
     _enableGrid = YES;
     _startOnGrid = NO;
     _enableSwipeToDismiss = YES;
+    _swipeToDismissDirections = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
     _recycledPages = [[NSMutableSet alloc] init];
@@ -194,7 +195,7 @@
     // Swipe to dismiss
     if (_enableSwipeToDismiss) {
         UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(doneButtonPressed:)];
-        swipeGesture.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
+        swipeGesture.direction = _swipeToDismissDirections;
         [self.view addGestureRecognizer:swipeGesture];
     }
     
