@@ -29,8 +29,8 @@ static const CGFloat labelPadding = 10;
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
             // Use iOS 7 blurry goodness
             self.barStyle = UIBarStyleBlackTranslucent;
-            self.tintColor = (_customTintColor ? _customTintColor : nil);
-            self.barTintColor = (_customBarTintColor ? _customBarTintColor : nil);
+            self.tintColor = (_captionTintColor ? _captionTintColor : nil);
+            self.barTintColor = (_captionBarTintColor ? _captionBarTintColor : nil);
             self.barStyle = UIBarStyleBlackTranslucent;
             self.backgroundColor = (_captionBackgroundColor ? _captionBackgroundColor : nil);
             [self setBackgroundImage:nil forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];

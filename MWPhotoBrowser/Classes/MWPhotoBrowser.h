@@ -74,6 +74,12 @@
 @property (nonatomic) UIColor *navBarBarTintColor;
 @property (nonatomic) UIColor *toolBarTintColor;
 
+@property (nonatomic) UIColor *captionTintColor;
+@property (nonatomic) UIColor *captionBarTintColor;
+@property (nonatomic) UIColor *captionBackgroundColor;
+@property (nonatomic) UIColor *captionTextColor;
+@property (nonatomic) UIColor *captionShadowColor;
+
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;

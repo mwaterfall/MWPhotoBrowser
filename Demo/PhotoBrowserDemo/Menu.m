@@ -1060,6 +1060,20 @@
     browser.swipeToDismissDirections = swipeToDismissDirections;
     [browser setCurrentPhotoIndex:0];
     
+    // Customize
+    // Browser
+    browser.backgroundColor = nil;
+    browser.navBarTintColor = nil;
+    browser.navBarBarTintColor = nil;
+    browser.toolBarTintColor = nil;
+
+    // Caption
+    browser.captionTintColor = nil;
+    browser.captionBarTintColor = nil;
+    browser.captionBackgroundColor = nil;
+    browser.captionTextColor = [UIColor orangeColor];
+    browser.captionShadowColor = nil;
+    
     // Reset selections
     if (displaySelectionButtons) {
         _selections = [NSMutableArray new];

@@ -31,8 +31,8 @@
 - (CGSize)sizeThatFits:(CGSize)size;
 
 // Customize
-@property (nonatomic) UIColor *customTintColor;
-@property (nonatomic) UIColor *customBarTintColor;
+@property (nonatomic) UIColor *captionTintColor;
+@property (nonatomic) UIColor *captionBarTintColor;
 @property (nonatomic) UIColor *captionBackgroundColor;
 @property (nonatomic) UIColor *captionTextColor;
 @property (nonatomic) UIColor *captionShadowColor;
