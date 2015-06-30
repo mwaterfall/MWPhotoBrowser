@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = 'MWPhotoBrowser-ModalPics'
-    s.version = '1.4.1.3'
+    s.version = '1.4.2'
     s.license = 'MIT'
     s.summary = 'A simple iOS photo browser with optional grid ' \
                 'view, captions and selections.'
@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
                     'web images or library assets. The photo browser ' \
                     'handles the downloading and caching of photos from ' \
                     'the web seamlessly. Photos can be zoomed and panned, ' \
-                    'and optional (customisable) captions can be  ' \
-                    'displayed. The browser can also be used to allow the ' \
+                    'The browser can also be used to allow the ' \
                     'user to select one or more photos using either the ' \
-                    'grid or main image view.'
+                    'grid or main image view.' \
+                    'Now you can customize all views to adapt to your custom design.'
     s.screenshots = ['https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser1.png',
                      'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
                      'master/Preview/MWPhotoBrowser5.png',
                      'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser6.png']
-    s.homepage = 'https://github.com/mwaterfall/MWPhotoBrowser'
+    s.homepage = 'https://github.com/sergiog90/MWPhotoBrowser'
     s.author = { 'Sergio Garcia' => 'sergiogm.amurrio@gmail.com' }
     s.source = {
         :git => 'https://github.com/sergiog90/MWPhotoBrowser.git',
