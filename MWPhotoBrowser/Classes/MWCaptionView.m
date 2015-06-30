@@ -29,16 +29,17 @@ static const CGFloat labelPadding = 10;
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7")) {
             // Use iOS 7 blurry goodness
             self.barStyle = UIBarStyleBlackTranslucent;
-            self.tintColor = nil;
-            self.barTintColor = nil;
+            self.tintColor = (_customTintColor ? _customTintColor : nil);
+            self.barTintColor = (_customBarTintColor ? _customBarTintColor : nil);
             self.barStyle = UIBarStyleBlackTranslucent;
+            self.backgroundColor = (_captionBackgroundColor ? _captionBackgroundColor : nil);
             [self setBackgroundImage:nil forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
         } else {
             // Transparent black with no gloss
             CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
             UIGraphicsBeginImageContext(rect.size);
             CGContextRef context = UIGraphicsGetCurrentContext();
-            CGContextSetFillColorWithColor(context, [[UIColor colorWithWhite:0 alpha:0.6] CGColor]);
+            CGContextSetFillColorWithColor(context, [[(_captionBackgroundColor ? _captionBackgroundColor : [UIColor blackColor]) colorWithAlphaComponent:0.6] CGColor]);
             CGContextFillRect(context, rect);
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
@@ -89,10 +90,10 @@ static const CGFloat labelPadding = 10;
     }
 
     _label.numberOfLines = 0;
-    _label.textColor = [UIColor whiteColor];
+    _label.textColor = (_captionTextColor ? _captionTextColor : [UIColor whiteColor]);
     if (SYSTEM_VERSION_LESS_THAN(@"7")) {
         // Shadow on 6 and below
-        _label.shadowColor = [UIColor blackColor];
+        _label.shadowColor = (_captionShadowColor ? _captionShadowColor : [UIColor blackColor]);
         _label.shadowOffset = CGSizeMake(1, 1);
     }
     _label.font = [UIFont systemFontOfSize:17];

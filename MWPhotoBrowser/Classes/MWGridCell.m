@@ -28,7 +28,7 @@
     if ((self = [super initWithFrame:frame])) {
         
         // Grey background
-        self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
+        self.backgroundColor = (_gridController.browser.backgroundColor ? _gridController.browser.backgroundColor : [UIColor colorWithWhite:0.12 alpha:1]);
         
         // Image
         _imageView = [UIImageView new];

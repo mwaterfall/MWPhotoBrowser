@@ -68,6 +68,12 @@
 - (void)setCurrentPhotoIndex:(NSUInteger)index;
 - (void)setInitialPageIndex:(NSUInteger)index  __attribute__((deprecated("Use setCurrentPhotoIndex: instead"))); // Depreciated
 
+// Customize
+@property (nonatomic) UIColor *backgroundColor;
+@property (nonatomic) UIColor *navBarTintColor;
+@property (nonatomic) UIColor *navBarBarTintColor;
+@property (nonatomic) UIColor *toolBarTintColor;
+
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;

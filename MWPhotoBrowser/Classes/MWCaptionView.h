@@ -30,4 +30,11 @@
 // the full width of the screen
 - (CGSize)sizeThatFits:(CGSize)size;
 
+// Customize
+@property (nonatomic) UIColor *customTintColor;
+@property (nonatomic) UIColor *customBarTintColor;
+@property (nonatomic) UIColor *captionBackgroundColor;
+@property (nonatomic) UIColor *captionTextColor;
+@property (nonatomic) UIColor *captionShadowColor;
+
 @end
