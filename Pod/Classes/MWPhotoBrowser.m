@@ -1108,6 +1108,10 @@
     [self addChildViewController:_gridController];
     [self.view addSubview:_gridController.view];
     
+    // Perform any adjustments
+    [_gridController.view layoutIfNeeded];
+    [_gridController adjustOffsetsAsRequired];
+    
     // Hide action button on nav bar if it exists
     if (self.navigationItem.rightBarButtonItem == _actionButton) {
         _gridPreviousRightNavItem = _actionButton;
@@ -1121,6 +1125,7 @@
     [self setControlsHidden:NO animated:YES permanent:YES];
     
     // Animate grid in and photo scroller out
+    [_gridController willMoveToParentViewController:self];
     [UIView animateWithDuration:animated ? 0.3 : 0 animations:^(void) {
         _gridController.view.frame = self.view.bounds;
         CGRect newPagingFrame = [self frameForPagingScrollView];
