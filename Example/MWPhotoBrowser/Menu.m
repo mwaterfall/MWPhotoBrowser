@@ -24,11 +24,6 @@
         [[SDImageCache sharedImageCache] clearMemory];
         
         _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Push", @"Modal", nil]];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-        if (SYSTEM_VERSION_LESS_THAN(@"7")) {
-            _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
-        }
-#endif
         _segmentedControl.selectedSegmentIndex = 0;
         [_segmentedControl addTarget:self action:@selector(segmentChange) forControlEvents:UIControlEventValueChanged];
         
@@ -1040,9 +1035,6 @@
     browser.displaySelectionButtons = displaySelectionButtons;
     browser.alwaysShowControls = displaySelectionButtons;
     browser.zoomPhotosToFill = YES;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
-    browser.wantsFullScreenLayout = YES;
-#endif
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = YES;

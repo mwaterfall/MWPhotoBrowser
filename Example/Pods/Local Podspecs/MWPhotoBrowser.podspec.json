@@ -32,11 +32,9 @@
   },
   "requires_arc": true,
   "frameworks": [
-    "MessageUI",
     "ImageIO",
     "QuartzCore",
-    "AssetsLibrary",
-    "MapKit"
+    "AssetsLibrary"
   ],
   "dependencies": {
     "SDWebImage": [
