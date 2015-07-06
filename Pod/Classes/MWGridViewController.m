@@ -23,7 +23,7 @@
 @implementation MWGridViewController
 
 - (id)init {
-    if ((self = [super initWithCollectionViewLayout:[PSTCollectionViewFlowLayout new]])) {
+    if ((self = [super initWithCollectionViewLayout:[UICollectionViewFlowLayout new]])) {
         
         // Defaults
         _columns = 3, _columnsL = 4;
@@ -91,7 +91,7 @@
     // Get scroll position to have the current photo on screen
     if (_browser.numberOfPhotos > 0) {
         NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
-        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:PSTCollectionViewScrollPositionNone animated:NO];
+        [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     }
     CGPoint offsetToShowCurrent = self.collectionView.contentOffset;
     
@@ -152,7 +152,7 @@
     return [_browser numberOfPhotos];
 }
 
-- (PSTCollectionViewCell *)collectionView:(PSTCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     MWGridCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"GridCell" forIndexPath:indexPath];
     if (!cell) {
         cell = [[MWGridCell alloc] init];
@@ -172,16 +172,16 @@
     return cell;
 }
 
-- (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [_browser setCurrentPhotoIndex:indexPath.row];
     [_browser hideGrid];
 }
 
-- (void)collectionView:(PSTCollectionView *)collectionView didEndDisplayingCell:(PSTCollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     [((MWGridCell *)cell).photo cancelAnyLoading];
 }
 
-- (CGSize)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat margin = [self getMargin];
     CGFloat gutter = [self getGutter];
     CGFloat columns = [self getColumns];
@@ -189,15 +189,15 @@
     return CGSizeMake(value, value);
 }
 
-- (CGFloat)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     return [self getGutter];
 }
 
-- (CGFloat)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return [self getGutter];
 }
 
-- (UIEdgeInsets)collectionView:(PSTCollectionView *)collectionView layout:(PSTCollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     CGFloat margin = [self getMargin];
     return UIEdgeInsetsMake(margin, margin, margin, margin);
 }

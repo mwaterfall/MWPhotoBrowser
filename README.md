@@ -28,7 +28,7 @@ The browser can also be used to allow the user to select one or more photos usin
 [screenshot6_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6t.png
 [screenshot6]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6.png
 
-Works on iOS 5.1.1+. All strings are localisable so they can be used in apps that support multiple languages.
+Works on iOS 7+. All strings are localisable so they can be used in apps that support multiple languages.
 
 ## Usage
 

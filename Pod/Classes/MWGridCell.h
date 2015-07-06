@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <PSTCollectionView/PSTCollectionView.h>
 #import "MWPhoto.h"
 #import "MWGridViewController.h"
 
-@interface MWGridCell : PSTCollectionViewCell {}
+@interface MWGridCell : UICollectionViewCell {}
 
 @property (nonatomic, weak) MWGridViewController *gridController;
 @property (nonatomic) NSUInteger index;
