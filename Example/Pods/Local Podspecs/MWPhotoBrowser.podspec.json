@@ -37,14 +37,15 @@
     "AssetsLibrary"
   ],
   "dependencies": {
-    "SDWebImage": [
-      "~> 3.7"
-    ],
     "MBProgressHUD": [
       "~> 0.9"
     ],
     "DACircularProgress": [
       "~> 2.3"
+    ],
+    "SDWebImage": [
+      "~> 3.7",
+      "!= 3.7.2"
     ]
   }
 }

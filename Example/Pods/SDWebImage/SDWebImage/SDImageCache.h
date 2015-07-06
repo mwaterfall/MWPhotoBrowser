@@ -37,12 +37,6 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
 @interface SDImageCache : NSObject
 
 /**
- * Decompressing images that are downloaded and cached can improve peformance but can consume lot of memory.
- * Defaults to YES. Set this to NO if you are experiencing a crash due to excessive memory consumption.
- */
-@property (assign, nonatomic) BOOL shouldDecompressImages;
-
-/**
  * The maximum "total cost" of the in-memory image cache. The cost function is the number of pixels held in memory.
  */
 @property (assign, nonatomic) NSUInteger maxMemoryCost;
@@ -142,7 +136,7 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
  * Remove the image from memory and disk cache synchronously
  *
  * @param key             The unique image cache key
- * @param completion      An block that should be executed after the image has been removed (optional)
+ * @param completionBlock An block that should be executed after the image has been removed (optional)
  */
 - (void)removeImageForKey:(NSString *)key withCompletion:(SDWebImageNoParamsBlock)completion;
 
@@ -159,7 +153,7 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
  *
  * @param key             The unique image cache key
  * @param fromDisk        Also remove cache entry from disk if YES
- * @param completion      An block that should be executed after the image has been removed (optional)
+ * @param completionBlock An block that should be executed after the image has been removed (optional)
  */
 - (void)removeImageForKey:(NSString *)key fromDisk:(BOOL)fromDisk withCompletion:(SDWebImageNoParamsBlock)completion;
 
@@ -170,7 +164,7 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
 
 /**
  * Clear all disk cached images. Non-blocking method - returns immediately.
- * @param completion    An block that should be executed after cache expiration completes (optional)
+ * @param completionBlock An block that should be executed after cache expiration completes (optional)
  */
 - (void)clearDiskOnCompletion:(SDWebImageNoParamsBlock)completion;
 
