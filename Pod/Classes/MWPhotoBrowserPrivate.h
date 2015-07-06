@@ -18,7 +18,7 @@
     NSUInteger _photoCount;
     NSMutableArray *_photos;
     NSMutableArray *_thumbPhotos;
-	NSArray *_depreciatedPhotoData; // Depreciated
+	NSArray *_fixedPhotosArray; // Provided via init
 	
 	// Views
 	UIScrollView *_pagingScrollView;

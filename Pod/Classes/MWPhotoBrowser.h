@@ -53,7 +53,7 @@
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
 // Init
-- (id)initWithPhotos:(NSArray *)photosArray  __attribute__((deprecated("Use initWithDelegate: instead"))); // Depreciated
+- (id)initWithPhotos:(NSArray *)photosArray;
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
 
 // Reloads the photo browser and refetches data

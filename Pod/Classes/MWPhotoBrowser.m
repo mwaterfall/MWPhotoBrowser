@@ -35,7 +35,7 @@
 
 - (id)initWithPhotos:(NSArray *)photosArray {
 	if ((self = [self init])) {
-		_depreciatedPhotoData = photosArray;
+		_fixedPhotosArray = photosArray;
 	}
 	return self;
 }
@@ -597,8 +597,8 @@
     if (_photoCount == NSNotFound) {
         if ([_delegate respondsToSelector:@selector(numberOfPhotosInPhotoBrowser:)]) {
             _photoCount = [_delegate numberOfPhotosInPhotoBrowser:self];
-        } else if (_depreciatedPhotoData) {
-            _photoCount = _depreciatedPhotoData.count;
+        } else if (_fixedPhotosArray) {
+            _photoCount = _fixedPhotosArray.count;
         }
     }
     if (_photoCount == NSNotFound) _photoCount = 0;
@@ -611,8 +611,8 @@
         if ([_photos objectAtIndex:index] == [NSNull null]) {
             if ([_delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:)]) {
                 photo = [_delegate photoBrowser:self photoAtIndex:index];
-            } else if (_depreciatedPhotoData && index < _depreciatedPhotoData.count) {
-                photo = [_depreciatedPhotoData objectAtIndex:index];
+            } else if (_fixedPhotosArray && index < _fixedPhotosArray.count) {
+                photo = [_fixedPhotosArray objectAtIndex:index];
             }
             if (photo) [_photos replaceObjectAtIndex:index withObject:photo];
         } else {
