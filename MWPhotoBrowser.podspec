@@ -13,12 +13,12 @@ Pod::Spec.new do |s|
                   or more photos using either the grid or main image view.
                   DESCRIPTION
   s.screenshots = [
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser1.png',
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser2.png',
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser3.png',
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser4.png',
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser5.png',
-    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6.png'
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser1.png',
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser2.png',
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser3.png',
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser4.png',
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser5.png',
+    'https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6.png'
   ]
 
   s.homepage = 'https://github.com/mwaterfall/MWPhotoBrowser'
