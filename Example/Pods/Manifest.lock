@@ -1,0 +1,42 @@
+PODS:
+  - DACircularProgress (2.3.1)
+  - Expecta (1.0.0)
+  - Expecta+Snapshots (1.3.4):
+    - Expecta (~> 1.0)
+    - FBSnapshotTestCase (~> 1.8)
+  - FBSnapshotTestCase (1.8.1)
+  - MBProgressHUD (0.9.1)
+  - MWPhotoBrowser (1.4.1):
+    - DACircularProgress (~> 2.3)
+    - MBProgressHUD (~> 0.9)
+    - PSTCollectionView (~> 1.2)
+    - SDWebImage (~> 3.7)
+  - PSTCollectionView (1.2.3)
+  - SDWebImage (3.7.2):
+    - SDWebImage/Core (= 3.7.2)
+  - SDWebImage/Core (3.7.2)
+  - Specta (1.0.2)
+
+DEPENDENCIES:
+  - Expecta
+  - Expecta+Snapshots
+  - FBSnapshotTestCase
+  - MWPhotoBrowser (from `../`)
+  - Specta
+
+EXTERNAL SOURCES:
+  MWPhotoBrowser:
+    :path: ../
+
+SPEC CHECKSUMS:
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  Expecta: 32604574add2c46a36f8d2f716b6c5736eb75024
+  Expecta+Snapshots: ca15bfb57e7a0f78f86c7699c2c54ffacfa4ad2a
+  FBSnapshotTestCase: 3dc3899168747a0319c5278f5b3445c13a6532dd
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  MWPhotoBrowser: 2489ec24bd4a036865c0581fb2dcd5b4d4e6bb56
+  PSTCollectionView: 6749df92885353521f55279a7ce2b293762e2be4
+  SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
+  Specta: 9cec98310dca411f7c7ffd6943552b501622abfe
+
+COCOAPODS: 0.37.2

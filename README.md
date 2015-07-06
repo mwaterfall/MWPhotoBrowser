@@ -1,5 +1,10 @@
 # MWPhotoBrowser
 
+<!--[![CI Status](http://img.shields.io/travis/Michael Waterfall/MWPhotoBrowser.svg?style=flat)](https://travis-ci.org/Michael Waterfall/MWPhotoBrowser)-->
+[![Version](https://img.shields.io/cocoapods/v/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
+[![License](https://img.shields.io/cocoapods/l/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
+[![Platform](https://img.shields.io/cocoapods/p/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
+
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mwaterfall&url=https://github.com/mwaterfall/MWPhotoBrowser&title=MWPhotoBrowser&language=&tags=github&category=software)
 
 ## A simple iOS photo browser with optional grid view, captions and selections.
@@ -70,13 +75,13 @@ Then respond to the required delegate methods:
 
 ```obj-c
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
-    return self.photos.count;
+return self.photos.count;
 }
 
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-    if (index < self.photos.count)
-        return [self.photos objectAtIndex:index];
-    return nil;
+if (index < self.photos.count)
+return [self.photos objectAtIndex:index];
+return nil;
 }
 ```
 
@@ -104,7 +109,7 @@ You can provide a custom action by implementing the following delegate method:
 
 ```obj-c
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index {
-    // Do your thing!
+// Do your thing!
 }
 ```
 
@@ -133,9 +138,9 @@ Example delegate method for custom caption view:
 
 ```obj-c
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-    MWPhoto *photo = [self.photos objectAtIndex:index];
-    MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
-    return captionView;
+MWPhoto *photo = [self.photos objectAtIndex:index];
+MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
+return captionView;
 }
 ```
 
@@ -146,78 +151,40 @@ The photo browser can display check boxes allowing the user to select one or mor
 
 ```obj-c
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
-    return [[_selections objectAtIndex:index] boolValue];
+return [[_selections objectAtIndex:index] boolValue];
 }
 
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
-    [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
+[_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
 }
 ```
 
 
-## Adding to your project
+## Installation
 
-### Method 1: Use CocoaPods
+MWPhotoBrowser is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
 
-[CocoaPods](http://cocoapods.org) is great. If you are using CocoaPods ([and here's how to get started](http://guides.cocoapods.org/using/using-cocoapods.html)), simply add `pod 'MWPhotoBrowser'` to your podfile and run `pod install`. You're good to go! Here's an example podfile:
-
-```
-platform :ios, '7'
-    pod 'MWPhotoBrowser'
+```ruby
+pod "MWPhotoBrowser"
 ```
 
 
-### Method 2: Static Library
+## Usage
 
-1. Get the latest source from GitHub by either [downloading as a zip file](https://github.com/mwaterfall/MWPhotoBrowser/zipball/master) or by cloning the repository at `git://github.com/mwaterfall/MWPhotoBrowser.git` and store the code wherever you wish.
-2. Right-click on the your project in the navigator, click "Add Files to 'Your Project'", and browse to and select "MWPhotoBrowser.xcodeproj"
-3. In your project's target settings, go to "Build Phases" -> "Link Binary With Libraries" and add `libMWPhotoBrowser.a`.
-4. Still in "Build Phases", drop down "Copy Bundle Resources" and drag the file `MWPhotoBrowser.bundle` from the MWPhotoBrowser project into that list. This ensures your project will include the required graphics for the photo browser to work correctly.
-5. In the target, select the "Build Settings" tab and ensure "Always Search User Paths" is set to YES, and "User Header Search Paths" is set to the recursive absolute or relative path that points to a directory under which the MWPhotoBrowser code is stored. In the file layout of the MWPhotoBrowser project, a simple ../** works as the demo project folder and MWPhotoBrowser project folder are adjacent to one another. Please let me know if you encounter any issue with this.
-6. Under "Build Phases / Link Binary With Libraries" add `MessageUI.framework`, `QuartzCore.framework`, `AssetsLibrary.framework` and `ImageIO.framework` to "Linked Frameworks and Libraries".
-
-You should now be able to include `MWPhotoBrowser.h` into your project and start using it.
-
-Setting these things up in Xcode can be a bit tricky so if you run into any problems you may wish to read through a few bits of information:
-
-- [Developing a Static Library and Incorporating It in Your Application](http://developer.apple.com/library/ios/#documentation/Xcode/Conceptual/ios_development_workflow/910-A-Developing_a_Static_Library_and_Incorporating_It_in_Your_Application/archiving_an_application_that_uses_a_static_library.html)
-- [Using Open Source Static Libraries in Xcode 4](http://blog.carbonfive.com/2011/04/04/using-open-source-static-libraries-in-xcode-4/#using_a_static_library)
-- [How to embed static library into Xcode 4 project](https://docs.google.com/document/pub?id=14XR5zcZb2Kz2s6A4AbzB00NLkrW9bWxMMprVsUao-hY)
-
-### Method 3: Including Source Directly Into Your Project
-
-Another method is to simply add the files to your Xcode project, copying them to your project's directory if required. Ensure that all the code within `MWPhotoBrowser/Classes`, `MWPhotoBrowser/Libraries` and the `MWPhotoBrowser.bundle` is included in your project.
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 
-## Notes and Accreditation
+## Author
 
-MWPhotoBrowser very gratefully makes use of these other fantastic open source projects:
+Michael Waterfall, michael@d3i.com
 
-- [SDWebImage](https://github.com/rs/SDWebImage) by Olivier Poitrey — Used to handle downloading and decompressing of photos from the web.
-- [MBProgressHUD](https://github.com/jdg/MBProgressHUD) by Jonathan George — Used to display activity notifications.
-- [DACircularProgress](https://github.com/danielamitay/DACircularProgress) by Daniel Amitay — Used to display image download progress.
+
+## License
+
+MWPhotoBrowser is available under the MIT license. See the LICENSE file for more info.
+
+
+## Notes
 
 Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>).
-
-
-## Licence
-
-Copyright (c) 2010 Michael Waterfall <michaelwaterfall@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
