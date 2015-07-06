@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <PSTCollectionView/PSTCollectionView.h>
 #import "MWPhoto.h"
 #import "MWGridViewController.h"
-#import "PSTCollectionView.h"
 
 @interface MWGridCell : PSTCollectionViewCell {}
 

@@ -6,10 +6,10 @@
 //
 //
 
+#import <DACircularProgress/DACircularProgressView.h>
 #import "MWGridCell.h"
 #import "MWCommon.h"
 #import "MWPhotoBrowserPrivate.h"
-#import "DACircularProgressView.h"
 #import "UIImage+MWPhotoBrowser.h"
 
 @interface MWGridCell () {
