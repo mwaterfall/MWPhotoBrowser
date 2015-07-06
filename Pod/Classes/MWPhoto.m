@@ -34,11 +34,6 @@
 	return [[MWPhoto alloc] initWithImage:image];
 }
 
-// Deprecated
-+ (MWPhoto *)photoWithFilePath:(NSString *)path {
-    return [MWPhoto photoWithURL:[NSURL fileURLWithPath:path]];
-}
-
 + (MWPhoto *)photoWithURL:(NSURL *)url {
 	return [[MWPhoto alloc] initWithURL:url];
 }
@@ -48,14 +43,6 @@
 - (id)initWithImage:(UIImage *)image {
 	if ((self = [super init])) {
 		_image = image;
-	}
-	return self;
-}
-
-// Deprecated
-- (id)initWithFilePath:(NSString *)path {
-	if ((self = [super init])) {
-		_photoURL = [NSURL fileURLWithPath:path];
 	}
 	return self;
 }

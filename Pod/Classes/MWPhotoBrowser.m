@@ -1305,11 +1305,6 @@
 
 #pragma mark - Properties
 
-// Handle depreciated method
-- (void)setInitialPageIndex:(NSUInteger)index {
-    [self setCurrentPhotoIndex:index];
-}
-
 - (void)setCurrentPhotoIndex:(NSUInteger)index {
     // Validate
     NSUInteger photoCount = [self numberOfPhotos];
