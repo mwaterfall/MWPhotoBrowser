@@ -192,13 +192,15 @@
 #pragma mark - Notifications
 
 - (void)setProgressFromNotification:(NSNotification *)notification {
-    NSDictionary *dict = [notification object];
-    id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
-    if (photoWithProgress == _photo) {
-        //        NSLog(@"%f", [[dict valueForKey:@"progress"] floatValue]);
-        float progress = [[dict valueForKey:@"progress"] floatValue];
-        _loadingIndicator.progress = MAX(MIN(1, progress), 0);
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSDictionary *dict = [notification object];
+        id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
+        if (photoWithProgress == _photo) {
+//            NSLog(@"%f", [[dict valueForKey:@"progress"] floatValue]);
+            float progress = [[dict valueForKey:@"progress"] floatValue];
+            _loadingIndicator.progress = MAX(MIN(1, progress), 0);
+        }
+    });
 }
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {

@@ -17,8 +17,9 @@
 
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, strong) NSMutableArray *thumbs;
-@property (nonatomic, strong) ALAssetsLibrary *assetLibrary;
 @property (nonatomic, strong) NSMutableArray *assets;
+
+@property (nonatomic, strong) ALAssetsLibrary *ALAssetsLibrary;
 
 - (void)loadAssets;
 

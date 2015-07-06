@@ -1,16 +1,16 @@
 {
   "name": "MWPhotoBrowser",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "summary": "A simple iOS photo browser with optional grid view, captions and selections.",
   "description": "                  MWPhotoBrowser can display one or more images by providing either UIImage\n                  objects, or URLs to files, web images or library assets. The photo browser\n                  handles the downloading and caching of photos from the web seamlessly.\n                  Photos can be zoomed and panned, and optional (customisable) captions can\n                  be displayed. The browser can also be used to allow the user to select one\n                  or more photos using either the grid or main image view.\n",
   "screenshots": [
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser1.png",
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser2.png",
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser3.png",
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser4.png",
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser5.png",
-    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Preview/MWPhotoBrowser6.png"
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser1.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser2.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser3.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser4.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser5.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6.png"
   ],
   "homepage": "https://github.com/mwaterfall/MWPhotoBrowser",
   "authors": {
@@ -19,7 +19,7 @@
   "social_media_url": "https://twitter.com/mwaterfall",
   "source": {
     "git": "https://github.com/mwaterfall/MWPhotoBrowser.git",
-    "tag": "2.0.0"
+    "tag": "2.0.1"
   },
   "platforms": {
     "ios": "7.0"
@@ -36,6 +36,7 @@
     "QuartzCore",
     "AssetsLibrary"
   ],
+  "weak_frameworks": "Photos",
   "dependencies": {
     "MBProgressHUD": [
       "~> 0.9"
