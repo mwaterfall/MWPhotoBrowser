@@ -161,6 +161,10 @@
     if (!_loadingError) {
         _loadingError = [UIImageView new];
         _loadingError.image = [UIImage imageNamed:@"MWPhotoBrowser.bundle/images/ImageError.png"];
+        if (_photoBrowser.zoomingImageFailureTintColor) {
+            _loadingError.image = [_loadingError.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            _loadingError.tintColor = _photoBrowser.zoomingImageFailureTintColor;
+        }
         _loadingError.userInteractionEnabled = NO;
 		_loadingError.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;

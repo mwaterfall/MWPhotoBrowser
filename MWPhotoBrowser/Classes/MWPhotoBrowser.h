@@ -80,6 +80,9 @@
 @property (nonatomic) UIColor *captionTextColor;
 @property (nonatomic) UIColor *captionShadowColor;
 
+@property (nonatomic) UIColor *gridImageFailureTintColor;
+@property (nonatomic) UIColor *zoomingImageFailureTintColor;
+
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
