@@ -9,7 +9,7 @@
 
 ## A simple iOS photo browser with optional grid view, captions and selections.
 
-MWPhotoBrowser can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed. 
+MWPhotoBrowser can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed.
 
 The browser can also be used to allow the user to select one or more photos using either the grid or main image view.
 
@@ -75,13 +75,14 @@ Then respond to the required delegate methods:
 
 ```obj-c
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
-return self.photos.count;
+    return self.photos.count;
 }
 
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-if (index < self.photos.count)
-return [self.photos objectAtIndex:index];
-return nil;
+    if (index < self.photos.count) {
+        return [self.photos objectAtIndex:index];
+    }
+    return nil;
 }
 ```
 
@@ -109,7 +110,7 @@ You can provide a custom action by implementing the following delegate method:
 
 ```obj-c
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index {
-// Do your thing!
+    // Do your thing!
 }
 ```
 
@@ -138,9 +139,9 @@ Example delegate method for custom caption view:
 
 ```obj-c
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-MWPhoto *photo = [self.photos objectAtIndex:index];
-MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
-return captionView;
+    MWPhoto *photo = [self.photos objectAtIndex:index];
+    MyMWCaptionViewSubclass *captionView = [[MyMWCaptionViewSubclass alloc] initWithPhoto:photo];
+    return captionView;
 }
 ```
 
@@ -151,11 +152,11 @@ The photo browser can display check boxes allowing the user to select one or mor
 
 ```obj-c
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
-return [[_selections objectAtIndex:index] boolValue];
+    return [[_selections objectAtIndex:index] boolValue];
 }
 
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
-[_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
+    [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
 }
 ```
 
