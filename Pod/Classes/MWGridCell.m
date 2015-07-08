@@ -30,7 +30,7 @@
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        
+
         // Grey background
         self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
         
@@ -85,6 +85,14 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)setGridController:(MWGridViewController *)gridController {
+    _gridController = gridController;
+    // Set custom selection image if required
+    if (_gridController.browser.customImageSelectedSmallIconName) {
+        [_selectedButton setImage:[UIImage imageNamed:_gridController.browser.customImageSelectedSmallIconName] forState:UIControlStateSelected];
+    }
 }
 
 #pragma mark - View

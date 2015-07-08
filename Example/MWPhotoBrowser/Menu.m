@@ -1101,6 +1101,10 @@
     browser.enableSwipeToDismiss = NO;
     [browser setCurrentPhotoIndex:0];
     
+    // Test custom selection images
+//    browser.customImageSelectedIconName = @"ImageSelected.png";
+//    browser.customImageSelectedSmallIconName = @"ImageSelectedSmall.png";
+    
     // Reset selections
     if (displaySelectionButtons) {
         _selections = [NSMutableArray new];

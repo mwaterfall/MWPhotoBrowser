@@ -817,7 +817,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             if (self.displaySelectionButtons) {
                 UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
                 [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
-                [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateSelected];
+                UIImage *selectedOnImage;
+                if (self.customImageSelectedIconName) {
+                    selectedOnImage = [UIImage imageNamed:self.customImageSelectedIconName];
+                } else {
+                    selectedOnImage = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+                }
+                [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
                 [selectedButton sizeToFit];
                 selectedButton.adjustsImageWhenHighlighted = NO;
                 [selectedButton addTarget:self action:@selector(selectedButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
