@@ -1094,8 +1094,14 @@
                 } else {
                     // Assets library
                     for (ALAsset *asset in copy) {
-                        [photos addObject:[MWPhoto photoWithURL:asset.defaultRepresentation.url]];
-                        [thumbs addObject:[MWPhoto photoWithImage:[UIImage imageWithCGImage:asset.thumbnail]]];
+                        MWPhoto *photo = [MWPhoto photoWithURL:asset.defaultRepresentation.url];
+                        [photos addObject:photo];
+                        MWPhoto *thumb = [MWPhoto photoWithImage:[UIImage imageWithCGImage:asset.thumbnail]];
+                        [thumbs addObject:thumb];
+                        if ([asset valueForProperty:ALAssetPropertyType] == ALAssetTypeVideo) {
+                            photo.videoURL = asset.defaultRepresentation.url;
+                            thumb.isVideo = true;
+                        }
                     }
                 }
             }
@@ -1286,7 +1292,8 @@
             // Process assets
             void (^assetEnumerator)(ALAsset *, NSUInteger, BOOL *) = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result != nil) {
-                    if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
+                    NSString *assetType = [result valueForProperty:ALAssetPropertyType];
+                    if ([assetType isEqualToString:ALAssetTypePhoto] || [assetType isEqualToString:ALAssetTypeVideo]) {
                         [assetURLDictionaries addObject:[result valueForProperty:ALAssetPropertyURLs]];
                         NSURL *url = result.defaultRepresentation.url;
                         [_ALAssetsLibrary assetForURL:url

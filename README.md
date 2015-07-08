@@ -113,6 +113,12 @@ video.videoURL = [NSURL URLWithString:@"https://scontent.cdninstagram.com/hphoto
 // Video with PHAsset
 MWPhoto *video = [MWPhoto photoWithAsset:asset targetSize:[UIScreen mainScreen].bounds.size]; // Example sizing
 
+// Video with ALAsset
+MWPhoto *video = [MWPhoto photoWithURL:asset.defaultRepresentation.url];
+if ([asset valueForProperty:ALAssetPropertyType] == ALAssetTypeVideo) {
+    photo.videoURL = asset.defaultRepresentation.url;
+}
+
 // Video with no poster photo
 MWPhoto *video = [MWPhoto videoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xfa1/t50.2886-16/11237510_945154435524423_2137519922_n.mp4"]];
 
