@@ -363,10 +363,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
         _viewHasAppearedInitially = YES;
     }
+    
+    // If rotation occured while we're presenting a modal
+    // and the index changed, make sure we show the right one now
+    if (_currentPageIndex != _pageIndexBeforeRotation) {
+        [self jumpToPageAtIndex:_pageIndexBeforeRotation animated:NO];
+    }
 
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    
+    // Detect if rotation occurs while we're presenting a modal
+    _pageIndexBeforeRotation = _currentPageIndex;
     
     // Check that we're being popped for good
     if ([self.navigationController.viewControllers objectAtIndex:0] != self &&
