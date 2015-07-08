@@ -86,8 +86,18 @@
     self.photo = nil;
     self.captionView = nil;
     self.selectedButton = nil;
+    self.playButton = nil;
+    _photoImageView.hidden = NO;
     _photoImageView.image = nil;
     _index = NSUIntegerMax;
+}
+
+- (BOOL)displayingVideo {
+    return [_photo respondsToSelector:@selector(isVideo)] && _photo.isVideo;
+}
+
+- (void)setImageHidden:(BOOL)hidden {
+    _photoImageView.hidden = hidden;
 }
 
 #pragma mark - Image
@@ -140,9 +150,9 @@
 			// Set zoom to minimum zoom
 			[self setMaxMinZoomScalesForCurrentBounds];
 			
-		} else {
-			
-			// Failed no image
+		} else  {
+
+            // Show image failure
             [self displayImageFailure];
 			
 		}
@@ -154,19 +164,23 @@
 - (void)displayImageFailure {
     [self hideLoadingIndicator];
     _photoImageView.image = nil;
-    if (!_loadingError) {
-        _loadingError = [UIImageView new];
-        _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
-        _loadingError.userInteractionEnabled = NO;
-		_loadingError.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-        [_loadingError sizeToFit];
-        [self addSubview:_loadingError];
+    
+    // Show if image is not empty
+    if (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage) {
+        if (!_loadingError) {
+            _loadingError = [UIImageView new];
+            _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+            _loadingError.userInteractionEnabled = NO;
+            _loadingError.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
+            UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
+            [_loadingError sizeToFit];
+            [self addSubview:_loadingError];
+        }
+        _loadingError.frame = CGRectMake(floorf((self.bounds.size.width - _loadingError.frame.size.width) / 2.),
+                                         floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
+                                         _loadingError.frame.size.width,
+                                         _loadingError.frame.size.height);
     }
-    _loadingError.frame = CGRectMake(floorf((self.bounds.size.width - _loadingError.frame.size.width) / 2.),
-                                     floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
-                                     _loadingError.frame.size.width,
-                                     _loadingError.frame.size.height);
 }
 
 - (void)hideImageFailure {
@@ -225,19 +239,19 @@
 }
 
 - (void)setMaxMinZoomScalesForCurrentBounds {
-	
-	// Reset
-	self.maximumZoomScale = 1;
-	self.minimumZoomScale = 1;
-	self.zoomScale = 1;
-	
-	// Bail if no image
-	if (_photoImageView.image == nil) return;
     
-	// Reset position
-	_photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
+    // Reset
+    self.maximumZoomScale = 1;
+    self.minimumZoomScale = 1;
+    self.zoomScale = 1;
+    
+    // Bail if no image
+    if (_photoImageView.image == nil) return;
+    
+    // Reset position
+    _photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
 	
-	// Sizes
+    // Sizes
     CGSize boundsSize = self.bounds.size;
     CGSize imageSize = _photoImageView.image.size;
     
@@ -245,35 +259,43 @@
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
     CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
-
+    
     // Calculate Max
-	CGFloat maxScale = 3;
+    CGFloat maxScale = 3;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // Let them go a bit bigger on a bigger screen!
         maxScale = 4;
     }
     
     // Image is smaller than screen so no zooming!
-	if (xScale >= 1 && yScale >= 1) {
-		minScale = 1.0;
-	}
-	
-	// Set min/max zoom
-	self.maximumZoomScale = maxScale;
-	self.minimumZoomScale = minScale;
+    if (xScale >= 1 && yScale >= 1) {
+        minScale = 1.0;
+    }
+    
+    // Set min/max zoom
+    self.maximumZoomScale = maxScale;
+    self.minimumZoomScale = minScale;
     
     // Initial zoom
     self.zoomScale = [self initialZoomScaleWithMinScale];
     
     // If we're zooming to fill then centralise
     if (self.zoomScale != minScale) {
+        
         // Centralise
         self.contentOffset = CGPointMake((imageSize.width * self.zoomScale - boundsSize.width) / 2.0,
                                          (imageSize.height * self.zoomScale - boundsSize.height) / 2.0);
         // Disable scrolling initially until the first pinch to fix issues with swiping on an initally zoomed in photo
         self.scrollEnabled = NO;
+        
     }
     
+    // If it's a video then disable zooming
+    if ([self displayingVideo]) {
+        self.maximumZoomScale = self.zoomScale;
+        self.minimumZoomScale = self.zoomScale;
+    }
+
     // Layout
 	[self setNeedsLayout];
 
@@ -356,6 +378,11 @@
 }
 
 - (void)handleDoubleTap:(CGPoint)touchPoint {
+    
+    // Dont double tap to zoom if showing a video
+    if ([self displayingVideo]) {
+        return;
+    }
 	
 	// Cancel any single tap handling
 	[NSObject cancelPreviousPerformRequestsWithTarget:_photoBrowser];

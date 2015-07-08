@@ -17,18 +17,20 @@
 @interface MWPhoto : NSObject <MWPhoto>
 
 @property (nonatomic, strong) NSString *caption;
-@property (nonatomic, readonly) UIImage *image;
-@property (nonatomic, readonly) NSURL *photoURL;
-@property (nonatomic, readonly) PHAsset *asset;
-@property (nonatomic, readonly) CGSize assetTargetSize;
+@property (nonatomic, strong) NSURL *videoURL;
+@property (nonatomic) BOOL emptyImage;
+@property (nonatomic) BOOL isVideo;
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
 + (MWPhoto *)photoWithURL:(NSURL *)url;
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
++ (MWPhoto *)videoWithURL:(NSURL *)url; // Initialise video with no poster image
 
+- (id)init;
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
+- (id)initWithVideoURL:(NSURL *)url;
 
 @end
 

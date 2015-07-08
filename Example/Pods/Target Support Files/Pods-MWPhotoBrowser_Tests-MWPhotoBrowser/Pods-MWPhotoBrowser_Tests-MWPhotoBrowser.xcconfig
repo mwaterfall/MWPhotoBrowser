@@ -1,1 +1,1 @@
-PODS_MWPHOTOBROWSER_TESTS_MWPHOTOBROWSER_OTHER_LDFLAGS = -framework "AssetsLibrary" -framework "ImageIO" -framework "QuartzCore" -weak_framework "Photos"
+PODS_MWPHOTOBROWSER_TESTS_MWPHOTOBROWSER_OTHER_LDFLAGS = -framework "AssetsLibrary" -framework "ImageIO" -framework "MediaPlayer" -framework "QuartzCore" -weak_framework "Photos"

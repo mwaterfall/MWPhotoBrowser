@@ -21,6 +21,11 @@
         
 }
 
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSURL *photoURL;
+@property (nonatomic, strong) PHAsset *asset;
+@property (nonatomic) CGSize assetTargetSize;
+
 - (void)imageLoadingComplete;
 
 @end
@@ -43,28 +48,73 @@
     return [[MWPhoto alloc] initWithAsset:asset targetSize:targetSize];
 }
 
++ (MWPhoto *)videoWithURL:(NSURL *)url {
+    return [[MWPhoto alloc] initWithVideoURL:url];
+}
+
 #pragma mark - Init
 
+- (id)init {
+    if ((self = [super init])) {
+        self.emptyImage = YES;
+    }
+    return self;
+}
+
 - (id)initWithImage:(UIImage *)image {
-	if ((self = [super init])) {
-		_image = image;
-	}
-	return self;
+    if ((self = [super init])) {
+        self.image = image;
+    }
+    return self;
 }
 
 - (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
-        _photoURL = [url copy];
+        self.photoURL = url;
     }
     return self;
 }
 
 - (id)initWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
     if ((self = [super init])) {
-        _asset = asset;
-        _assetTargetSize = targetSize;
+        self.asset = asset;
+        self.assetTargetSize = targetSize;
+        self.isVideo = asset.mediaType == PHAssetMediaTypeVideo;
     }
     return self;
+}
+
+- (id)initWithVideoURL:(NSURL *)url {
+    if ((self = [super init])) {
+        self.videoURL = url;
+        self.isVideo = YES;
+        self.emptyImage = YES;
+    }
+    return self;
+}
+
+#pragma mark - Video
+
+- (void)setVideoURL:(NSURL *)videoURL {
+    _videoURL = videoURL;
+    self.isVideo = YES;
+}
+
+- (void)getVideoURL:(void (^)(NSURL *url))completion {
+    if (_videoURL) {
+        completion(_videoURL);
+    } else if (_asset && _asset.mediaType == PHAssetMediaTypeVideo) {
+        PHVideoRequestOptions *options = [PHVideoRequestOptions new];
+        options.networkAccessAllowed = YES;
+        [[PHImageManager defaultManager] requestAVAssetForVideo:_asset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
+            if ([asset isKindOfClass:[AVURLAsset class]]) {
+                completion(((AVURLAsset *)asset).URL);
+            } else {
+                completion(nil);
+            }
+        }];
+    }
+    return completion(nil);
 }
 
 #pragma mark - MWPhoto Protocol Methods
@@ -130,8 +180,8 @@
         
     } else {
         
-        // Failed - no source
-        @throw [NSException exceptionWithName:nil reason:nil userInfo:nil];
+        // Image is empty
+        [self imageLoadingComplete];
         
     }
 }
