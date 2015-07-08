@@ -236,4 +236,4 @@ MWPhotoBrowser is available under the MIT license. See the LICENSE file for more
 
 ## Notes
 
-Demo photos kindly provided by Oliver Waters (<http://twitter.com/oliverwaters>).
+Demo photos kindly provided by [Oliver Waters](<http://twitter.com/oliverwaters>).
