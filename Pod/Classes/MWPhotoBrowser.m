@@ -361,7 +361,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (_startOnGrid) {
             [self showGrid:NO];
         }
-        _viewHasAppearedInitially = YES;
     }
     
     // If rotation occured while we're presenting a modal
@@ -370,6 +369,24 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self jumpToPageAtIndex:_pageIndexBeforeRotation animated:NO];
     }
 
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    _viewIsActive = YES;
+    
+    // Autoplay if first is video
+    if (!_viewHasAppearedInitially) {
+        if (_autoPlayOnAppear) {
+            MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
+            if ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo) {
+                [self playVideoAtIndex:_currentPageIndex];
+            }
+        }
+    }
+    
+    _viewHasAppearedInitially = YES;
+        
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -402,11 +419,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// Super
 	[super viewWillDisappear:animated];
     
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    _viewIsActive = YES;
 }
 
 - (void)willMoveToParentViewController:(UIViewController *)parent {
@@ -515,6 +527,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
 
 	}
+    
+    // Adjust video loading indicator if it's visible
+    [self positionVideoLoadingIndicator];
 	
 	// Adjust contentOffset to preserve page location based on values collected prior to location
 	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:indexPriorToLayout];
@@ -1146,36 +1161,38 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     if (index != NSUIntegerMax) {
         if (!_currentVideoPlayerViewController) {
-            [self playVideoAtIndex:index withPlayButton:playButton];
+            [self playVideoAtIndex:index];
         }
     }
 }
 
 #pragma mark - Video
 
-- (void)playVideoAtIndex:(NSUInteger)index withPlayButton:(UIButton *)playButton {
+- (void)playVideoAtIndex:(NSUInteger)index {
     id photo = [self photoAtIndex:index];
     if ([photo respondsToSelector:@selector(getVideoURL:)]) {
-        [self setVideoLoadingIndicatorVisible:YES];
+        
+        // Valid for playing
+        _currentVideoIndex = index;
+        [self clearCurrentVideo];
+        [self setVideoLoadingIndicatorVisible:YES atPageIndex:index];
+        
+        // Get video and play
         [photo getVideoURL:^(NSURL *url) {
             if (url) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self playVideo:url atPhotoIndex:index withPlayButton:playButton inFrame:[self frameForPageAtIndex:index]];
+                    [self _playVideo:url atPhotoIndex:index];
                 });
             } else {
-                [self setVideoLoadingIndicatorVisible:NO];
+                [self setVideoLoadingIndicatorVisible:NO atPageIndex:index];
             }
         }];
+        
     }
 }
 
-- (void)playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index withPlayButton:(UIButton *)playButton inFrame:(CGRect)frame {
-    
-    // Configure before launching player
-    [self clearCurrentVideo];
-    _currentVideoIndex = index;
-    _currentPlayButton = playButton;
-    
+- (void)_playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index {
+
     // Setup player
     _currentVideoPlayerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:videoURL];
     [_currentVideoPlayerViewController.moviePlayer prepareToPlay];
@@ -1215,24 +1232,27 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                                                   object:_currentVideoPlayerViewController.moviePlayer];
     [_currentVideoLoadingIndicator removeFromSuperview];
     _currentVideoPlayerViewController = nil;
-    _currentPlayButton = nil;
     _currentVideoLoadingIndicator = nil;
     _currentVideoIndex = NSUIntegerMax;
 }
 
-- (void)setVideoLoadingIndicatorVisible:(BOOL)visible {
-    if (_currentPlayButton) {
-        if (_currentVideoLoadingIndicator && !visible) {
-            [_currentVideoLoadingIndicator removeFromSuperview];
-            _currentVideoLoadingIndicator = nil;
-        } else if (!_currentVideoLoadingIndicator && visible) {
-            _currentVideoLoadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
-            [_currentVideoLoadingIndicator sizeToFit];
-            [_currentVideoLoadingIndicator startAnimating];
-            CGRect frame = _currentPlayButton.frame;
-            _currentVideoLoadingIndicator.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
-            [_pagingScrollView addSubview:_currentVideoLoadingIndicator];
-        }
+- (void)setVideoLoadingIndicatorVisible:(BOOL)visible atPageIndex:(NSUInteger)pageIndex {
+    if (_currentVideoLoadingIndicator && !visible) {
+        [_currentVideoLoadingIndicator removeFromSuperview];
+        _currentVideoLoadingIndicator = nil;
+    } else if (!_currentVideoLoadingIndicator && visible) {
+        _currentVideoLoadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
+        [_currentVideoLoadingIndicator sizeToFit];
+        [_currentVideoLoadingIndicator startAnimating];
+        [_pagingScrollView addSubview:_currentVideoLoadingIndicator];
+        [self positionVideoLoadingIndicator];
+    }
+}
+
+- (void)positionVideoLoadingIndicator {
+    if (_currentVideoLoadingIndicator && _currentVideoIndex != NSUIntegerMax) {
+        CGRect frame = [self frameForPageAtIndex:_currentVideoIndex];
+        _currentVideoLoadingIndicator.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     }
 }
 

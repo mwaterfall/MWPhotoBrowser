@@ -55,10 +55,9 @@
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
     
     // Video
-    UIButton *_currentPlayButton;
-    UIActivityIndicatorView *_currentVideoLoadingIndicator;
-    NSUInteger _currentVideoIndex;
     MPMoviePlayerViewController *_currentVideoPlayerViewController;
+    NSUInteger _currentVideoIndex;
+    UIActivityIndicatorView *_currentVideoLoadingIndicator;
     
     // Misc
     BOOL _hasBelongedToViewController;

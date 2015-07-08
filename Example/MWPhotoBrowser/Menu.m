@@ -85,7 +85,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 8;
+    NSInteger rows = 9;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -140,11 +140,16 @@
             break;
         }
         case 7: {
+            cell.textLabel.text = @"Single video";
+            cell.detailTextLabel.text = @"with auto-play";
+            break;
+        }
+        case 8: {
             cell.textLabel.text = @"Web videos";
             cell.detailTextLabel.text = @"showing grid first";
             break;
         }
-		case 8: {
+		case 9: {
             cell.textLabel.text = @"Library photos and videos";
             cell.detailTextLabel.text = @"media from device library";
             break;
@@ -169,6 +174,7 @@
     BOOL displayNavArrows = NO;
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
+    BOOL autoPlayOnAppear = NO;
 	switch (indexPath.row) {
 		case 0:
             // Photos
@@ -1023,7 +1029,18 @@
             // Options
             startOnGrid = YES;
 			break;
-		case 7: {
+        case 7: {
+            
+            // Single video
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video_thumb" ofType:@"jpg"]]];
+            photo.videoURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"]];
+            [photos addObject:photo];
+            enableGrid = NO;
+            autoPlayOnAppear = YES;
+            break;
+            
+        }
+		case 8: {
             
             // Videos
             
@@ -1059,7 +1076,7 @@
             startOnGrid = YES;
             break;
         }
-		case 8: {
+		case 9: {
             @synchronized(_assets) {
                 NSMutableArray *copy = [_assets copy];
                 if (NSClassFromString(@"PHAsset")) {
@@ -1099,6 +1116,7 @@
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = NO;
+    browser.autoPlayOnAppear = autoPlayOnAppear;
     [browser setCurrentPhotoIndex:0];
     
     // Test custom selection images
