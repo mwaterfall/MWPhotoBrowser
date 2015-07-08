@@ -7,9 +7,9 @@
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mwaterfall&url=https://github.com/mwaterfall/MWPhotoBrowser&title=MWPhotoBrowser&language=&tags=github&category=software)
 
-## A simple iOS photo browser with optional grid view, captions and selections.
+## A simple iOS photo and video browser with optional grid view, captions and selections.
 
-MWPhotoBrowser can display one or more images by providing either `UIImage` objects, or URLs to files, web images or library assets. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed.
+MWPhotoBrowser can display one or more images or videos by providing either `UIImage` objects, `PHAsset` objects, or URLs to library assets, web images/videos or local files. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed.
 
 The browser can also be used to allow the user to select one or more photos using either the grid or main image view.
 
@@ -32,7 +32,7 @@ Works on iOS 7+. All strings are localisable so they can be used in apps that su
 
 ## Usage
 
-MWPhotoBrowser is designed to be presented within a navigation controller. Simply set the delegate (which must conform to `MWPhotoBrowserDelegate`) and implement the 2 required delegate methods to provide the photo browser with the data in the form of `MWPhoto` objects. You can create an `MWPhoto` object by providing a `UIImage` object, or a URL containing the path to a file, an image online or an asset from the asset library.
+MWPhotoBrowser is designed to be presented within a navigation controller. Simply set the delegate (which must conform to `MWPhotoBrowserDelegate`) and implement the 2 required delegate methods to provide the photo browser with the data in the form of `MWPhoto` objects. You can create an `MWPhoto` object by providing a `UIImage` object, `PHAsset` object, or a URL containing the path to a file, an image online or an asset from the asset library.
 
 `MWPhoto` objects handle caching, file management, downloading of web images, and various optimisations for you. If however you would like to use your own data model to represent photos you can simply ensure your model conforms to the `MWPhoto` protocol. You can then handle the management of caching, downloads, etc, yourself. More information on this can be found in `MWPhotoProtocol.h`.
 
@@ -41,9 +41,16 @@ See the code snippet below for an example of how to implement the photo browser.
 ```obj-c
 // Create array of MWPhoto objects
 self.photos = [NSMutableArray array];
+
+// Add photos
 [photos addObject:[MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
+
+// Add video with poster photo
+MWPhoto *video = [MWPhoto photoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xpt1/t51.2885-15/e15/11192696_824079697688618_1761661_n.jpg"]];
+video.videoURL = [[NSURL alloc] initWithString:@"https://scontent.cdninstagram.com/hphotos-xpa1/t50.2886-16/11200303_1440130956287424_1714699187_n.mp4"];
+[photos addObject:video];
 
 // Create browser (must be done each time photo browser is
 // displayed. Photo browser objects cannot be re-used)
@@ -57,7 +64,7 @@ browser.zoomPhotosToFill = YES; // Images that almost fill the screen will be in
 browser.alwaysShowControls = NO; // Allows to control whether the bars and controls are always visible or whether they fade away to show the photo full (defaults to NO)
 browser.enableGrid = YES; // Whether to allow the viewing of all the photo thumbnails on a grid (defaults to YES)
 browser.startOnGrid = NO; // Whether to start on the grid of thumbnails instead of the first photo (defaults to NO)
-browser.wantsFullScreenLayout = YES; // iOS 5 & 6 only: Decide if you want the photo browser full screen, i.e. whether the status bar is affected (defaults to YES)
+browser.autoPlayOnAppear = NO; // Auto-play first video
 
 // Optionally set the current visible photo before displaying
 [browser setCurrentPhotoIndex:1];
@@ -88,7 +95,32 @@ Then respond to the required delegate methods:
 
 You can present the browser modally simply by wrapping it in a new navigation controller and presenting that. The demo app allows you to toggle between the two presentation types.
 
-If using iOS 5 or 6 and you don't want to view the photo browser full screen (for example if you are using view controller containment) then set the photo browser's `wantsFullScreenLayout` property to `NO`. This will mean the status bar will not be affected by the photo browser.
+
+### Videos
+
+You can represent videos in MWPhoto objects by providing a standard MWPhoto image object with a `videoURL`. You can also use a `PHAsset` object or a URL to an assets library video.
+
+```obj-c
+
+// Video with URL including poster photo
+MWPhoto *video = [MWPhoto photoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xpt1/t51.2885-15/e15/11192696_824079697688618_1761661_n.jpg"]];
+video.videoURL = [NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xpa1/t50.2886-16/11200303_1440130956287424_1714699187_n.mp4"];
+
+// Video with PHAsset
+MWPhoto *video = [MWPhoto photoWithAsset:asset targetSize:[UIScreen mainScreen].bounds.size]; // Example sizing
+
+// Video with no poster photo
+MWPhoto *video = [MWPhoto videoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xfa1/t50.2886-16/11237510_945154435524423_2137519922_n.mp4"]];
+
+// Video grid thumbnail
+MWPhoto *videoThumb = [MWPhoto photoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s150x150/e15/11240463_963135443745570_1519872157_n.jpg"]];
+videoThumb.isVideo = YES;
+
+// Video grid thumbnail for video with no poster photo
+MWPhoto *videoThumb = [MWPhoto new];
+videoThumb.isVideo = YES;
+
+```
 
 
 ### Grid
@@ -104,7 +136,7 @@ The photo browser can also start on the grid by enabling the `startOnGrid` prope
 
 ### Actions
 
-By default, if the action button is visible then the image (and caption if it exists) are sent to a UIActivityViewController. On iOS 5, a custom action sheet appears allowing them to copy or email the photo.
+By default, if the action button is visible then the image (and caption if it exists) are sent to a UIActivityViewController.
 
 You can provide a custom action by implementing the following delegate method:
 
