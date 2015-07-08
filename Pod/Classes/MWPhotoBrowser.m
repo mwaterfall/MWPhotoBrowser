@@ -1224,19 +1224,27 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 }
 
-- (void)videoFinishedCallback:(NSNotification*)aNotification {
+- (void)videoFinishedCallback:(NSNotification*)notification {
     
     // Remove observer
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:MPMoviePlayerPlaybackDidFinishNotification
                                                   object:_currentVideoPlayerViewController.moviePlayer];
     
-    // Dismiss with our modal transition
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-    // Clear
+    // Clear up
     [self clearCurrentVideo];
-
+    
+    // Dismiss
+    BOOL error = [[[notification userInfo] objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue] == MPMovieFinishReasonPlaybackError;
+    if (error) {
+        // Error occured so dismiss with a delay incase error was immediate and we need to wait to dismiss the VC
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self dismissViewControllerAnimated:YES completion:nil];
+        });
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    
 }
 
 - (void)clearCurrentVideo {
