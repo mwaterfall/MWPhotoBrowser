@@ -1226,6 +1226,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)videoFinishedCallback:(NSNotification*)aNotification {
     
+    // Remove observer
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:MPMoviePlayerPlaybackDidFinishNotification
+                                                  object:_currentVideoPlayerViewController.moviePlayer];
+    
     // Dismiss with our modal transition
     [self dismissViewControllerAnimated:YES completion:nil];
     
@@ -1236,9 +1241,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)clearCurrentVideo {
     if (!_currentVideoPlayerViewController) return;
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MPMoviePlayerPlaybackDidFinishNotification
-                                                  object:_currentVideoPlayerViewController.moviePlayer];
     [_currentVideoLoadingIndicator removeFromSuperview];
     _currentVideoPlayerViewController = nil;
     _currentVideoLoadingIndicator = nil;
