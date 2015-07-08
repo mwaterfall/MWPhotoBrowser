@@ -66,6 +66,10 @@ browser.enableGrid = YES; // Whether to allow the viewing of all the photo thumb
 browser.startOnGrid = NO; // Whether to start on the grid of thumbnails instead of the first photo (defaults to NO)
 browser.autoPlayOnAppear = NO; // Auto-play first video
 
+// Customise selection images to change colours if required
+browser.customImageSelectedIconName = @"ImageSelected.png";
+browser.customImageSelectedSmallIconName = @"ImageSelectedSmall.png";
+
 // Optionally set the current visible photo before displaying
 [browser setCurrentPhotoIndex:1];
 
