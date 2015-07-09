@@ -1084,7 +1084,7 @@
                     UIScreen *screen = [UIScreen mainScreen];
                     CGFloat scale = screen.scale;
                     // Sizing is very rough... more thought required in a real implementation
-                    CGFloat imageSize = MAX(screen.bounds.size.width, screen.bounds.size.height);
+                    CGFloat imageSize = MAX(screen.bounds.size.width, screen.bounds.size.height) * 1.5;
                     CGSize imageTargetSize = CGSizeMake(imageSize * scale, imageSize * scale);
                     CGSize thumbTargetSize = CGSizeMake(imageSize / 3.0 * scale, imageSize / 3.0 * scale);
                     for (PHAsset *asset in copy) {
