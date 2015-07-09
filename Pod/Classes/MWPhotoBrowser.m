@@ -1476,6 +1476,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationSlide;
 }
