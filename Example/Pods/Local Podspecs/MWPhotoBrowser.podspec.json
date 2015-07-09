@@ -1,6 +1,6 @@
 {
   "name": "MWPhotoBrowser",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "summary": "A simple iOS photo and video browser with optional grid view, captions and selections.",
   "description": "                  MWPhotoBrowser can display one or more images or videos by providing either UIImage\n                  objects, PHAsset objects, or URLs to library assets, web images/videos or local files.\n                  The photo browser handles the downloading and caching of photos from the web seamlessly.\n                  Photos can be zoomed and panned, and optional (customisable) captions can be displayed.\n",
@@ -19,7 +19,7 @@
   "social_media_url": "https://twitter.com/mwaterfall",
   "source": {
     "git": "https://github.com/mwaterfall/MWPhotoBrowser.git",
-    "tag": "2.1.0"
+    "tag": "2.1.1"
   },
   "platforms": {
     "ios": "7.0"
