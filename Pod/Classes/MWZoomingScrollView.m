@@ -285,10 +285,11 @@
         // Centralise
         self.contentOffset = CGPointMake((imageSize.width * self.zoomScale - boundsSize.width) / 2.0,
                                          (imageSize.height * self.zoomScale - boundsSize.height) / 2.0);
-        // Disable scrolling initially until the first pinch to fix issues with swiping on an initally zoomed in photo
-        self.scrollEnabled = NO;
-        
+
     }
+    
+    // Disable scrolling initially until the first pinch to fix issues with swiping on an initally zoomed in photo
+    self.scrollEnabled = NO;
     
     // If it's a video then disable zooming
     if ([self displayingVideo]) {
