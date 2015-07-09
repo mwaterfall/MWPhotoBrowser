@@ -1015,14 +1015,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (CGRect)frameForSelectedButton:(UIButton *)selectedButton atIndex:(NSUInteger)index {
     CGRect pageFrame = [self frameForPageAtIndex:index];
+    CGFloat padding = 20;
     CGFloat yOffset = 0;
     if (![self areControlsHidden]) {
         UINavigationBar *navBar = self.navigationController.navigationBar;
         yOffset = navBar.frame.origin.y + navBar.frame.size.height;
     }
-    CGFloat statusBarOffset = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    CGRect selectedButtonFrame = CGRectMake(pageFrame.origin.x + pageFrame.size.width - 20 - selectedButton.frame.size.width,
-                                            statusBarOffset + yOffset,
+    CGRect selectedButtonFrame = CGRectMake(pageFrame.origin.x + pageFrame.size.width - selectedButton.frame.size.width - padding,
+                                            padding + yOffset,
                                             selectedButton.frame.size.width,
                                             selectedButton.frame.size.height);
     return CGRectIntegral(selectedButtonFrame);
