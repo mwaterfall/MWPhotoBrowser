@@ -69,6 +69,7 @@
 - (void)setInitialPageIndex:(NSUInteger)index  __attribute__((deprecated("Use setCurrentPhotoIndex: instead"))); // Depreciated
 
 // Customize
+@property (nonatomic) UIStatusBarStyle statusBarStyle;
 @property (nonatomic) UIColor *backgroundColor;
 @property (nonatomic) UIColor *navBarTintColor;
 @property (nonatomic) UIColor *navBarBarTintColor;

@@ -386,7 +386,7 @@
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
 #pragma clang diagnostic push
         } else {
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:animated];
+            [[UIApplication sharedApplication] setStatusBarStyle:(_statusBarStyle ? _statusBarStyle : UIStatusBarStyleDefault) animated:animated];
         }
     }
     
