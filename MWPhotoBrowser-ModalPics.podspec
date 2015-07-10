@@ -13,22 +13,23 @@ Pod::Spec.new do |s|
                     'user to select one or more photos using either the ' \
                     'grid or main image view.' \
                     'Now you can customize all views to adapt to your custom design.'
-    s.screenshots = ['https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+    s.screenshots = ['https://raw.github.com/sergiog90MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser1.png',
-                     'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+                     'https://raw.github.com/sergiog90/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser2.png',
-                     'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+                     'https://raw.github.com/sergiog90/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser3.png',
-                     'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+                     'https://raw.github.com/sergiog90/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser4.png',
-                     'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+                     'https://raw.github.com/sergiog90/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser5.png',
-                     'https://raw.github.com/mwaterfall/MWPhotoBrowser/' \
+                     'https://raw.github.com/sergiog90/MWPhotoBrowser/' \
                      'master/Preview/MWPhotoBrowser6.png']
     s.homepage = 'https://github.com/sergiog90/MWPhotoBrowser'
     s.author = { 'Sergio Garcia' => 'sergiogm.amurrio@gmail.com' }
     s.source = {
-        :git => 'https://github.com/sergiog90/MWPhotoBrowser.git'
+        :git => 'https://github.com/sergiog90/MWPhotoBrowser.git',
+	:tag => s.version
     }
     s.platform = :ios, '5.1.1'
     s.source_files = 'MWPhotoBrowser/Classes/*.{h,m}'
