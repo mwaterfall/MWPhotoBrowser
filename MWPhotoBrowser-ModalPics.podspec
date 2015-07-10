@@ -28,8 +28,7 @@ Pod::Spec.new do |s|
     s.homepage = 'https://github.com/sergiog90/MWPhotoBrowser'
     s.author = { 'Sergio Garcia' => 'sergiogm.amurrio@gmail.com' }
     s.source = {
-        :git => 'https://github.com/sergiog90/MWPhotoBrowser.git',
-        :tag => s.version
+        :git => 'https://github.com/sergiog90/MWPhotoBrowser.git'
     }
     s.platform = :ios, '5.1.1'
     s.source_files = 'MWPhotoBrowser/Classes/*.{h,m}'

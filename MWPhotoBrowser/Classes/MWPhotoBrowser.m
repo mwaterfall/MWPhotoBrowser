@@ -258,16 +258,8 @@
         // Check if _doneButton exits to not duplicate
         if (_displayPicturesInModalViewWithGrid && !_doneButton) {
             // We're first on stack so create close button
-            _closeButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Close", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
-            // Set appearance
-            if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
-                [_closeButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-                [_closeButton setBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
-                [_closeButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-                [_closeButton setBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsLandscapePhone];
-                [_closeButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-                [_closeButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-            }
+            NSString *buttonName = @"UIBarButtonItemClose";
+            _closeButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"MWPhotoBrowser.bundle/images/%@.png", buttonName]] style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
         } else {
             hasItems = YES;
             NSString *buttonName = @"UIBarButtonItemGrid";
@@ -513,7 +505,6 @@
     }
 }
 
-// TODO: Check Sergio
 - (void)showCloseButton:(BOOL)show {
     if (_enableGrid) {
         [self.navigationItem setHidesBackButton:show animated:YES];
