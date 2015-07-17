@@ -1669,16 +1669,15 @@ UIImage *_navigationBarBackgroundImage;
 
 
 #pragma mark - Customize user interface
-- (void)changeGridBackgroundColor:(UIColor*)color{
-    
+- (void)changeGridBackgroundColor:(UIColor*)color
+{
     _gridBackgroundColor = [color copy];
-    
 }
 
 - (void)changeNavigationBarBackButtonTintColor:(UIColor *)color
 {
         _navigationBarBackButtonTintColor = [color copy];
-    }
+}
 
 - (void)changeNavigationBarBackgroundImage:(UIImage *)image
 {
@@ -1688,29 +1687,30 @@ UIImage *_navigationBarBackgroundImage;
 - (void)changeImageViewBackgroundColor:(UIColor *)color
 {
         _backgroundColor = [color copy];
-    }
+}
 
 - (void)changeToolbarTintColor:(UIColor *)color
 {
         _toolbarTintColor = [color copy];
-    }
+}
 
 - (void)changeToolbarBackgroundImage:(UIImage *)image
 {
         _toolbarBackgroundImage = [image copy];
 }
 
--(void)changeBottomBarColor:(UIColor*)color {
+-(void)changeBottomBarColor:(UIColor*)color
+{
     _bottomBarColor = [color copy];
 }
 
-- (void)changeNavigationBarTintColor:(UIColor*)color{
-    
+- (void)changeNavigationBarTintColor:(UIColor*)color
+{
     _navigationBarTintColor = [color copy];
 }
 
-- (void)changeNavigationBarTitleColor:(UIColor*)color{
-    
+- (void)changeNavigationBarTitleColor:(UIColor*)color
+{
     _navigationBarTitleColor = [color copy];
 }
 
