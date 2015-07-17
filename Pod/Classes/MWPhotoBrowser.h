@@ -72,4 +72,16 @@
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
 
+
+// Customize user interface
+- (void)changeNavigationBarBackButtonTintColor:(UIColor *)color;
+- (void)changeNavigationBarBackgroundImage:(UIImage *)image;
+- (void)changeImageViewBackgroundColor:(UIColor *)color;
+- (void)changeToolbarTintColor:(UIColor *)color;
+- (void)changeToolbarBackgroundImage:(UIImage *)image;
+- (void)changeGridBackgroundColor:(UIColor*)color;
+- (void)changeBottomBarColor:(UIColor*)color;
+- (void)changeNavigationBarTintColor:(UIColor*)color;
+- (void)changeNavigationBarTitleColor:(UIColor*)color;
+
 @end
