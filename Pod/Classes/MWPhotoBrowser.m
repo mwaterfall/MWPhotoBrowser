@@ -1101,9 +1101,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	_previousButton.enabled = (_currentPageIndex > 0);
 	_nextButton.enabled = (_currentPageIndex < numberOfPhotos - 1);
     
-    // Disable action button if there is no image or it's a video
+    // Disable action button if there is no image
     MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo underlyingImage] == nil || ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo)) {
+    if ([photo underlyingImage] == nil) {
         _actionButton.enabled = NO;
         _actionButton.tintColor = [UIColor clearColor]; // Tint to hide button
     } else {
@@ -1551,6 +1551,32 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark - Actions
 
+- (void)showActivityController:(NSArray *)items {
+    self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    // Show loading spinner after a couple of seconds
+    double delayInSeconds = 2.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        if (self.activityViewController) {
+            [self showProgressHUDWithMessage:nil];
+        }
+    });
+    
+    // Show
+    typeof(self) __weak weakSelf = self;
+    [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+        weakSelf.activityViewController = nil;
+        [weakSelf hideControlsAfterDelay];
+        [weakSelf hideProgressHUD:YES];
+    }];
+    // iOS 8 - Set the Anchor Point for the popover
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
+    }
+    [self presentViewController:self.activityViewController animated:YES completion:nil];
+}
+
 - (void)actionButtonPressed:(id)sender {
 
     // Only react when image has loaded
@@ -1564,43 +1590,68 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             [self.delegate photoBrowser:self actionButtonPressedForPhotoAtIndex:_currentPageIndex];
             
         } else {
-            
-            // Show activity view controller
-            NSMutableArray *items = [NSMutableArray arrayWithObject:[photo underlyingImage]];
-            if (photo.caption) {
-                [items addObject:photo.caption];
-            }
-            self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
-            
-            // Show loading spinner after a couple of seconds
-            double delayInSeconds = 2.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                if (self.activityViewController) {
-                    [self showProgressHUDWithMessage:nil];
+            if ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload Video" message:@"It will take a few minutes to prepare for sharing the video. Do you want to continue?" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Yes", @"No", nil];
+                    [alert show];
+                });
+            } else {
+                NSMutableArray *items = [NSMutableArray arrayWithObject:[photo underlyingImage]];
+                // Show activity view controller
+                if (photo.caption) {
+                    [items addObject:photo.caption];
                 }
-            });
-
-            // Show
-            typeof(self) __weak weakSelf = self;
-            [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
-                weakSelf.activityViewController = nil;
-                [weakSelf hideControlsAfterDelay];
-                [weakSelf hideProgressHUD:YES];
-            }];
-            // iOS 8 - Set the Anchor Point for the popover
-            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-                self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
+                [self showActivityController:items];
             }
-            [self presentViewController:self.activityViewController animated:YES completion:nil];
-
         }
         
         // Keep controls hidden
         [self setControlsHidden:NO animated:YES permanent:YES];
+    }
+}
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:@"No"]) {
+        return;
     }
     
+    [self showProgressHUDWithMessage:@"Preparing video..."];
+    
+    id <MWPhoto> video = [self photoAtIndex:_currentPageIndex];
+    
+    if ([video respondsToSelector:@selector(getVideoURL:)]) {
+        [video getVideoURL:^(NSURL *url) {
+            if (url) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self uploadRemoteVideo:url withDescription:@""];
+                });
+            }
+        }];
+    }
+}
+
+#pragma mark - Upload Remote Video
+
+- (void)uploadRemoteVideo:(NSURL *)url withDescription:(NSString *)description {
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData *urlData = [NSData dataWithContentsOfURL:url];
+        if (urlData) {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths objectAtIndex:0];
+            NSString *filePath = [NSString stringWithFormat:@"%@/%@", documentsDirectory, @"video.mp4"];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [urlData writeToFile:filePath atomically:YES];
+                [self hideProgressHUD:YES];
+                NSMutableArray *items = [NSMutableArray arrayWithObject:[NSURL fileURLWithPath:filePath]];
+                [items addObject:description];
+                
+                [self showActivityController:items];
+            });
+        }
+    });
 }
 
 #pragma mark - Action Progress
