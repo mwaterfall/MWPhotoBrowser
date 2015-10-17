@@ -1078,6 +1078,7 @@
         }
 		case 9: {
             @synchronized(_assets) {
+                startOnGrid = YES;
                 NSMutableArray *copy = [_assets copy];
                 if (NSClassFromString(@"PHAsset")) {
                     // Photos library
@@ -1192,6 +1193,8 @@
         return [_photos objectAtIndex:index];
     return nil;
 }
+
+
 
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index {
     if (index < _thumbs.count)
