@@ -1,0 +1,3 @@
+github "mluisbrown/DACircularProgress" "master"
+github "jdg/MBProgressHUD" "master"
+github "rs/SDWebImage" ~> 3.7.3

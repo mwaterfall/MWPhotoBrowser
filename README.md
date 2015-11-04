@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/cocoapods/v/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
 [![License](https://img.shields.io/cocoapods/l/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
 [![Platform](https://img.shields.io/cocoapods/p/MWPhotoBrowser.svg?style=flat)](http://cocoapods.org/pods/MWPhotoBrowser)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mwaterfall&url=https://github.com/mwaterfall/MWPhotoBrowser&title=MWPhotoBrowser&language=&tags=github&category=software)
 
@@ -212,6 +213,19 @@ it, simply add the following line to your Podfile:
 pod "MWPhotoBrowser"
 ```
 
+### Carthage
+
+Carthage support is currently only working in this fork of the MWPhotoBrowser repo
+
+```
+github "ragboyjr/MWPHotoBrowser" "master"
+```
+
+This project lists several dependencies that also have expiremental carthage support. When you checkout and build this project, it will also grab its dependencies. Make sure to include the dependencies of this project into your own Xcode project frameworks.
+
+The dependencies of this project can be viewed in the `Cartfile`
+
+**NOTE** On the build phase of this project, carthage will report a bunch of warnings. These are mainly just iOS8 and 9 deprecation warnings. It shouldn't affect anything.
 
 ## Usage
 
@@ -228,7 +242,6 @@ If you are using Swift and frameworks, then you can just import the browser into
 ```swift
 import MWPhotoBrowser
 ```
-
 
 ## Author
 
