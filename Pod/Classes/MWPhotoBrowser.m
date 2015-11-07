@@ -90,7 +90,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _backgroundColor = [UIColor blackColor];
     _progressColor = nil;
     _imageCellBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
-    
+    _preLoadNum = 1;
+
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
@@ -731,20 +732,18 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         // If page is current page then initiate loading of previous and next pages
         NSUInteger pageIndex = page.index;
         if (_currentPageIndex == pageIndex) {
-            if (pageIndex > 0) {
-                // Preload index - 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex-1];
+            for (int i = MAX(pageIndex - _preLoadNum, 0); i < pageIndex; ++i) {
+                id <MWPhoto> photo = [self photoAtIndex:i];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex-1);
                 }
             }
-            if (pageIndex < [self numberOfPhotos] - 1) {
-                // Preload index + 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex+1];
+            for (int i = pageIndex+1; i <= pageIndex+_preLoadNum && i < [self numberOfPhotos]; ++i) {
+                id <MWPhoto> photo = [self photoAtIndex:i];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
-                    MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex+1);
+                    MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex-1);
                 }
             }
         }
