@@ -80,6 +80,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _thumbPhotos = [[NSMutableArray alloc] init];
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
+    _scrollDirection = MWScrollDirectionHorizontal;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     // Listen for MWPhoto notifications
@@ -768,8 +769,15 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// Ignore padding as paging bounces encroach on that
 	// and lead to false page loads
 	CGRect visibleBounds = _pagingScrollView.bounds;
-	NSInteger iFirstIndex = (NSInteger)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	NSInteger iLastIndex  = (NSInteger)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+    NSInteger iFirstIndex = 0;
+    NSInteger iLastIndex = 0;
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
+        iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+    } else {
+        iFirstIndex = (int)floorf((CGRectGetMinY(visibleBounds)+PADDING*2) / CGRectGetHeight(visibleBounds));
+        iLastIndex  = (int)floorf((CGRectGetMaxY(visibleBounds)-PADDING*2-1) / CGRectGetHeight(visibleBounds));
+    }
     if (iFirstIndex < 0) iFirstIndex = 0;
     if (iFirstIndex > [self numberOfPhotos] - 1) iFirstIndex = [self numberOfPhotos] - 1;
     if (iLastIndex < 0) iLastIndex = 0;
@@ -967,9 +975,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (CGRect)frameForPagingScrollView {
     CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
-    frame.origin.x -= PADDING;
-    frame.size.width += (2 * PADDING);
-    return CGRectIntegral(frame);
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        frame.origin.x -= PADDING;
+        frame.size.width += (2 * PADDING);
+    } else {
+        frame.origin.y -= PADDING;
+        frame.size.height += (2 * PADDING);
+    }
+    return frame;
 }
 
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
@@ -979,21 +992,32 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // because it has a rotation transform applied.
     CGRect bounds = _pagingScrollView.bounds;
     CGRect pageFrame = bounds;
-    pageFrame.size.width -= (2 * PADDING);
-    pageFrame.origin.x = (bounds.size.width * index) + PADDING;
-    return CGRectIntegral(pageFrame);
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        pageFrame.size.width -= (2 * PADDING);
+        pageFrame.origin.x = (bounds.size.width * index) + PADDING;
+    } else {
+        pageFrame.size.height -= (2 * PADDING);
+        pageFrame.origin.y = (bounds.size.height * index) + PADDING;
+    }
+    return pageFrame;
 }
 
 - (CGSize)contentSizeForPagingScrollView {
     // We have to use the paging scroll view's bounds to calculate the contentSize, for the same reason outlined above.
     CGRect bounds = _pagingScrollView.bounds;
-    return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height);
+    return _scrollDirection == MWScrollDirectionHorizontal ? CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height) : CGSizeMake(bounds.size.width, bounds.size.height * [self numberOfPhotos]);
 }
 
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
-	CGFloat pageWidth = _pagingScrollView.bounds.size.width;
-	CGFloat newOffset = index * pageWidth;
-	return CGPointMake(newOffset, 0);
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        CGFloat pageWidth = _pagingScrollView.bounds.size.width;
+        CGFloat newOffset = index * pageWidth;
+        return CGPointMake(newOffset, 0);
+    } else {
+        CGFloat pageHeight = _pagingScrollView.bounds.size.height;
+        CGFloat newOffset = index * pageHeight;
+        return CGPointMake(0, newOffset);
+    }
 }
 
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation {
@@ -1021,10 +1045,18 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         UINavigationBar *navBar = self.navigationController.navigationBar;
         yOffset = navBar.frame.origin.y + navBar.frame.size.height;
     }
-    CGRect selectedButtonFrame = CGRectMake(pageFrame.origin.x + pageFrame.size.width - selectedButton.frame.size.width - padding,
-                                            padding + yOffset,
-                                            selectedButton.frame.size.width,
-                                            selectedButton.frame.size.height);
+    CGRect selectedButtonFrame = CGRectZero;
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        selectedButtonFrame = CGRectMake(pageFrame.origin.x + pageFrame.size.width - selectedButton.frame.size.width - padding,
+                                         padding + yOffset,
+                                         selectedButton.frame.size.width,
+                                         selectedButton.frame.size.height);
+    } else {
+        selectedButtonFrame = CGRectMake(pageFrame.origin.x + pageFrame.size.width - selectedButton.frame.size.width - padding,
+                                         pageFrame.origin.y + padding + yOffset,
+                                         selectedButton.frame.size.width,
+                                         selectedButton.frame.size.height);
+    }
     return CGRectIntegral(selectedButtonFrame);
 }
 
@@ -1048,7 +1080,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	
 	// Calculate current page
 	CGRect visibleBounds = _pagingScrollView.bounds;
-	NSInteger index = (NSInteger)(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)));
+    NSInteger index = 0;
+    if (_scrollDirection == MWScrollDirectionHorizontal) {
+        index = (int)(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)));
+    } else {
+        index = (int)(floorf(CGRectGetMidY(visibleBounds) / CGRectGetHeight(visibleBounds)));
+    }
     if (index < 0) index = 0;
 	if (index > [self numberOfPhotos] - 1) index = [self numberOfPhotos] - 1;
 	NSUInteger previousCurrentPage = _currentPageIndex;
@@ -1118,7 +1155,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// Change page
 	if (index < [self numberOfPhotos]) {
 		CGRect pageFrame = [self frameForPageAtIndex:index];
-        [_pagingScrollView setContentOffset:CGPointMake(pageFrame.origin.x - PADDING, 0) animated:animated];
+        CGPoint offset = _scrollDirection == MWScrollDirectionHorizontal ? CGPointMake(pageFrame.origin.x - PADDING, 0) : CGPointMake(0, pageFrame.origin.y - PADDING);
+        [_pagingScrollView setContentOffset:offset animated:animated];
 		[self updateNavigation];
 	}
 	
@@ -1454,7 +1492,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             if (page.selectedButton) {
                 UIButton *v = page.selectedButton;
                 CGRect newFrame = [self frameForSelectedButton:v atIndex:0];
-                newFrame.origin.x = v.frame.origin.x;
+                if (_scrollDirection == MWScrollDirectionHorizontal) {
+                    newFrame.origin.x = v.frame.origin.x;
+                } else {
+                    newFrame.origin.y = v.frame.origin.y;
+                }
+                
                 v.frame = newFrame;
             }
         }
