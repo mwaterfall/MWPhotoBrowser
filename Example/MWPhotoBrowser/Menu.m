@@ -85,7 +85,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 9;
+    NSInteger rows = 10;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -154,6 +154,11 @@
             cell.detailTextLabel.text = @"media from device library";
             break;
         }
+        case 10: {
+            cell.textLabel.text = @"Photos";
+            cell.detailTextLabel.text = @"vertical scroll";
+            break;
+        }
 		default: break;
 	}
     return cell;
@@ -175,6 +180,7 @@
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
     BOOL autoPlayOnAppear = NO;
+    MWScrollDirection scrollDirection = MWScrollDirectionHorizontal;
 	switch (indexPath.row) {
 		case 0:
             // Photos
@@ -1107,6 +1113,17 @@
             }
 			break;
         }
+        case 10: {
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
+            [photos addObject:photo];
+            // Options
+            enableGrid = NO;
+            scrollDirection = MWScrollDirectionVertical;
+        }
 		default: break;
 	}
     self.photos = photos;
@@ -1123,6 +1140,7 @@
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = NO;
     browser.autoPlayOnAppear = autoPlayOnAppear;
+    browser.scrollDirection = scrollDirection;
     [browser setCurrentPhotoIndex:0];
     
     // Test custom selection images
