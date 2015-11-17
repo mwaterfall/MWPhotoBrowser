@@ -1154,9 +1154,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
     
-    if ([self.delegate respondsToSelector:@selector(photoBrowser:canSelectePhotoAtIndex:withPhotoCurrentStatus:)]) {
-        if ([self.delegate photoBrowser:self canSelectePhotoAtIndex:index withPhotoCurrentStatus:selectedButton.selected]) {
-            if (index != NSUIntegerMax) {
+    if ([self.delegate respondsToSelector:@selector(photoBrowser:canSelectPhotoAtIndex:withPhotoCurrentStatus:)]) {
+        if (index != NSUIntegerMax) {
+            if ([self.delegate photoBrowser:self canSelectPhotoAtIndex:index withPhotoCurrentStatus:selectedButton.selected]) {
                 selectedButton.selected = !selectedButton.selected;
             }
         }
