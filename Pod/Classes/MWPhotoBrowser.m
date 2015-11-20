@@ -932,7 +932,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     NSUInteger i;
     if (index > 0) {
         // Release anything < index - 1
-        for (i = 0; i < index-1; i++) { 
+        for (i = 0; i+_preLoadNum < index; i++) {
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
                 [photo unloadUnderlyingImage];
@@ -943,7 +943,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     if (index < [self numberOfPhotos] - 1) {
         // Release anything > index + 1
-        for (i = index + 2; i < _photos.count; i++) {
+        for (i = index + _preLoadNum + 1; i < _photos.count; i++) {
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
                 [photo unloadUnderlyingImage];
