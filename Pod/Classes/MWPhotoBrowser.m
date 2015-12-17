@@ -1214,6 +1214,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentVideoPlayerViewController.moviePlayer.scalingMode = MPMovieScalingModeAspectFit;
     _currentVideoPlayerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
+    // When Autolayout is not supported then force video to Landscape
+    CGAffineTransform landscapeTransform;
+    landscapeTransform = CGAffineTransformMakeRotation(90*M_PI/180.0f);
+    landscapeTransform = CGAffineTransformTranslate(landscapeTransform, 80, 80);
+    [_currentVideoPlayerViewController.moviePlayer.view setTransform: landscapeTransform];
+
     // Remove the movie player view controller from the "playback did finish" notification observers
     // Observe ourselves so we can get it to use the crossfade transition
     [[NSNotificationCenter defaultCenter] removeObserver:_currentVideoPlayerViewController
