@@ -22,6 +22,7 @@
 }
 
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *placeholder;
 @property (nonatomic, strong) NSURL *photoURL;
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic) CGSize assetTargetSize;
@@ -42,6 +43,10 @@
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {
     return [[MWPhoto alloc] initWithURL:url];
+}
+
++ (MWPhoto *)photoWithURL:(NSURL *)url andPlaceholderImage:(UIImage *)placeholder {
+    return [[MWPhoto alloc] initWithURL:url andPlaceholderImage:placeholder];
 }
 
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
@@ -71,6 +76,13 @@
 - (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
         self.photoURL = url;
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSURL *)url andPlaceholderImage:(UIImage *)placeholder {
+    if ((self = [self initWithURL:url])) {
+        self.placeholder = placeholder;
     }
     return self;
 }
@@ -155,6 +167,10 @@
         
     } else if (_photoURL) {
         
+        if (_placeholder) {
+            self.underlyingImage = _image;
+        }
+
         // Check what type of url it is
         if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
             
