@@ -42,6 +42,7 @@
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
+@property (nonatomic) BOOL zoomSmallPhotos;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
 @property (nonatomic) BOOL displaySelectionButtons;

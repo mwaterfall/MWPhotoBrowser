@@ -67,6 +67,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _displayActionButton = YES;
     _displayNavArrows = NO;
     _zoomPhotosToFill = YES;
+    _zoomSmallPhotos = NO;
     _performingLayout = NO; // Reset on view did appear
     _rotating = NO;
     _viewIsActive = NO;

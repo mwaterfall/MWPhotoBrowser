@@ -1119,6 +1119,7 @@
     browser.displaySelectionButtons = displaySelectionButtons;
     browser.alwaysShowControls = displaySelectionButtons;
     browser.zoomPhotosToFill = YES;
+    browser.zoomSmallPhotos = YES;
     browser.enableGrid = enableGrid;
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = NO;
