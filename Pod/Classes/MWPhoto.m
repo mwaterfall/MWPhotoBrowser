@@ -168,7 +168,8 @@
     } else if (_photoURL) {
         
         if (_placeholder) {
-            self.underlyingImage = _image;
+            self.underlyingImage = _placeholder;
+            [self imagePlaceholderComplete];
         }
 
         // Check what type of url it is
@@ -308,6 +309,12 @@
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
 	self.underlyingImage = nil;
+}
+
+- (void)imagePlaceholderComplete {
+    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
+    [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PLACEHOLDER_NOTIFICATION
+                                                        object:self];
 }
 
 - (void)imageLoadingComplete {

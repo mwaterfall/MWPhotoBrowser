@@ -84,6 +84,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleMWPhotoPlaceholderNotification:)
+                                                 name:MWPHOTO_PLACEHOLDER_NOTIFICATION
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
                                                  name:MWPHOTO_LOADING_DID_END_NOTIFICATION
                                                object:nil];
@@ -741,6 +745,20 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 #pragma mark - MWPhoto Loading Notification
+
+- (void)handleMWPhotoPlaceholderNotification:(NSNotification *)notification {
+    id <MWPhoto> photo = [notification object];
+    MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
+    if (page) {
+        if ([photo underlyingImage]) {
+            // Successful load
+            [page displayPlaceholderImage];
+            [self loadAdjacentPhotosIfNecessary:photo];
+        }
+        // Update nav
+        [self updateNavigation];
+    }
+}
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
     id <MWPhoto> photo = [notification object];

@@ -74,6 +74,11 @@
                                                  selector:@selector(setProgressFromNotification:)
                                                      name:MWPHOTO_PROGRESS_NOTIFICATION
                                                    object:nil];
+        // Listen for MWPhoto notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMWPhotoPlaceholderNotification:)
+                                                     name:MWPHOTO_PLACEHOLDER_NOTIFICATION
+                                                   object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleMWPhotoLoadingDidEndNotification:)
                                                      name:MWPHOTO_LOADING_DID_END_NOTIFICATION
@@ -229,6 +234,17 @@
             _loadingIndicator.progress = MAX(MIN(1, progress), 0);
         }
     });
+}
+
+- (void)handleMWPhotoPlaceholderNotification:(NSNotification *)notification {
+    id <MWPhoto> photo = [notification object];
+    if (photo == _photo) {
+        if ([photo underlyingImage]) {
+            // Successful load
+            [self displayImage];
+        }
+        [self hideLoadingIndicator];
+    }
 }
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
