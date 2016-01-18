@@ -261,10 +261,10 @@
     CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
     
     // Calculate Max
-    CGFloat maxScale = 5;
+    CGFloat maxScale = 3;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // Let them go a bit bigger on a bigger screen!
-        maxScale = 5;
+        maxScale = 4;
     }
     
     if (_photoBrowser.zoomSmallPhotos) {
@@ -272,7 +272,7 @@
             minScale = 3;
         }
         if (maxScale <= minScale)
-            maxScale = minScale +1;
+            maxScale = minScale +2;
     }else{
         // Image is smaller than screen so no zooming!
         if (xScale >= 1 && yScale >= 1) {
