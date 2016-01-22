@@ -20,17 +20,24 @@
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
+@property (nonatomic) BOOL isLivePhoto;
+
+// MWPhoto protocol properties
+@property (nonatomic) UIImage *underlyingImage;
+@property (nonatomic) PHLivePhoto *underlyingLivePhoto;
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
 + (MWPhoto *)photoWithURL:(NSURL *)url;
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 + (MWPhoto *)videoWithURL:(NSURL *)url; // Initialise video with no poster image
++ (MWPhoto *)photoWithLivePhotoURLs:(NSArray *)URLs;
 
 - (id)init;
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 - (id)initWithVideoURL:(NSURL *)url;
+- (id)initWithLivePhotoURLs:(NSArray *)URLs;
 
 @end
 

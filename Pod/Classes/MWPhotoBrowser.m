@@ -714,6 +714,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	return nil;
 }
 
+- (PHLivePhoto *)livePhotoForPhoto:(id<MWPhoto>)photo {
+    if (photo) {
+        if (photo.underlyingLivePhoto) {
+            return photo.underlyingLivePhoto;
+        } else {
+            [photo loadUnderlyingLivePhotoAndNotify];
+        }
+    }
+    return nil;
+}
+
 - (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo {
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
@@ -745,13 +756,23 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
     id <MWPhoto> photo = [notification object];
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
-    if (page) {
+    
+    if (page == nil) {
+        return;
+    }
+    if (photo.isLivePhoto) {
+        if ([photo underlyingLivePhoto]) {
+            [page displayLivePhoto];
+            [self loadAdjacentPhotosIfNecessary:photo];
+        } else {
+            [page displayImageFailure];
+        }
+    } else {
         if ([photo underlyingImage]) {
             // Successful load
             [page displayImage];
             [self loadAdjacentPhotosIfNecessary:photo];
         } else {
-            
             // Failed to load
             [page displayImageFailure];
         }

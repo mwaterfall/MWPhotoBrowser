@@ -26,14 +26,21 @@
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic) CGSize assetTargetSize;
 
+// Live photos
+@property (nonatomic) PHLivePhoto *livePhoto;
+@property (nonatomic) NSArray *livePhotoURLs;
+@property (nonatomic) NSURL *livePhotoFirstFileURL;
+@property (nonatomic) NSURL *livePhotoSecondFileURL;
+@property (nonatomic) BOOL didDownloadLivePhotoFirstFile;
+@property (nonatomic) BOOL didDownloadLivePhotoSecondFile;
+
 - (void)imageLoadingComplete;
 
 @end
 
 @implementation MWPhoto
 
-@synthesize underlyingImage = _underlyingImage; // synth property from protocol
-
+//--------------------------------------------------------------------------------------------------
 #pragma mark - Class Methods
 
 + (MWPhoto *)photoWithImage:(UIImage *)image {
@@ -52,6 +59,11 @@
     return [[MWPhoto alloc] initWithVideoURL:url];
 }
 
++ (MWPhoto *)photoWithLivePhotoURLs:(NSArray *)URLs {
+    return [[MWPhoto alloc] initWithLivePhotoURLs:URLs];
+}
+
+//--------------------------------------------------------------------------------------------------
 #pragma mark - Init
 
 - (id)init {
@@ -93,6 +105,15 @@
     return self;
 }
 
+- (id)initWithLivePhotoURLs:(NSArray *)URLs {
+    if (self = [super init]) {
+        self.isLivePhoto = YES;
+        self.livePhotoURLs = URLs;
+    }
+    return self;
+}
+
+//--------------------------------------------------------------------------------------------------
 #pragma mark - Video
 
 - (void)setVideoURL:(NSURL *)videoURL {
@@ -117,11 +138,8 @@
     return completion(nil);
 }
 
+//--------------------------------------------------------------------------------------------------
 #pragma mark - MWPhoto Protocol Methods
-
-- (UIImage *)underlyingImage {
-    return _underlyingImage;
-}
 
 - (void)loadUnderlyingImageAndNotify {
     NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
@@ -185,6 +203,49 @@
         
     }
 }
+
+//--------------------------------------------------------------------------------------------------
+#pragma mark - MWPhoto protocol methods for Live Photos
+
+- (void)loadUnderlyingLivePhotoAndNotify {
+    
+    BOOL isMainThread = [[NSThread currentThread] isMainThread];
+    NSAssert(isMainThread, @"This method must be called on the main thread.");
+    
+    if (_loadingInProgress) {
+        return;
+    }
+    
+    _loadingInProgress = YES;
+    
+    @try {
+        if (self.underlyingLivePhoto) {
+            [self livePhotoLoadingComplete];
+        } else {
+            [self performLoadUnderlyingLivePhotoAndNotify];
+        }
+    }
+    @catch (NSException *exception) {
+        self.underlyingLivePhoto = nil;
+        _loadingInProgress = NO;
+        [self livePhotoLoadingComplete];
+    }
+    @finally {
+        
+    }
+}
+
+- (void)performLoadUnderlyingLivePhotoAndNotify {
+    if (self.livePhoto) {
+        self.underlyingLivePhoto = self.livePhoto;
+        [self livePhotoLoadingComplete];
+    } else if (self.livePhotoURLs) {
+        [self _performLoadUnderlyingLivePhotoAndNotifyWithWebURLs:self.livePhotoURLs];
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+#pragma mark - Utils
 
 // Load from local file
 - (void)_performLoadUnderlyingImageAndNotifyWithWebURL:(NSURL *)url {
@@ -288,6 +349,103 @@
 
 }
 
+- (void)_performLoadUnderlyingLivePhotoAndNotifyWithWebURLs:(NSArray *)URLs {
+    
+    if (URLs.count != 2) {
+        MWLog(@"Error: URLs must have one movie and one image URLs.");
+        return;
+    }
+    
+    NSURL *firstURL = URLs[0];
+    NSURL *secondURL = URLs[1];
+    
+    NSURLSession *session = [NSURLSession sharedSession];
+    
+    NSString *tmpPath = [NSString stringWithFormat:@"file://%@", NSTemporaryDirectory()];
+    NSString *tmpFirstFileName = [NSString stringWithFormat:@"%@.mov", [[NSUUID new] UUIDString]];
+    NSString *tmpSecondFileName = [NSString stringWithFormat:@"%@.jpg", [[NSUUID new] UUIDString]];
+    
+    self.livePhotoFirstFileURL = [[NSURL URLWithString:tmpPath]
+                                  URLByAppendingPathComponent:tmpFirstFileName];
+    self.livePhotoSecondFileURL = [[NSURL URLWithString:tmpPath]
+                                   URLByAppendingPathComponent:tmpSecondFileName];
+    
+    [session downloadTaskWithURL:firstURL completionHandler:
+     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+         if (error) {
+             MWLog(@"Error downloading Live Photo movie: %@", error);
+             return;
+         }
+         
+         MWLog(@"Live Photo movie downloaded.");
+         
+         NSError *err = nil;
+         
+         if (![[NSFileManager defaultManager]
+               moveItemAtURL:location
+               toURL:self.livePhotoFirstFileURL
+               error:&err]) {
+             MWLog(@"Error moving Live Photo movie: %@", err);
+             return;
+         }
+         
+         self.didDownloadLivePhotoFirstFile = YES;
+         [self didDownloadLivePhotoAsset];
+     }];
+    
+    [session downloadTaskWithURL:secondURL completionHandler:
+     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+         
+         if (error) {
+             MWLog(@"Error downloading Live Photo image: %@", error);
+             return;
+         }
+         
+         MWLog(@"Live Photo image downloaded.");
+         
+         NSError *err = nil;
+         
+         if (![[NSFileManager defaultManager]
+               moveItemAtURL:location
+               toURL:self.livePhotoSecondFileURL
+               error:&err]) {
+             MWLog(@"Error moving Live Photo image: %@", err);
+             return;
+         }
+         
+         self.didDownloadLivePhotoSecondFile = YES;
+         [self didDownloadLivePhotoAsset];
+     }];
+}
+
+- (void)didDownloadLivePhotoAsset {
+    
+    if (self.didDownloadLivePhotoFirstFile && self.didDownloadLivePhotoSecondFile) {
+        NSArray *fileURLs = @[self.livePhotoFirstFileURL, self.livePhotoSecondFileURL];
+        [PHLivePhoto
+         requestLivePhotoWithResourceFileURLs:fileURLs
+         placeholderImage:nil
+         targetSize:CGSizeZero
+         contentMode:PHImageContentModeAspectFill
+         resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nonnull info) {
+             
+             NSError *error;
+             if ((error = info[PHLivePhotoInfoErrorKey])) {
+                 MWLog(@"Error creating Live Photo: %@", value);
+                 return;
+             }
+             
+             NSNumber *isDegraded = info[PHLivePhotoInfoIsDegradedKey];
+             
+             MWLog(@"Live Photo created with PHLivePhotoInfoIsDegradedKey: %@", isDegraded);
+             
+             self.underlyingLivePhoto = livePhoto;
+             [self livePhotoLoadingComplete];
+         }];
+    }
+}
+
 // Release if we can get it again from path or url
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
@@ -302,9 +460,22 @@
     [self performSelector:@selector(postCompleteNotification) withObject:nil afterDelay:0];
 }
 
+- (void)livePhotoLoadingComplete {
+    NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
+    
+    _loadingInProgress = NO;
+    [self performSelector:@selector(postLivePhotoCompleteNotification) withObject:nil afterDelay:0];
+}
+
 - (void)postCompleteNotification {
     [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_LOADING_DID_END_NOTIFICATION
                                                         object:self];
+}
+
+- (void)postLivePhotoCompleteNotification {
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:MWPHOTO_LIVE_PHOTO_LOADING_DID_END_NOTIFICATION
+     object:self];
 }
 
 - (void)cancelAnyLoading {

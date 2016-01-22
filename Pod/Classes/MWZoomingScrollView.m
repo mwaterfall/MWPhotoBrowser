@@ -7,6 +7,7 @@
 //
 
 #import <DACircularProgress/DACircularProgressView.h>
+#import <PhotosUI/PhotosUI.h>
 #import "MWCommon.h"
 #import "MWZoomingScrollView.h"
 #import "MWPhotoBrowser.h"
@@ -20,6 +21,7 @@
     MWPhotoBrowser __weak *_photoBrowser;
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
+    PHLivePhotoView *_livePhotoView;
 	DACircularProgressView *_loadingIndicator;
     UIImageView *_loadingError;
     
@@ -49,6 +51,13 @@
 		_photoImageView.contentMode = UIViewContentModeCenter;
 		_photoImageView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_photoImageView];
+        
+        // Live photo view
+        _livePhotoView = [[PHLivePhotoView alloc] initWithFrame:CGRectZero];
+        _livePhotoView.hidden = YES;
+        _livePhotoView.contentMode = UIViewContentModeCenter;
+        _livePhotoView.backgroundColor = [UIColor blackColor];
+        [self addSubview:_livePhotoView];
 		
 		// Loading indicator
 		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
@@ -110,12 +119,27 @@
         }
     }
     _photo = photo;
-    UIImage *img = [_photoBrowser imageForPhoto:_photo];
-    if (img) {
-        [self displayImage];
+    
+    if (_photo.isLivePhoto) {
+        
+        PHLivePhoto *livePhoto = [_photoBrowser livePhotoForPhoto:_photo];
+        
+        if (livePhoto) {
+            [self displayLivePhoto];
+        } else {
+            [self showLoadingIndicator];
+        }
+        
     } else {
-        // Will be loading so show loading
-        [self showLoadingIndicator];
+        
+        UIImage *img = [_photoBrowser imageForPhoto:_photo];
+        
+        if (img) {
+            [self displayImage];
+        } else {
+            // Will be loading so show loading
+            [self showLoadingIndicator];
+        }
     }
 }
 
@@ -158,6 +182,34 @@
 		}
 		[self setNeedsLayout];
 	}
+}
+
+- (void)displayLivePhoto {
+    
+    if (_photo && _livePhotoView.livePhoto == nil) {
+        
+        // Reset
+        self.maximumZoomScale = 1;
+        self.minimumZoomScale = 1;
+        self.zoomScale = 1;
+        self.contentSize = CGSizeMake(0, 0);
+        
+        // Get image from browser as it handles ordering of fetching
+        
+        PHLivePhoto *livePhoto = [_photoBrowser livePhotoForPhoto:_photo];
+        
+        if (livePhoto) {
+            [self hideLoadingIndicator];
+            _livePhotoView.livePhoto = livePhoto;
+            _livePhotoView.hidden = NO;
+            _livePhotoView.frame = CGRectMake(0, 0, livePhoto.size.width, livePhoto.size.height);
+            self.contentSize = _livePhotoView.frame.size;
+        } else {
+            [self displayImageFailure];
+        }
+        
+        [self setNeedsLayout];
+    }
 }
 
 // Image failed so just show black!

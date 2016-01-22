@@ -85,7 +85,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 9;
+    NSInteger rows = 10;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -152,6 +152,10 @@
 		case 9: {
             cell.textLabel.text = @"Library photos and videos";
             cell.detailTextLabel.text = @"media from device library";
+            break;
+        }
+        case 10: {
+            cell.textLabel.text = @"Live photos";
             break;
         }
 		default: break;
@@ -1106,6 +1110,13 @@
                 }
             }
 			break;
+        }
+        case 10: {
+            MWPhoto *photo = [MWPhoto photoWithLivePhotoURLs:@[
+                @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.mov",
+                @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.jpg"
+            ]];
+            [photos addObject:photo];
         }
 		default: break;
 	}
