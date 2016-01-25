@@ -159,7 +159,7 @@
 
             // Set zoom to minimum zoom
             [self setMaxMinZoomScalesForCurrentBounds];
-        } else if (needsFailureImage) {
+        } else if (needsFailureImage && !_photoImageView.image) {
             // Show image failure
             [self displayImageFailure];
         }
