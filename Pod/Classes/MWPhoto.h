@@ -30,7 +30,7 @@
 + (MWPhoto *)photoWithURL:(NSURL *)url;
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 + (MWPhoto *)videoWithURL:(NSURL *)url; // Initialise video with no poster image
-+ (MWPhoto *)photoWithLivePhotoURLs:(NSArray *)URLs;
++ (MWPhoto *)photoWithLivePhotoImageURL:(NSURL *)imageURL movieURL:(NSURL *)movieURL;
 
 - (id)init;
 - (id)initWithImage:(UIImage *)image;

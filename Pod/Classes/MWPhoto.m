@@ -28,15 +28,16 @@
 
 // Live photos management
 @property (nonatomic) PHLivePhoto *livePhoto;
-@property (nonatomic) NSArray *livePhotoURLs;
-@property (nonatomic) NSURL *livePhotoFirstFileURL;
-@property (nonatomic) NSURL *livePhotoSecondFileURL;
-@property (nonatomic) BOOL didDownloadLivePhotoFirstFile;
-@property (nonatomic) BOOL didDownloadLivePhotoSecondFile;
-@property (nonatomic) NSURLSession *firstFileSession;
-@property (nonatomic) NSURLSession *secondFileSession;
-@property (nonatomic) CGFloat firstFileProgress;
-@property (nonatomic) CGFloat secondFileProgress;
+@property (nonatomic) NSURL *livePhotoImageWebURL;
+@property (nonatomic) NSURL *livePhotoMovieWebURL;
+@property (nonatomic) NSURL *livePhotoImageFileURL;
+@property (nonatomic) NSURL *livePhotoMovieFileURL;
+@property (nonatomic) BOOL didDownloadLivePhotoImage;
+@property (nonatomic) BOOL didDownloadLivePhotoMovie;
+@property (nonatomic) NSURLSession *imageSession;
+@property (nonatomic) NSURLSession *movieSession;
+@property (nonatomic) CGFloat imageProgress;
+@property (nonatomic) CGFloat movieProgress;
 
 - (void)imageLoadingComplete;
 
@@ -63,8 +64,8 @@
     return [[MWPhoto alloc] initWithVideoURL:url];
 }
 
-+ (MWPhoto *)photoWithLivePhotoURLs:(NSArray *)URLs {
-    return [[MWPhoto alloc] initWithLivePhotoURLs:URLs];
++ (MWPhoto *)photoWithLivePhotoImageURL:(NSURL *)imageURL movieURL:(NSURL *)movieURL {
+    return [[MWPhoto alloc] initWithLivePhotoImageURL:imageURL movieURL:movieURL];
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -109,10 +110,11 @@
     return self;
 }
 
-- (id)initWithLivePhotoURLs:(NSArray *)URLs {
+- (id)initWithLivePhotoImageURL:(NSURL *)imageURL movieURL:(NSURL *)movieURL {
     if (self = [super init]) {
         self.isLivePhoto = YES;
-        self.livePhotoURLs = URLs;
+        self.livePhotoImageWebURL = imageURL;
+        self.livePhotoMovieWebURL = movieURL;
     }
     return self;
 }
@@ -243,8 +245,10 @@
     if (self.livePhoto) {
         self.underlyingLivePhoto = self.livePhoto;
         [self livePhotoLoadingComplete];
-    } else if (self.livePhotoURLs) {
-        [self _performLoadUnderlyingLivePhotoAndNotifyWithWebURLs:self.livePhotoURLs];
+    } else if (self.livePhotoImageWebURL && self.livePhotoMovieWebURL) {
+        [self
+         _performLoadUnderlyingLivePhotoAndNotifyWithImageURL:self.livePhotoImageWebURL
+         movieURL:self.livePhotoMovieWebURL];
     }
 }
 
@@ -257,15 +261,15 @@
  totalBytesWritten:(int64_t)totalBytesWritten
 totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
-    if (session = self.firstFileSession) {
-        self.firstFileProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
-    } else if (session == self.secondFileSession) {
-        self.secondFileProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
+    if (session = self.imageSession) {
+        self.imageProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
+        NSLog(@"Image progress %@", @(self.imageProgress));
+    } else if (session == self.movieSession) {
+        self.movieProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
+        NSLog(@"Movie progress %@", @(self.movieProgress));
     }
     
-    CGFloat progress = (self.firstFileProgress + self.secondFileProgress) / 2;
-    
-    NSLog(@"Session: %@, Progress: %@", session == self.firstFileSession ? @"1" : @"2", @(progress));
+    CGFloat progress = (self.imageProgress + self.movieProgress) / 2;
     
     [[NSNotificationCenter defaultCenter] 
      postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION
@@ -382,66 +386,34 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
 
 }
 
-- (void)_performLoadUnderlyingLivePhotoAndNotifyWithWebURLs:(NSArray *)URLs {
+- (void)_performLoadUnderlyingLivePhotoAndNotifyWithImageURL:(NSURL *)imageURL movieURL:(NSURL *)movieURL {
     
-    if (URLs.count != 2) {
+    if (!imageURL || !movieURL) {
         MWLog(@"Error: URLs must have one movie and one image URLs.");
         return;
     }
     
-    NSURL *firstURL = URLs[0];
-    NSURL *secondURL = URLs[1];
-    
     NSString *tmpPath = [NSString stringWithFormat:@"file://%@", NSTemporaryDirectory()];
-    NSString *tmpFirstFileName = [NSString stringWithFormat:@"%@", [[NSUUID new] UUIDString]];
-    NSString *tmpSecondFileName = [NSString stringWithFormat:@"%@", [[NSUUID new] UUIDString]];
+    NSString *tmpImageFileName = [NSString stringWithFormat:@"%@.jpg", [[NSUUID new] UUIDString]];
+    NSString *tmpMovieFileName = [NSString stringWithFormat:@"%@.mov", [[NSUUID new] UUIDString]];
     
-    self.livePhotoFirstFileURL = [[NSURL URLWithString:tmpPath]
-                                  URLByAppendingPathComponent:tmpFirstFileName];
-    self.livePhotoSecondFileURL = [[NSURL URLWithString:tmpPath]
-                                   URLByAppendingPathComponent:tmpSecondFileName];
+    self.livePhotoImageFileURL = [[NSURL URLWithString:tmpPath]
+                                  URLByAppendingPathComponent:tmpImageFileName];
+    self.livePhotoMovieFileURL = [[NSURL URLWithString:tmpPath]
+                                  URLByAppendingPathComponent:tmpMovieFileName];
     
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     
-    self.firstFileSession = [NSURLSession
-                             sessionWithConfiguration:config
-                             delegate:self
-                             delegateQueue:[NSOperationQueue mainQueue]];
+    self.imageSession = [NSURLSession
+                         sessionWithConfiguration:config
+                         delegate:self
+                         delegateQueue:[NSOperationQueue mainQueue]];
     
-    [[self.firstFileSession downloadTaskWithURL:firstURL completionHandler:
+    [[self.imageSession downloadTaskWithURL:self.livePhotoImageWebURL completionHandler:
      ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
          if (error) {
              MWLog(@"Error downloading Live Photo movie: %@", error);
-             return;
-         }
-         
-         MWLog(@"Live Photo movie downloaded.");
-         
-         NSError *err = nil;
-         
-         if (![[NSFileManager defaultManager]
-               moveItemAtURL:location
-               toURL:self.livePhotoFirstFileURL
-               error:&err]) {
-             MWLog(@"Error moving Live Photo movie: %@", err);
-             return;
-         }
-         
-         self.didDownloadLivePhotoFirstFile = YES;
-         [self didDownloadLivePhotoAsset];
-     }] resume];
-    
-    self.secondFileSession = [NSURLSession
-                              sessionWithConfiguration:config
-                              delegate:self
-                              delegateQueue:[NSOperationQueue mainQueue]];
-    
-    [[self.secondFileSession downloadTaskWithURL:secondURL completionHandler:
-     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-         
-         if (error) {
-             MWLog(@"Error downloading Live Photo image: %@", error);
              return;
          }
          
@@ -451,21 +423,52 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
          
          if (![[NSFileManager defaultManager]
                moveItemAtURL:location
-               toURL:self.livePhotoSecondFileURL
+               toURL:self.livePhotoImageFileURL
                error:&err]) {
              MWLog(@"Error moving Live Photo image: %@", err);
              return;
          }
          
-         self.didDownloadLivePhotoSecondFile = YES;
+         self.didDownloadLivePhotoImage = YES;
+         [self didDownloadLivePhotoAsset];
+     }] resume];
+    
+    self.movieSession = [NSURLSession
+                         sessionWithConfiguration:config
+                         delegate:self
+                         delegateQueue:[NSOperationQueue mainQueue]];
+    
+    [[self.movieSession downloadTaskWithURL:self.livePhotoMovieWebURL completionHandler:
+     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+         
+         if (error) {
+             MWLog(@"Error downloading Live Photo image: %@", error);
+             return;
+         }
+         
+         MWLog(@"Live Photo movie downloaded.");
+         
+         NSError *err = nil;
+         
+         if (![[NSFileManager defaultManager]
+               moveItemAtURL:location
+               toURL:self.livePhotoMovieFileURL
+               error:&err]) {
+             MWLog(@"Error moving Live Photo movie: %@", err);
+             return;
+         }
+         
+         self.didDownloadLivePhotoMovie = YES;
          [self didDownloadLivePhotoAsset];
      }] resume];
 }
 
 - (void)didDownloadLivePhotoAsset {
     
-    if (self.didDownloadLivePhotoFirstFile && self.didDownloadLivePhotoSecondFile) {
-        NSArray *fileURLs = @[self.livePhotoFirstFileURL, self.livePhotoSecondFileURL];
+    if (self.didDownloadLivePhotoImage && self.didDownloadLivePhotoMovie) {
+        
+        NSArray *fileURLs = @[self.livePhotoImageFileURL, self.livePhotoMovieFileURL];
+        
         [PHLivePhoto
          requestLivePhotoWithResourceFileURLs:fileURLs
          placeholderImage:nil
@@ -497,6 +500,11 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
 	self.underlyingImage = nil;
+}
+
+- (void)unloadUnderlyingLivePhoto {
+    _loadingInProgress = NO;
+    self.underlyingLivePhoto = nil;
 }
 
 - (void)imageLoadingComplete {
@@ -531,8 +539,8 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
 }
 
 - (void)dealloc {
-    [self.firstFileSession invalidateAndCancel];
-    [self.secondFileSession invalidateAndCancel];
+    [self.imageSession invalidateAndCancel];
+    [self.movieSession invalidateAndCancel];
 }
 
 @end
