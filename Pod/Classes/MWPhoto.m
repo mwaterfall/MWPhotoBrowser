@@ -261,22 +261,70 @@
  totalBytesWritten:(int64_t)totalBytesWritten
 totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
-    if (session = self.imageSession) {
-        self.imageProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
-        NSLog(@"Image progress %@", @(self.imageProgress));
+    CGFloat currentProgress = (CGFloat)totalBytesWritten / (CGFloat)totalBytesExpectedToWrite;
+    
+    if (session == self.imageSession) {
+        self.imageProgress = currentProgress;
     } else if (session == self.movieSession) {
-        self.movieProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
-        NSLog(@"Movie progress %@", @(self.movieProgress));
+        self.movieProgress = currentProgress;
     }
     
-    CGFloat progress = (self.imageProgress + self.movieProgress) / 2;
+    CGFloat totalProgress = (self.imageProgress + self.movieProgress) / 2;
     
     [[NSNotificationCenter defaultCenter] 
      postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION
      object:@{
-         @"progress": @(progress),
+         @"progress": @(totalProgress),
          @"photo": self
      }];
+}
+
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error {
+    if (session == self.imageSession) {
+        MWLog(@"Error downloading Live Photo image: %@", error);
+    } else if (session == self.movieSession) {
+        MWLog(@"Error downloading Live Photo movie: %@", error);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+      downloadTask:(NSURLSessionDownloadTask *)downloadTask
+didFinishDownloadingToURL:(NSURL *)location {
+    
+    if (session == self.imageSession) {
+        
+        MWLog(@"Live Photo image downloaded.");
+        
+        NSError *err = nil;
+        
+        if (![[NSFileManager defaultManager]
+              moveItemAtURL:location
+              toURL:self.livePhotoImageFileURL
+              error:&err]) {
+            MWLog(@"Error moving Live Photo image: %@", err);
+            return;
+        }
+        
+        self.didDownloadLivePhotoImage = YES;
+        [self didDownloadLivePhotoAsset];
+        
+    } else if (session == self.movieSession) {
+        
+        MWLog(@"Live Photo movie downloaded.");
+        
+        NSError *err = nil;
+        
+        if (![[NSFileManager defaultManager]
+              moveItemAtURL:location
+              toURL:self.livePhotoMovieFileURL
+              error:&err]) {
+            MWLog(@"Error moving Live Photo movie: %@", err);
+            return;
+        }
+        
+        self.didDownloadLivePhotoMovie = YES;
+        [self didDownloadLivePhotoAsset];
+    }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -402,65 +450,25 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     self.livePhotoMovieFileURL = [[NSURL URLWithString:tmpPath]
                                   URLByAppendingPathComponent:tmpMovieFileName];
     
-    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSessionConfiguration *imageConfig = [NSURLSessionConfiguration
+                                              defaultSessionConfiguration];
     
     self.imageSession = [NSURLSession
-                         sessionWithConfiguration:config
+                         sessionWithConfiguration:imageConfig
                          delegate:self
                          delegateQueue:[NSOperationQueue mainQueue]];
     
-    [[self.imageSession downloadTaskWithURL:self.livePhotoImageWebURL completionHandler:
-     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
-         if (error) {
-             MWLog(@"Error downloading Live Photo movie: %@", error);
-             return;
-         }
-         
-         MWLog(@"Live Photo image downloaded.");
-         
-         NSError *err = nil;
-         
-         if (![[NSFileManager defaultManager]
-               moveItemAtURL:location
-               toURL:self.livePhotoImageFileURL
-               error:&err]) {
-             MWLog(@"Error moving Live Photo image: %@", err);
-             return;
-         }
-         
-         self.didDownloadLivePhotoImage = YES;
-         [self didDownloadLivePhotoAsset];
-     }] resume];
+    [[self.imageSession downloadTaskWithURL:self.livePhotoImageWebURL] resume];
+    
+    NSURLSessionConfiguration *movieConfig = [NSURLSessionConfiguration
+                                              defaultSessionConfiguration];
     
     self.movieSession = [NSURLSession
-                         sessionWithConfiguration:config
+                         sessionWithConfiguration:movieConfig
                          delegate:self
                          delegateQueue:[NSOperationQueue mainQueue]];
     
-    [[self.movieSession downloadTaskWithURL:self.livePhotoMovieWebURL completionHandler:
-     ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-         
-         if (error) {
-             MWLog(@"Error downloading Live Photo image: %@", error);
-             return;
-         }
-         
-         MWLog(@"Live Photo movie downloaded.");
-         
-         NSError *err = nil;
-         
-         if (![[NSFileManager defaultManager]
-               moveItemAtURL:location
-               toURL:self.livePhotoMovieFileURL
-               error:&err]) {
-             MWLog(@"Error moving Live Photo movie: %@", err);
-             return;
-         }
-         
-         self.didDownloadLivePhotoMovie = YES;
-         [self didDownloadLivePhotoAsset];
-     }] resume];
+    [[self.movieSession downloadTaskWithURL:self.livePhotoMovieWebURL] resume];
 }
 
 - (void)didDownloadLivePhotoAsset {
