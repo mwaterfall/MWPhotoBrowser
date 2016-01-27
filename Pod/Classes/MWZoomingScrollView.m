@@ -21,7 +21,7 @@
     MWPhotoBrowser __weak *_photoBrowser;
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
-    PHLivePhotoView *_livePhotoView;
+    MWTapDetectingLivePhotoView *_livePhotoView;
 	DACircularProgressView *_loadingIndicator;
     UIImageView *_loadingError;
     
@@ -53,7 +53,8 @@
 		[self addSubview:_photoImageView];
         
         // Live photo view
-        _livePhotoView = [[PHLivePhotoView alloc] initWithFrame:CGRectZero];
+        _livePhotoView = [[MWTapDetectingLivePhotoView alloc] initWithFrame:CGRectZero];
+        _livePhotoView.tapDelegate = self;
         _livePhotoView.hidden = YES;
         _livePhotoView.contentMode = UIViewContentModeCenter;
         _livePhotoView.backgroundColor = [UIColor blackColor];
@@ -201,6 +202,7 @@
             _livePhotoView.livePhoto = livePhoto;
             _livePhotoView.hidden = NO;
             _livePhotoView.frame = CGRectMake(0, 0, livePhoto.size.width, livePhoto.size.height);
+            [_livePhotoView startPlaybackWithStyle:PHLivePhotoViewPlaybackStyleHint];
             self.contentSize = _livePhotoView.frame.size;
             
             [self setMaxMinZoomScalesForCurrentBounds];
@@ -476,7 +478,6 @@
 	
 	// Delay controls
 	[_photoBrowser hideControlsAfterDelay];
-	
 }
 
 // Image View
@@ -485,6 +486,15 @@
 }
 - (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch {
     [self handleDoubleTap:[touch locationInView:imageView]];
+}
+
+// Live Photo View
+- (void)livePhotoView:(PHLivePhotoView *)livePhotoView singleTapDetected:(UITouch *)touch {
+    [self handleSingleTap:[touch locationInView:livePhotoView]];
+}
+
+- (void)livePhotoView:(PHLivePhotoView *)livePhotoView doubleTapDetected:(UITouch *)touch {
+    [self handleDoubleTap:[touch locationInView:livePhotoView]];
 }
 
 // Background View

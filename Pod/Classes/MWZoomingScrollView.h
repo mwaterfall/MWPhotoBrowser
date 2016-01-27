@@ -10,12 +10,15 @@
 #import "MWPhotoProtocol.h"
 #import "MWTapDetectingImageView.h"
 #import "MWTapDetectingView.h"
+#import "MWTapDetectingLivePhotoView.h"
 
 @class MWPhotoBrowser, MWPhoto, MWCaptionView;
 
-@interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, MWTapDetectingImageViewDelegate, MWTapDetectingViewDelegate> {
-
-}
+@interface MWZoomingScrollView : UIScrollView <
+    UIScrollViewDelegate,
+    MWTapDetectingImageViewDelegate,
+    MWTapDetectingViewDelegate,
+    MWTapDetectingLivePhotoView>
 
 @property () NSUInteger index;
 @property (nonatomic) id <MWPhoto> photo;
