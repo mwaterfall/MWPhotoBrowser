@@ -98,15 +98,13 @@
     self.playButton = nil;
     _photoImageView.hidden = NO;
     _photoImageView.image = nil;
+    _livePhotoView.hidden = NO;
+    _livePhotoView.livePhoto = nil;
     _index = NSUIntegerMax;
 }
 
 - (BOOL)displayingVideo {
     return [_photo respondsToSelector:@selector(isVideo)] && _photo.isVideo;
-}
-
-- (void)setImageHidden:(BOOL)hidden {
-    _photoImageView.hidden = hidden;
 }
 
 #pragma mark - Image
@@ -204,6 +202,8 @@
             _livePhotoView.hidden = NO;
             _livePhotoView.frame = CGRectMake(0, 0, livePhoto.size.width, livePhoto.size.height);
             self.contentSize = _livePhotoView.frame.size;
+            
+            [self setMaxMinZoomScalesForCurrentBounds];
         } else {
             [self displayImageFailure];
         }
@@ -270,12 +270,11 @@
 
 #pragma mark - Setup
 
-- (CGFloat)initialZoomScaleWithMinScale {
+- (CGFloat)initialZoomScaleWithMinScaleImageSize:(CGSize)imageSize {
     CGFloat zoomScale = self.minimumZoomScale;
-    if (_photoImageView && _photoBrowser.zoomPhotosToFill) {
+    if ((_livePhotoView || _photoImageView) && _photoBrowser.zoomPhotosToFill) {
         // Zoom image to fill if the aspect ratios are fairly similar
         CGSize boundsSize = self.bounds.size;
-        CGSize imageSize = _photoImageView.image.size;
         CGFloat boundsAR = boundsSize.width / boundsSize.height;
         CGFloat imageAR = imageSize.width / imageSize.height;
         CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
@@ -297,15 +296,24 @@
     self.minimumZoomScale = 1;
     self.zoomScale = 1;
     
-    // Bail if no image
-    if (_photoImageView.image == nil) return;
+    UIView *view;
+    CGSize imageSize;
+    
+    if (_livePhotoView.livePhoto) {
+        view = _livePhotoView;
+        imageSize = _livePhotoView.livePhoto.size;
+    } else if (_photoImageView.image) {
+        view = _photoImageView;
+        imageSize = _photoImageView.image.size;
+    } else {
+        return;
+    }
     
     // Reset position
-    _photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
-	
+    view.frame = CGRectMake(0, 0, view.frame.size.width, view.frame.size.height);
+    
     // Sizes
     CGSize boundsSize = self.bounds.size;
-    CGSize imageSize = _photoImageView.image.size;
     
     // Calculate Min
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
@@ -329,7 +337,7 @@
     self.minimumZoomScale = minScale;
     
     // Initial zoom
-    self.zoomScale = [self initialZoomScaleWithMinScale];
+    self.zoomScale = [self initialZoomScaleWithMinScaleImageSize:imageSize];
     
     // If we're zooming to fill then centralise
     if (self.zoomScale != minScale) {
@@ -337,7 +345,7 @@
         // Centralise
         self.contentOffset = CGPointMake((imageSize.width * self.zoomScale - boundsSize.width) / 2.0,
                                          (imageSize.height * self.zoomScale - boundsSize.height) / 2.0);
-
+        
     }
     
     // Disable scrolling initially until the first pinch to fix issues with swiping on an initally zoomed in photo
@@ -348,10 +356,9 @@
         self.maximumZoomScale = self.zoomScale;
         self.minimumZoomScale = self.zoomScale;
     }
-
+    
     // Layout
-	[self setNeedsLayout];
-
+    [self setNeedsLayout];
 }
 
 #pragma mark - Layout
@@ -376,9 +383,11 @@
 	// Super
 	[super layoutSubviews];
 	
+    UIView *viewToCenter = self.photo.isLivePhoto ? _livePhotoView : _photoImageView;
+    
     // Center the image as it becomes smaller than the size of the screen
     CGSize boundsSize = self.bounds.size;
-    CGRect frameToCenter = _photoImageView.frame;
+    CGRect frameToCenter = viewToCenter.frame;
     
     // Horizontally
     if (frameToCenter.size.width < boundsSize.width) {
@@ -395,15 +404,15 @@
 	}
     
 	// Center
-	if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter))
-		_photoImageView.frame = frameToCenter;
+	if (!CGRectEqualToRect(viewToCenter.frame, frameToCenter))
+		viewToCenter.frame = frameToCenter;
 	
 }
 
 #pragma mark - UIScrollViewDelegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-	return _photoImageView;
+    return self.photo.isLivePhoto ? _livePhotoView : _photoImageView;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -439,9 +448,18 @@
 	
 	// Cancel any single tap handling
 	[NSObject cancelPreviousPerformRequestsWithTarget:_photoBrowser];
+    
+    CGSize imageSize;
+    
+    if (self.photo.isLivePhoto) {
+        imageSize = _livePhotoView.livePhoto.size;
+    } else {
+        imageSize = _photoImageView.image.size;
+    }
 	
 	// Zoom
-	if (self.zoomScale != self.minimumZoomScale && self.zoomScale != [self initialZoomScaleWithMinScale]) {
+	if (self.zoomScale != self.minimumZoomScale
+        && self.zoomScale != [self initialZoomScaleWithMinScaleImageSize:imageSize]) {
 		
 		// Zoom out
 		[self setZoomScale:self.minimumZoomScale animated:YES];

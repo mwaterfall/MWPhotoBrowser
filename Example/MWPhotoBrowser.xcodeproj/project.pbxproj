@@ -25,6 +25,7 @@
 		0EC5D4C41B4C46E50092ACC1 /* photo8t.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0EC5D4B31B4C46E50092ACC1 /* photo8t.jpg */; };
 		0EC5D4C51B4C46E50092ACC1 /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0EC5D4B41B4C46E50092ACC1 /* video.mp4 */; };
 		0EC5D4C91B4C480E0092ACC1 /* video_thumb.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0EC5D4C81B4C480E0092ACC1 /* video_thumb.jpg */; };
+		1CD3E5261C52C2F100995F43 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CD3E5251C52C2F100995F43 /* Launch Screen.storyboard */; };
 		4C18E11B1B47E72800E3D63A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C18E1181B47E72800E3D63A /* AppDelegate.m */; };
 		4C18E11C1B47E72800E3D63A /* Menu.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C18E11A1B47E72800E3D63A /* Menu.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -72,6 +73,7 @@
 		0EC5D4B31B4C46E50092ACC1 /* photo8t.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = photo8t.jpg; path = "MWPhotoBrowser/Local Media/photo8t.jpg"; sourceTree = SOURCE_ROOT; };
 		0EC5D4B41B4C46E50092ACC1 /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = video.mp4; path = "MWPhotoBrowser/Local Media/video.mp4"; sourceTree = SOURCE_ROOT; };
 		0EC5D4C81B4C480E0092ACC1 /* video_thumb.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = video_thumb.jpg; path = "MWPhotoBrowser/Local Media/video_thumb.jpg"; sourceTree = SOURCE_ROOT; };
+		1CD3E5251C52C2F100995F43 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		234A7CACC7671133BED1A091 /* Pods-MWPhotoBrowser_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MWPhotoBrowser_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MWPhotoBrowser_Tests/Pods-MWPhotoBrowser_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		2BD41C6E3DA363EE7B81636E /* libPods-MWPhotoBrowser_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MWPhotoBrowser_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		42FCB8D314CA85E2DF2C6434 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				4C18E1191B47E72800E3D63A /* Menu.h */,
 				4C18E11A1B47E72800E3D63A /* Menu.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
+				1CD3E5251C52C2F100995F43 /* Launch Screen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				4C18E1431B47F05900E3D63A /* Local Media */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -300,6 +303,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Michael Waterfall";
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						DevelopmentTeam = RQPYQ7RG5R;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -335,6 +341,7 @@
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				0EC5D4BD1B4C46E50092ACC1 /* photo5.jpg in Resources */,
+				1CD3E5261C52C2F100995F43 /* Launch Screen.storyboard in Resources */,
 				0EC5D4BF1B4C46E50092ACC1 /* photo6.jpg in Resources */,
 				0EC5D4BE1B4C46E50092ACC1 /* photo5t.jpg in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
@@ -552,13 +559,16 @@
 			baseConfigurationReference = 6E2C60685D353B336094E4E7 /* Pods-MWPhotoBrowser_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MWPhotoBrowser/MWPhotoBrowser-Prefix.pch";
 				INFOPLIST_FILE = "MWPhotoBrowser/MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = br.com.lucianoks.MWPhotoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -568,13 +578,16 @@
 			baseConfigurationReference = 4D7FBE8AC8249BBC4ADD838E /* Pods-MWPhotoBrowser_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MWPhotoBrowser/MWPhotoBrowser-Prefix.pch";
 				INFOPLIST_FILE = "MWPhotoBrowser/MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = br.com.lucianoks.MWPhotoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -102,12 +102,16 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Create a copy in case this array is modified while we are looping through
     // Release photos
     NSArray *copy = [_photos copy];
-    for (id p in copy) {
+    for (id<MWPhoto> p in copy) {
         if (p != [NSNull null]) {
             if (preserveCurrent && p == [self photoAtIndex:self.currentIndex]) {
                 continue; // skip current
             }
-            [p unloadUnderlyingImage];
+            if (p.isLivePhoto) {
+                [p unloadUnderlyingLivePhoto];
+            } else {
+                [p unloadUnderlyingImage];
+            }
         }
     }
     // Release thumbs
@@ -1124,7 +1128,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // Disable action button if there is no image or it's a video
     MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo underlyingImage] == nil || ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo)) {
+    
+    if (photo.underlyingLivePhoto == nil
+        || photo.underlyingImage == nil
+        || ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo)) {
         _actionButton.enabled = NO;
         _actionButton.tintColor = [UIColor clearColor]; // Tint to hide button
     } else {

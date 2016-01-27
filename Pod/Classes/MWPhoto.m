@@ -13,7 +13,7 @@
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
 
-@interface MWPhoto () {
+@interface MWPhoto () <NSURLSessionDownloadDelegate> {
 
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
@@ -26,13 +26,17 @@
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic) CGSize assetTargetSize;
 
-// Live photos
+// Live photos management
 @property (nonatomic) PHLivePhoto *livePhoto;
 @property (nonatomic) NSArray *livePhotoURLs;
 @property (nonatomic) NSURL *livePhotoFirstFileURL;
 @property (nonatomic) NSURL *livePhotoSecondFileURL;
 @property (nonatomic) BOOL didDownloadLivePhotoFirstFile;
 @property (nonatomic) BOOL didDownloadLivePhotoSecondFile;
+@property (nonatomic) NSURLSession *firstFileSession;
+@property (nonatomic) NSURLSession *secondFileSession;
+@property (nonatomic) CGFloat firstFileProgress;
+@property (nonatomic) CGFloat secondFileProgress;
 
 - (void)imageLoadingComplete;
 
@@ -245,33 +249,62 @@
 }
 
 //--------------------------------------------------------------------------------------------------
+#pragma mark - NSURLSessionDownloadDelegate
+
+- (void)URLSession:(NSURLSession *)session
+      downloadTask:(NSURLSessionDownloadTask *)downloadTask
+      didWriteData:(int64_t)bytesWritten
+ totalBytesWritten:(int64_t)totalBytesWritten
+totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
+    
+    if (session = self.firstFileSession) {
+        self.firstFileProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
+    } else if (session == self.secondFileSession) {
+        self.secondFileProgress = (CGFloat)bytesWritten / (CGFloat)totalBytesWritten;
+    }
+    
+    CGFloat progress = (self.firstFileProgress + self.secondFileProgress) / 2;
+    
+    NSLog(@"Session: %@, Progress: %@", session == self.firstFileSession ? @"1" : @"2", @(progress));
+    
+    [[NSNotificationCenter defaultCenter] 
+     postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION
+     object:@{
+         @"progress": @(progress),
+         @"photo": self
+     }];
+}
+
+//--------------------------------------------------------------------------------------------------
 #pragma mark - Utils
 
 // Load from local file
 - (void)_performLoadUnderlyingImageAndNotifyWithWebURL:(NSURL *)url {
     @try {
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
-        _webImageOperation = [manager downloadImageWithURL:url
-                                                   options:0
-                                                  progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                                      if (expectedSize > 0) {
-                                                          float progress = receivedSize / (float)expectedSize;
-                                                          NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                [NSNumber numberWithFloat:progress], @"progress",
-                                                                                self, @"photo", nil];
-                                                          [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
-                                                      }
-                                                  }
-                                                 completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                                                     if (error) {
-                                                         MWLog(@"SDWebImage failed to download image: %@", error);
-                                                     }
-                                                     _webImageOperation = nil;
-                                                     self.underlyingImage = image;
-                                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                                         [self imageLoadingComplete];
-                                                     });
-                                                 }];
+        _webImageOperation =
+        [manager
+         downloadImageWithURL:url
+         options:0
+         progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+             if (expectedSize > 0) {
+                 float progress = receivedSize / (float)expectedSize;
+                 NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [NSNumber numberWithFloat:progress], @"progress",
+                                       self, @"photo", nil];
+                 [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
+             }
+         }
+         completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+             if (error) {
+                 MWLog(@"SDWebImage failed to download image: %@", error);
+             }
+             _webImageOperation = nil;
+             self.underlyingImage = image;
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self imageLoadingComplete];
+             });
+         }];
     } @catch (NSException *e) {
         MWLog(@"Photo from web: %@", e);
         _webImageOperation = nil;
@@ -359,18 +392,23 @@
     NSURL *firstURL = URLs[0];
     NSURL *secondURL = URLs[1];
     
-    NSURLSession *session = [NSURLSession sharedSession];
-    
     NSString *tmpPath = [NSString stringWithFormat:@"file://%@", NSTemporaryDirectory()];
-    NSString *tmpFirstFileName = [NSString stringWithFormat:@"%@.mov", [[NSUUID new] UUIDString]];
-    NSString *tmpSecondFileName = [NSString stringWithFormat:@"%@.jpg", [[NSUUID new] UUIDString]];
+    NSString *tmpFirstFileName = [NSString stringWithFormat:@"%@", [[NSUUID new] UUIDString]];
+    NSString *tmpSecondFileName = [NSString stringWithFormat:@"%@", [[NSUUID new] UUIDString]];
     
     self.livePhotoFirstFileURL = [[NSURL URLWithString:tmpPath]
                                   URLByAppendingPathComponent:tmpFirstFileName];
     self.livePhotoSecondFileURL = [[NSURL URLWithString:tmpPath]
                                    URLByAppendingPathComponent:tmpSecondFileName];
     
-    [session downloadTaskWithURL:firstURL completionHandler:
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    self.firstFileSession = [NSURLSession
+                             sessionWithConfiguration:config
+                             delegate:self
+                             delegateQueue:[NSOperationQueue mainQueue]];
+    
+    [[self.firstFileSession downloadTaskWithURL:firstURL completionHandler:
      ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
          if (error) {
@@ -392,9 +430,14 @@
          
          self.didDownloadLivePhotoFirstFile = YES;
          [self didDownloadLivePhotoAsset];
-     }];
+     }] resume];
     
-    [session downloadTaskWithURL:secondURL completionHandler:
+    self.secondFileSession = [NSURLSession
+                              sessionWithConfiguration:config
+                              delegate:self
+                              delegateQueue:[NSOperationQueue mainQueue]];
+    
+    [[self.secondFileSession downloadTaskWithURL:secondURL completionHandler:
      ^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
          
          if (error) {
@@ -416,7 +459,7 @@
          
          self.didDownloadLivePhotoSecondFile = YES;
          [self didDownloadLivePhotoAsset];
-     }];
+     }] resume];
 }
 
 - (void)didDownloadLivePhotoAsset {
@@ -432,13 +475,17 @@
              
              NSError *error;
              if ((error = info[PHLivePhotoInfoErrorKey])) {
-                 MWLog(@"Error creating Live Photo: %@", value);
+                 MWLog(@"Error creating Live Photo: %@", error);
                  return;
              }
              
              NSNumber *isDegraded = info[PHLivePhotoInfoIsDegradedKey];
              
              MWLog(@"Live Photo created with PHLivePhotoInfoIsDegradedKey: %@", isDegraded);
+             
+             if (isDegraded && isDegraded.boolValue) {
+                 return;
+             }
              
              self.underlyingLivePhoto = livePhoto;
              [self livePhotoLoadingComplete];
@@ -464,7 +511,7 @@
     NSAssert([[NSThread currentThread] isMainThread], @"This method must be called on the main thread.");
     
     _loadingInProgress = NO;
-    [self performSelector:@selector(postLivePhotoCompleteNotification) withObject:nil afterDelay:0];
+    [self performSelector:@selector(postCompleteNotification) withObject:nil afterDelay:0];
 }
 
 - (void)postCompleteNotification {
@@ -472,13 +519,8 @@
                                                         object:self];
 }
 
-- (void)postLivePhotoCompleteNotification {
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:MWPHOTO_LIVE_PHOTO_LOADING_DID_END_NOTIFICATION
-     object:self];
-}
-
 - (void)cancelAnyLoading {
+    // TODO: live photos
     if (_webImageOperation != nil) {
         [_webImageOperation cancel];
         _loadingInProgress = NO;
@@ -486,6 +528,11 @@
         [[PHImageManager defaultManager] cancelImageRequest:_assetRequestID];
         _assetRequestID = PHInvalidImageRequestID;
     }
+}
+
+- (void)dealloc {
+    [self.firstFileSession invalidateAndCancel];
+    [self.secondFileSession invalidateAndCancel];
 }
 
 @end

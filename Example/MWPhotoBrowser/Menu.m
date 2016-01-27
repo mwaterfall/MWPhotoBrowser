@@ -1112,11 +1112,31 @@
 			break;
         }
         case 10: {
-            MWPhoto *photo = [MWPhoto photoWithLivePhotoURLs:@[
-                @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.mov",
-                @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.jpg"
+            // Local Photos and Videos
+//            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo5" ofType:@"jpg"]]];
+//            photo.caption = @"Fireworks";
+//            [photos addObject:photo];
+            photo = [MWPhoto photoWithLivePhotoURLs:@[
+                [NSURL URLWithString:@"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.mov"],
+                [NSURL URLWithString:@"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.jpg"]
             ]];
             [photos addObject:photo];
+//            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
+//            photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
+//            [photos addObject:photo];
+//            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
+//            photo.caption = @"York Floods";
+//            [photos addObject:photo];
+//            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video_thumb" ofType:@"jpg"]]];
+//            photo.videoURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"]];
+//            photo.caption = @"Big Buck Bunny";
+//            [photos addObject:photo];
+//            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4" ofType:@"jpg"]]];
+//            photo.caption = @"Campervan";
+//            [photos addObject:photo];
+            // Options
+            enableGrid = NO;
+            break;
         }
 		default: break;
 	}
