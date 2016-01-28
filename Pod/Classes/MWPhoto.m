@@ -12,6 +12,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
+#import "MWLivePhotoManager.h"
 
 @interface MWPhoto () <NSURLSessionDownloadDelegate> {
 
@@ -30,14 +31,6 @@
 @property (nonatomic) PHLivePhoto *livePhoto;
 @property (nonatomic) NSURL *livePhotoImageWebURL;
 @property (nonatomic) NSURL *livePhotoMovieWebURL;
-@property (nonatomic) NSURL *livePhotoImageFileURL;
-@property (nonatomic) NSURL *livePhotoMovieFileURL;
-@property (nonatomic) BOOL didDownloadLivePhotoImage;
-@property (nonatomic) BOOL didDownloadLivePhotoMovie;
-@property (nonatomic) NSURLSession *imageSession;
-@property (nonatomic) NSURLSession *movieSession;
-@property (nonatomic) CGFloat imageProgress;
-@property (nonatomic) CGFloat movieProgress;
 
 - (void)imageLoadingComplete;
 
@@ -253,81 +246,6 @@
 }
 
 //--------------------------------------------------------------------------------------------------
-#pragma mark - NSURLSessionDownloadDelegate
-
-- (void)URLSession:(NSURLSession *)session
-      downloadTask:(NSURLSessionDownloadTask *)downloadTask
-      didWriteData:(int64_t)bytesWritten
- totalBytesWritten:(int64_t)totalBytesWritten
-totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    
-    CGFloat currentProgress = (CGFloat)totalBytesWritten / (CGFloat)totalBytesExpectedToWrite;
-    
-    if (session == self.imageSession) {
-        self.imageProgress = currentProgress;
-    } else if (session == self.movieSession) {
-        self.movieProgress = currentProgress;
-    }
-    
-    CGFloat totalProgress = (self.imageProgress + self.movieProgress) / 2;
-    
-    [[NSNotificationCenter defaultCenter] 
-     postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION
-     object:@{
-         @"progress": @(totalProgress),
-         @"photo": self
-     }];
-}
-
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error {
-    if (session == self.imageSession) {
-        MWLog(@"Error downloading Live Photo image: %@", error);
-    } else if (session == self.movieSession) {
-        MWLog(@"Error downloading Live Photo movie: %@", error);
-    }
-}
-
-- (void)URLSession:(NSURLSession *)session
-      downloadTask:(NSURLSessionDownloadTask *)downloadTask
-didFinishDownloadingToURL:(NSURL *)location {
-    
-    if (session == self.imageSession) {
-        
-        MWLog(@"Live Photo image downloaded.");
-        
-        NSError *err = nil;
-        
-        if (![[NSFileManager defaultManager]
-              moveItemAtURL:location
-              toURL:self.livePhotoImageFileURL
-              error:&err]) {
-            MWLog(@"Error moving Live Photo image: %@", err);
-            return;
-        }
-        
-        self.didDownloadLivePhotoImage = YES;
-        [self didDownloadLivePhotoAsset];
-        
-    } else if (session == self.movieSession) {
-        
-        MWLog(@"Live Photo movie downloaded.");
-        
-        NSError *err = nil;
-        
-        if (![[NSFileManager defaultManager]
-              moveItemAtURL:location
-              toURL:self.livePhotoMovieFileURL
-              error:&err]) {
-            MWLog(@"Error moving Live Photo movie: %@", err);
-            return;
-        }
-        
-        self.didDownloadLivePhotoMovie = YES;
-        [self didDownloadLivePhotoAsset];
-    }
-}
-
-//--------------------------------------------------------------------------------------------------
 #pragma mark - Utils
 
 // Load from local file
@@ -441,67 +359,30 @@ didFinishDownloadingToURL:(NSURL *)location {
         return;
     }
     
-    NSString *tmpPath = [NSString stringWithFormat:@"file://%@", NSTemporaryDirectory()];
-    NSString *tmpImageFileName = [NSString stringWithFormat:@"%@.jpg", [[NSUUID new] UUIDString]];
-    NSString *tmpMovieFileName = [NSString stringWithFormat:@"%@.mov", [[NSUUID new] UUIDString]];
-    
-    self.livePhotoImageFileURL = [[NSURL URLWithString:tmpPath]
-                                  URLByAppendingPathComponent:tmpImageFileName];
-    self.livePhotoMovieFileURL = [[NSURL URLWithString:tmpPath]
-                                  URLByAppendingPathComponent:tmpMovieFileName];
-    
-    NSURLSessionConfiguration *imageConfig = [NSURLSessionConfiguration
-                                              defaultSessionConfiguration];
-    
-    self.imageSession = [NSURLSession
-                         sessionWithConfiguration:imageConfig
-                         delegate:self
-                         delegateQueue:[NSOperationQueue mainQueue]];
-    
-    [[self.imageSession downloadTaskWithURL:self.livePhotoImageWebURL] resume];
-    
-    NSURLSessionConfiguration *movieConfig = [NSURLSessionConfiguration
-                                              defaultSessionConfiguration];
-    
-    self.movieSession = [NSURLSession
-                         sessionWithConfiguration:movieConfig
-                         delegate:self
-                         delegateQueue:[NSOperationQueue mainQueue]];
-    
-    [[self.movieSession downloadTaskWithURL:self.livePhotoMovieWebURL] resume];
-}
-
-- (void)didDownloadLivePhotoAsset {
-    
-    if (self.didDownloadLivePhotoImage && self.didDownloadLivePhotoMovie) {
-        
-        NSArray *fileURLs = @[self.livePhotoImageFileURL, self.livePhotoMovieFileURL];
-        
-        [PHLivePhoto
-         requestLivePhotoWithResourceFileURLs:fileURLs
-         placeholderImage:nil
-         targetSize:CGSizeZero
-         contentMode:PHImageContentModeAspectFill
-         resultHandler:^(PHLivePhoto * _Nullable livePhoto, NSDictionary * _Nonnull info) {
-             
-             NSError *error;
-             if ((error = info[PHLivePhotoInfoErrorKey])) {
-                 MWLog(@"Error creating Live Photo: %@", error);
-                 return;
-             }
-             
-             NSNumber *isDegraded = info[PHLivePhotoInfoIsDegradedKey];
-             
-             MWLog(@"Live Photo created with PHLivePhotoInfoIsDegradedKey: %@", isDegraded);
-             
-             if (isDegraded && isDegraded.boolValue) {
-                 return;
-             }
-             
-             self.underlyingLivePhoto = livePhoto;
-             [self livePhotoLoadingComplete];
-         }];
-    }
+    [[MWLivePhotoManager sharedManager]
+     livePhotoWithImageURL:imageURL
+     movieURL:movieURL
+     progress:^(NSInteger receivedBytes, NSInteger expectedBytes) {
+         
+         CGFloat progress = (CGFloat)receivedBytes / (CGFloat)expectedBytes;
+         
+         [[NSNotificationCenter defaultCenter]
+          postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION
+          object:@{
+              @"progress": @(progress),
+              @"photo": self
+          }];
+     }
+     completion:^(PHLivePhoto *livePhoto, NSError *error) {
+         
+         if (error) {
+             return;
+         }
+         
+         self.underlyingLivePhoto = livePhoto;
+         [self livePhotoLoadingComplete];
+         
+     }];
 }
 
 // Release if we can get it again from path or url
@@ -544,11 +425,6 @@ didFinishDownloadingToURL:(NSURL *)location {
         [[PHImageManager defaultManager] cancelImageRequest:_assetRequestID];
         _assetRequestID = PHInvalidImageRequestID;
     }
-}
-
-- (void)dealloc {
-    [self.imageSession invalidateAndCancel];
-    [self.movieSession invalidateAndCancel];
 }
 
 @end

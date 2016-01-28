@@ -51,6 +51,8 @@
 		1A9E317C3FBB5EBC29966D3F /* Pods-MWPhotoBrowser_Example-DACircularProgress-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 670E481C6734F0D1599E7DE7 /* Pods-MWPhotoBrowser_Example-DACircularProgress-dummy.m */; };
 		1B55460029F0DE41C75CF9B4 /* SDWebImageCompat.h in Headers */ = {isa = PBXBuildFile; fileRef = 058398466D8FA41086E5527B /* SDWebImageCompat.h */; };
 		1C64164A1C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C6416491C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m */; };
+		1C64164D1C59426900D62B21 /* MWLivePhotoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C64164C1C59426900D62B21 /* MWLivePhotoManager.m */; };
+		1C6416501C5A6E1700D62B21 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C64164F1C5A6E1700D62B21 /* NSString+MD5.m */; };
 		1D4E62CAFC272E300F5A17B2 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA90B66DB2B8461F9B53A4F /* ImageIO.framework */; };
 		1DBA8D590CB494A44C9D6A66 /* ImageSelectedSmallOff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1606500E66A442F75C1412FA /* ImageSelectedSmallOff@2x.png */; };
 		1DE998FB0D5A87EE65975CF6 /* ImageSelectedOff@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 52B5A8E76356DDB98572F3A8 /* ImageSelectedOff@3x.png */; };
@@ -538,6 +540,10 @@
 		1BE3D359E09454DEA1BCE6CE /* MWPhotoBrowser.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MWPhotoBrowser.m; sourceTree = "<group>"; };
 		1C6416481C592E1F00D62B21 /* MWTapDetectingLivePhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWTapDetectingLivePhotoView.h; sourceTree = "<group>"; };
 		1C6416491C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWTapDetectingLivePhotoView.m; sourceTree = "<group>"; };
+		1C64164B1C59426900D62B21 /* MWLivePhotoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWLivePhotoManager.h; sourceTree = "<group>"; };
+		1C64164C1C59426900D62B21 /* MWLivePhotoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWLivePhotoManager.m; sourceTree = "<group>"; };
+		1C64164E1C5A6E1700D62B21 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		1C64164F1C5A6E1700D62B21 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		1C73AD90A11764CB7CD00D32 /* Pods-MWPhotoBrowser_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MWPhotoBrowser_Tests-resources.sh"; sourceTree = "<group>"; };
 		1D6B42D1FBD8A0DB4599FE14 /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		1D7C9CDAB2493A50D28AB1E2 /* EXPMatchers+endWith.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+endWith.m"; path = "Expecta/Matchers/EXPMatchers+endWith.m"; sourceTree = "<group>"; };
@@ -1140,22 +1146,26 @@
 				0F49A2D5C747DE9C3C8D1154 /* MWGridCell.m */,
 				46532D684677702C5261FC22 /* MWGridViewController.h */,
 				C20515F033176C4189E7F72F /* MWGridViewController.m */,
-				00D81C7106250C084720D159 /* MWPhotoProtocol.h */,
+				1C64164B1C59426900D62B21 /* MWLivePhotoManager.h */,
+				1C64164C1C59426900D62B21 /* MWLivePhotoManager.m */,
 				218F8831400B44A17FC07A7B /* MWPhoto.h */,
 				2A33FA603AF5627E5AAA600E /* MWPhoto.m */,
 				8447C25D154E2E775A91EE87 /* MWPhotoBrowser.h */,
 				1BE3D359E09454DEA1BCE6CE /* MWPhotoBrowser.m */,
 				D6D763AA4CCE6852222A9316 /* MWPhotoBrowserPrivate.h */,
+				00D81C7106250C084720D159 /* MWPhotoProtocol.h */,
 				D34FFFB79653ECFD50F775EC /* MWTapDetectingImageView.h */,
 				17815C76371F9AF62B6C4592 /* MWTapDetectingImageView.m */,
+				1C6416481C592E1F00D62B21 /* MWTapDetectingLivePhotoView.h */,
+				1C6416491C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m */,
 				399ABC7001AA0C1F56860B7F /* MWTapDetectingView.h */,
 				586E77C39E7967D7E1414E91 /* MWTapDetectingView.m */,
 				7264F08B4775C57D7CC3183C /* MWZoomingScrollView.h */,
 				81CD49C37697CB57DE2E5C1B /* MWZoomingScrollView.m */,
+				1C64164E1C5A6E1700D62B21 /* NSString+MD5.h */,
+				1C64164F1C5A6E1700D62B21 /* NSString+MD5.m */,
 				F2ECA9C513443EDCEB3D888F /* UIImage+MWPhotoBrowser.h */,
 				3D263BD3303C69B37D097F73 /* UIImage+MWPhotoBrowser.m */,
-				1C6416481C592E1F00D62B21 /* MWTapDetectingLivePhotoView.h */,
-				1C6416491C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -2299,7 +2309,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C64164D1C59426900D62B21 /* MWLivePhotoManager.m in Sources */,
 				DAC0DABA4042089D53189A9F /* Pods-MWPhotoBrowser_Example-dummy.m in Sources */,
+				1C6416501C5A6E1700D62B21 /* NSString+MD5.m in Sources */,
 				1C64164A1C592E1F00D62B21 /* MWTapDetectingLivePhotoView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

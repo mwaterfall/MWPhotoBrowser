@@ -97,9 +97,9 @@
     self.captionView = nil;
     self.selectedButton = nil;
     self.playButton = nil;
-    _photoImageView.hidden = NO;
+    _photoImageView.hidden = YES;
     _photoImageView.image = nil;
-    _livePhotoView.hidden = NO;
+    _livePhotoView.hidden = YES;
     _livePhotoView.livePhoto = nil;
     _index = NSUIntegerMax;
 }
