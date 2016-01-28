@@ -7,9 +7,9 @@
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mwaterfall&url=https://github.com/mwaterfall/MWPhotoBrowser&title=MWPhotoBrowser&language=&tags=github&category=software)
 
-## A simple iOS photo and video browser with optional grid view, captions and selections.
+## A simple iOS photo and video browser with optional grid view, captions and selections, with remote Live Photos support.
 
-MWPhotoBrowser can display one or more images or videos by providing either `UIImage` objects, `PHAsset` objects, or URLs to library assets, web images/videos or local files. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed.
+MWPhotoBrowser can display one or more images or videos by providing either `UIImage` objects, `PHAsset` objects, URLs to Live Photo image and movie files, or URLs to library assets, web images/videos or local files. The photo browser handles the downloading and caching of photos from the web seamlessly. Photos can be zoomed and panned, and optional (customisable) captions can be displayed.
 
 The browser can also be used to allow the user to select one or more photos using either the grid or main image view.
 
@@ -28,11 +28,11 @@ The browser can also be used to allow the user to select one or more photos usin
 [screenshot6_thumb]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6t.png
 [screenshot6]: https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6.png
 
-Works on iOS 7+. All strings are localisable so they can be used in apps that support multiple languages.
+Works on iOS 7+. Live Photos is supported only on iOS 9+. All strings are localisable so they can be used in apps that support multiple languages.
 
 ## Usage
 
-MWPhotoBrowser is designed to be presented within a navigation controller. Simply set the delegate (which must conform to `MWPhotoBrowserDelegate`) and implement the 2 required delegate methods to provide the photo browser with the data in the form of `MWPhoto` objects. You can create an `MWPhoto` object by providing a `UIImage` object, `PHAsset` object, or a URL containing the path to a file, an image online or an asset from the asset library.
+MWPhotoBrowser is designed to be presented within a navigation controller. Simply set the delegate (which must conform to `MWPhotoBrowserDelegate`) and implement the 2 required delegate methods to provide the photo browser with the data in the form of `MWPhoto` objects. You can create an `MWPhoto` object by providing a `UIImage` object, `PHAsset` object, or a URL containing the path to a file, an image online or an asset from the asset library. Remote Live Photos are supported, in this case you have to provide remote URLs for image and video files.
 
 `MWPhoto` objects handle caching, file management, downloading of web images, and various optimisations for you. If however you would like to use your own data model to represent photos you can simply ensure your model conforms to the `MWPhoto` protocol. You can then handle the management of caching, downloads, etc, yourself. More information on this can be found in `MWPhotoProtocol.h`.
 
@@ -65,6 +65,8 @@ browser.alwaysShowControls = NO; // Allows to control whether the bars and contr
 browser.enableGrid = YES; // Whether to allow the viewing of all the photo thumbnails on a grid (defaults to YES)
 browser.startOnGrid = NO; // Whether to start on the grid of thumbnails instead of the first photo (defaults to NO)
 browser.autoPlayOnAppear = NO; // Auto-play first video
+browser.showLivePhotoIcon = YES; // Display a small icon indicating it is a Live Photo
+browser.previewLivePhotos = YES; // When a Live Photo is displayed, start a preview animation right after loading it
 
 // Customise selection images to change colours if required
 browser.customImageSelectedIconName = @"ImageSelected.png";
@@ -129,6 +131,21 @@ videoThumb.isVideo = YES;
 // Video grid thumbnail for video with no poster photo
 MWPhoto *videoThumb = [MWPhoto new];
 videoThumb.isVideo = YES;
+
+```
+
+### Live Photos
+
+Live Photos are available on iOS 9+ through `PHLivePhoto` and `PHLivePhotoView` classes. `PHLivePhoto` needs an image file and a movie file (both previously generated on devices that can take Live Photos). `MWPhoto` supports Live Photos by its `+photoWithLivePhotoImageURL:movieURL:` method.
+
+```objc
+
+NSURL *movieURL = [NSURL URLWithString:
+                   @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.mov"];
+NSURL *imageURL = [NSURL URLWithString:
+                   @"http://s3.amazonaws.com/kekanto_pics/live_pics/18/18.jpg"];
+MWPhoto *photo = [MWPhoto photoWithLivePhotoImageURL:imageURL movieURL:movieURL];
+photo.caption = @"A cool live photo";
 
 ```
 
@@ -201,7 +218,6 @@ The photo browser can display check boxes allowing the user to select one or mor
     [_selections replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:selected]];
 }
 ```
-
 
 ## Installation
 

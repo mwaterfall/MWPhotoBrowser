@@ -153,7 +153,8 @@
             break;
         }
 		case 9: {
-            cell.textLabel.text = @"Live photos";
+            cell.textLabel.text = @"Live Photos";
+            cell.detailTextLabel.text = @"with preview and icon";
             break;
         }
         case 10: {
