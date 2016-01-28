@@ -303,9 +303,6 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Michael Waterfall";
 				TargetAttributes = {
-					6003F589195388D20070C39A = {
-						DevelopmentTeam = RQPYQ7RG5R;
-					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -566,7 +563,7 @@
 				INFOPLIST_FILE = "MWPhotoBrowser/MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = br.com.lucianoks.MWPhotoBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MWPhotoBrowser-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -585,7 +582,7 @@
 				INFOPLIST_FILE = "MWPhotoBrowser/MWPhotoBrowser-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = br.com.lucianoks.MWPhotoBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MWPhotoBrowser-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
