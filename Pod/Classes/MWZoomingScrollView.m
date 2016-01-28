@@ -24,7 +24,7 @@
     MWTapDetectingLivePhotoView *_livePhotoView;
 	DACircularProgressView *_loadingIndicator;
     UIImageView *_loadingError;
-    
+    UIImageView *_livePhotoBadge;
 }
 
 @end
@@ -56,9 +56,22 @@
         _livePhotoView = [[MWTapDetectingLivePhotoView alloc] initWithFrame:CGRectZero];
         _livePhotoView.tapDelegate = self;
         _livePhotoView.hidden = YES;
+        _livePhotoBadge.hidden = YES;
         _livePhotoView.contentMode = UIViewContentModeCenter;
         _livePhotoView.backgroundColor = [UIColor blackColor];
         [self addSubview:_livePhotoView];
+        
+        // Live photo badge
+        _livePhotoBadge = [[UIImageView alloc] initWithImage:
+                           [PHLivePhotoView
+                            livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent]];
+        _livePhotoBadge.hidden = YES;
+        _livePhotoBadge.frame = CGRectMake(
+            8, 72,
+            _livePhotoBadge.frame.size.width, _livePhotoBadge.frame.size.height
+        );
+        _livePhotoBadge.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_livePhotoBadge];
 		
 		// Loading indicator
 		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
@@ -100,6 +113,7 @@
     _photoImageView.hidden = YES;
     _photoImageView.image = nil;
     _livePhotoView.hidden = YES;
+    _livePhotoBadge.hidden = YES;
     _livePhotoView.livePhoto = nil;
     _index = NSUIntegerMax;
 }
@@ -120,6 +134,8 @@
     _photo = photo;
     
     if (_photo.isLivePhoto) {
+        
+        _livePhotoBadge.hidden = NO;
         
         PHLivePhoto *livePhoto = [_photoBrowser livePhotoForPhoto:_photo];
         
@@ -201,6 +217,7 @@
             [self hideLoadingIndicator];
             _livePhotoView.livePhoto = livePhoto;
             _livePhotoView.hidden = NO;
+            _livePhotoBadge.hidden = NO;
             _livePhotoView.frame = CGRectMake(0, 0, livePhoto.size.width, livePhoto.size.height);
             [_livePhotoView startPlaybackWithStyle:PHLivePhotoViewPlaybackStyleHint];
             self.contentSize = _livePhotoView.frame.size;
@@ -433,6 +450,13 @@
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
     [self setNeedsLayout];
     [self layoutIfNeeded];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGRect frame = _livePhotoBadge.frame;
+    frame.origin.y = scrollView.contentOffset.y + 8 + 64;
+    frame.origin.x = scrollView.contentOffset.x + 8;
+    _livePhotoBadge.frame = frame;
 }
 
 #pragma mark - Tap Detection

@@ -375,10 +375,6 @@
      }
      completion:^(PHLivePhoto *livePhoto, NSError *error) {
          
-         if (error) {
-             return;
-         }
-         
          self.underlyingLivePhoto = livePhoto;
          [self livePhotoLoadingComplete];
          
@@ -417,8 +413,10 @@
 }
 
 - (void)cancelAnyLoading {
-    // TODO: live photos
-    if (_webImageOperation != nil) {
+    if (self.isLivePhoto) {
+        [[MWLivePhotoManager sharedManager] cancelAnyLoading];
+    }
+    else if (_webImageOperation != nil) {
         [_webImageOperation cancel];
         _loadingInProgress = NO;
     } else if (_assetRequestID != PHInvalidImageRequestID) {

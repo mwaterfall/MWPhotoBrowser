@@ -134,6 +134,13 @@ didFinishDownloadingToURL:(NSURL *)location {
 //--------------------------------------------------------------------------------------------------
 #pragma mark - Public methods
 
+- (void)cancelAnyLoading {
+    [self.imageSession invalidateAndCancel];
+    [self.movieSession invalidateAndCancel];
+    self.imageSession = nil;
+    self.movieSession = nil;
+}
+
 - (void)livePhotoWithImageURL:(NSURL *)imageURL
                      movieURL:(NSURL *)movieURL
                      progress:(MWLivePhotoManagerProgressBlock)progress
@@ -142,7 +149,15 @@ didFinishDownloadingToURL:(NSURL *)location {
     self.progress = progress;
     self.completion = completion;
     
-    NSString *tmpDirPath = NSTemporaryDirectory();
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSString *tmpDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"MWLivePhotos"];
+    
+    [fileManager
+     createDirectoryAtPath:tmpDirPath
+     withIntermediateDirectories:tmpDirPath
+     attributes:nil
+     error:nil];
     
     NSString *imageFileName = [NSString stringWithFormat:@"%@.jpg", imageURL.absoluteString.md5];
     NSString *movieFileName = [NSString stringWithFormat:@"%@.mov", movieURL.absoluteString.md5];
@@ -154,8 +169,6 @@ didFinishDownloadingToURL:(NSURL *)location {
                            [NSString stringWithFormat:@"file://%@", imageFilePath]];
     NSURL *movieFileURL = [NSURL URLWithString:
                            [NSString stringWithFormat:@"file://%@", movieFilePath]];
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     
     if ([fileManager fileExistsAtPath:imageFilePath] &&
         [fileManager fileExistsAtPath:movieFilePath]) {
