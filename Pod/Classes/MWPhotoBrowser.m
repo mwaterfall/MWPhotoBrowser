@@ -80,6 +80,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _thumbPhotos = [[NSMutableArray alloc] init];
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
+    _previewLivePhotos = YES;
+    _showLivePhotoIcon = YES;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     // Listen for MWPhoto notifications
@@ -826,6 +828,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 			MWZoomingScrollView *page = [self dequeueRecycledPage];
 			if (!page) {
 				page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self];
+                page.previewLivePhotos = self.previewLivePhotos;
+                page.showLivePhotoIcon = self.showLivePhotoIcon;
 			}
 			[_visiblePages addObject:page];
 			[self configurePage:page forIndex:index];

@@ -415,6 +415,7 @@
 - (void)cancelAnyLoading {
     if (self.isLivePhoto) {
         [[MWLivePhotoManager sharedManager] cancelAnyLoading];
+        _loadingInProgress = NO;
     }
     else if (_webImageOperation != nil) {
         [_webImageOperation cancel];

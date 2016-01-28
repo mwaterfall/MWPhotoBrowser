@@ -67,7 +67,7 @@
                             livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent]];
         _livePhotoBadge.hidden = YES;
         _livePhotoBadge.frame = CGRectMake(
-            8, 72,
+            8, 8 + 64, // margin left and top 8, below navigation bar
             _livePhotoBadge.frame.size.width, _livePhotoBadge.frame.size.height
         );
         _livePhotoBadge.translatesAutoresizingMaskIntoConstraints = NO;
@@ -95,7 +95,8 @@
 		self.showsVerticalScrollIndicator = NO;
 		self.decelerationRate = UIScrollViewDecelerationRateFast;
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        
+        self.showLivePhotoIcon = YES;
+        self.previewLivePhotos = YES;
     }
     return self;
 }
@@ -135,7 +136,9 @@
     
     if (_photo.isLivePhoto) {
         
-        _livePhotoBadge.hidden = NO;
+        if (self.showLivePhotoIcon) {
+            _livePhotoBadge.hidden = NO;
+        }
         
         PHLivePhoto *livePhoto = [_photoBrowser livePhotoForPhoto:_photo];
         
@@ -217,9 +220,13 @@
             [self hideLoadingIndicator];
             _livePhotoView.livePhoto = livePhoto;
             _livePhotoView.hidden = NO;
-            _livePhotoBadge.hidden = NO;
+            if (self.showLivePhotoIcon) {
+                _livePhotoBadge.hidden = NO;
+            }
             _livePhotoView.frame = CGRectMake(0, 0, livePhoto.size.width, livePhoto.size.height);
-            [_livePhotoView startPlaybackWithStyle:PHLivePhotoViewPlaybackStyleHint];
+            if (self.previewLivePhotos) {
+                [_livePhotoView startPlaybackWithStyle:PHLivePhotoViewPlaybackStyleHint];
+            }
             self.contentSize = _livePhotoView.frame.size;
             
             [self setMaxMinZoomScalesForCurrentBounds];
