@@ -81,16 +81,17 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
       downloadTask:(NSURLSessionDownloadTask *)downloadTask
 didFinishDownloadingToURL:(NSURL *)location {
     
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
     if (session == self.imageSession) {
         
         MWLog(@"Live Photo image downloaded.");
         
         NSError *err = nil;
         
-        if (![[NSFileManager defaultManager]
-              moveItemAtURL:location
-              toURL:self.imageFileURL
-              error:&err]) {
+        [fileManager removeItemAtURL:self.imageFileURL error:nil];
+        
+        if (![fileManager moveItemAtURL:location toURL:self.imageFileURL error:&err]) {
             MWLog(@"Error moving Live Photo image: %@", err);
             [self completeWithError:err];
             return;
@@ -105,10 +106,9 @@ didFinishDownloadingToURL:(NSURL *)location {
         
         NSError *err = nil;
         
-        if (![[NSFileManager defaultManager]
-              moveItemAtURL:location
-              toURL:self.movieFileURL
-              error:&err]) {
+        [fileManager removeItemAtURL:self.movieFileURL error:nil];
+        
+        if (![fileManager moveItemAtURL:location toURL:self.movieFileURL error:&err]) {
             MWLog(@"Error moving Live Photo movie: %@", err);
             [self completeWithError:err];
             return;
