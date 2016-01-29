@@ -31,6 +31,7 @@
 @property (nonatomic) PHLivePhoto *livePhoto;
 @property (nonatomic) NSURL *livePhotoImageWebURL;
 @property (nonatomic) NSURL *livePhotoMovieWebURL;
+@property (nonatomic) MWLivePhotoManager *livePhotoManager;
 
 - (void)imageLoadingComplete;
 
@@ -108,6 +109,7 @@
         self.isLivePhoto = YES;
         self.livePhotoImageWebURL = imageURL;
         self.livePhotoMovieWebURL = movieURL;
+        self.livePhotoManager = [MWLivePhotoManager new];
     }
     return self;
 }
@@ -359,7 +361,7 @@
         return;
     }
     
-    [[MWLivePhotoManager sharedManager]
+    [self.livePhotoManager
      livePhotoWithImageURL:imageURL
      movieURL:movieURL
      progress:^(NSInteger receivedBytes, NSInteger expectedBytes) {
@@ -414,7 +416,7 @@
 
 - (void)cancelAnyLoading {
     if (self.isLivePhoto) {
-        [[MWLivePhotoManager sharedManager] cancelAnyLoading];
+        [self.livePhotoManager cancelAnyLoading];
         _loadingInProgress = NO;
     }
     else if (_webImageOperation != nil) {

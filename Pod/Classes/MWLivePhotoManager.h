@@ -14,8 +14,6 @@ typedef void(^MWLivePhotoManagerProgressBlock)(NSInteger receivedBytes, NSIntege
 
 @interface MWLivePhotoManager : NSObject
 
-+ (instancetype)sharedManager;
-
 - (void)cancelAnyLoading;
 
 - (void)livePhotoWithImageURL:(NSURL *)imageURL
