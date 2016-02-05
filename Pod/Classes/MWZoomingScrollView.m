@@ -130,7 +130,7 @@
     }
 }
 
-- (void)displayPhoto:(MWPhoto *)photo andShowFailureImageIfFails:(BOOL)needsFailureImage{
+- (void)displayPhoto:(MWPhoto *)photo andShowFailureImageIfFails:(BOOL)needsFailureImage {
     if (photo) {
 
         // Reset
@@ -173,7 +173,7 @@
     [self hideLoadingIndicator];
 
     // Show if image is not empty
-    if (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage) {
+    if (_photoImageView.image == nil && (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage)) {
         if (!_loadingError) {
             _loadingError = [UIImageView new];
             _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];

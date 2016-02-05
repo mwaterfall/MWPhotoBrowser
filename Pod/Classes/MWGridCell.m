@@ -198,7 +198,7 @@
 
 - (void)showImageFailure {
     // Only show if image is not empty
-    if (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage) {
+    if (_imageView.image == nil && ([_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage)) {
         if (!_loadingError) {
             _loadingError = [UIImageView new];
             _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
@@ -211,6 +211,7 @@
                                          _loadingError.frame.size.width,
                                          _loadingError.frame.size.height);
     }
+
     [self hideLoadingIndicator];
     _imageView.image = nil;
 }
