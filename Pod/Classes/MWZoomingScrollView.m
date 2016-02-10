@@ -125,7 +125,7 @@
 
 #pragma mark - Image
 
-- (void)setPhoto:(id<MWPhoto>)photo {
+- (void)setPhoto:(id<MWPhotoProtocol>)photo {
     // Cancel any loading on old photo
     if (_photo && photo == nil) {
         if ([_photo respondsToSelector:@selector(cancelAnyLoading)]) {
@@ -273,7 +273,7 @@
 - (void)setProgressFromNotification:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *dict = [notification object];
-        id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
+        id <MWPhotoProtocol> photoWithProgress = [dict objectForKey:@"photo"];
         if (photoWithProgress == self.photo) {
             float progress = [[dict valueForKey:@"progress"] floatValue];
             _loadingIndicator.progress = MAX(MIN(1, progress), 0);

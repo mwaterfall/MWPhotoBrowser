@@ -14,7 +14,7 @@
 
 @property (nonatomic, weak) MWGridViewController *gridController;
 @property (nonatomic) NSUInteger index;
-@property (nonatomic) id <MWPhoto> photo;
+@property (nonatomic) id <MWPhotoProtocol> photo;
 @property (nonatomic) BOOL selectionMode;
 @property (nonatomic) BOOL isSelected;
 

@@ -91,7 +91,7 @@ Then respond to the required delegate methods:
     return self.photos.count;
 }
 
-- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+- (id <MWPhotoProtocol>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (index < self.photos.count) {
         return [self.photos objectAtIndex:index];
     }
@@ -155,7 +155,7 @@ photo.caption = @"A cool live photo";
 In order to properly show the grid of thumbnails, you must ensure the property `enableGrid` is set to `YES`, and implement the following delegate method:
 
 ```obj-c
-- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
+- (id <MWPhotoProtocol>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
 ```
 
 The photo browser can also start on the grid by enabling the `startOnGrid` property.

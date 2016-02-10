@@ -14,14 +14,14 @@ static const CGFloat labelPadding = 10;
 
 // Private
 @interface MWCaptionView () {
-    id <MWPhoto> _photo;
+    id <MWPhotoProtocol> _photo;
     UILabel *_label;    
 }
 @end
 
 @implementation MWCaptionView
 
-- (id)initWithPhoto:(id<MWPhoto>)photo {
+- (id)initWithPhoto:(id<MWPhotoProtocol>)photo {
     self = [super initWithFrame:CGRectMake(0, 0, 320, 44)]; // Random initial frame
     if (self) {
         self.userInteractionEnabled = NO;

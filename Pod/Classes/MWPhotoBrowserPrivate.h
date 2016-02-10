@@ -91,7 +91,7 @@
 - (void)tilePages;
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index;
 - (MWZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
-- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo;
+- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhotoProtocol>)photo;
 - (MWZoomingScrollView *)dequeueRecycledPage;
 - (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index;
 - (void)didStartViewingPageAtIndex:(NSUInteger)index;
@@ -124,13 +124,13 @@
 
 // Data
 - (NSUInteger)numberOfPhotos;
-- (id<MWPhoto>)photoAtIndex:(NSUInteger)index;
-- (id<MWPhoto>)thumbPhotoAtIndex:(NSUInteger)index;
-- (UIImage *)imageForPhoto:(id<MWPhoto>)photo;
-- (PHLivePhoto *)livePhotoForPhoto:(id<MWPhoto>)photo;
+- (id<MWPhotoProtocol>)photoAtIndex:(NSUInteger)index;
+- (id<MWPhotoProtocol>)thumbPhotoAtIndex:(NSUInteger)index;
+- (UIImage *)imageForPhoto:(id<MWPhotoProtocol>)photo;
+- (PHLivePhoto *)livePhotoForPhoto:(id<MWPhotoProtocol>)photo;
 - (BOOL)photoIsSelectedAtIndex:(NSUInteger)index;
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index;
-- (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo;
+- (void)loadAdjacentPhotosIfNecessary:(id<MWPhotoProtocol>)photo;
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent;
 
 @end

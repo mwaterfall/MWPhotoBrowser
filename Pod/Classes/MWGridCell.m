@@ -122,7 +122,7 @@
 
 #pragma mark - Image Handling
 
-- (void)setPhoto:(id <MWPhoto>)photo {
+- (void)setPhoto:(id <MWPhotoProtocol>)photo {
     _photo = photo;
     if ([photo respondsToSelector:@selector(isVideo)]) {
         _videoIndicator.hidden = !photo.isVideo;
@@ -222,7 +222,7 @@
 - (void)setProgressFromNotification:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *dict = [notification object];
-        id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
+        id <MWPhotoProtocol> photoWithProgress = [dict objectForKey:@"photo"];
         if (photoWithProgress == _photo) {
 //            NSLog(@"%f", [[dict valueForKey:@"progress"] floatValue]);
             float progress = [[dict valueForKey:@"progress"] floatValue];
@@ -232,7 +232,7 @@
 }
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
-    id <MWPhoto> photo = [notification object];
+    id <MWPhotoProtocol> photo = [notification object];
     if (photo == _photo) {
         if ([photo underlyingImage]) {
             // Successful load

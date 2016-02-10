@@ -104,7 +104,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Create a copy in case this array is modified while we are looping through
     // Release photos
     NSArray *copy = [_photos copy];
-    for (id<MWPhoto> p in copy) {
+    for (id<MWPhotoProtocol> p in copy) {
         if (p != [NSNull null]) {
             if (preserveCurrent && p == [self photoAtIndex:self.currentIndex]) {
                 continue; // skip current
@@ -644,8 +644,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     return _photoCount;
 }
 
-- (id<MWPhoto>)photoAtIndex:(NSUInteger)index {
-    id <MWPhoto> photo = nil;
+- (id<MWPhotoProtocol>)photoAtIndex:(NSUInteger)index {
+    id <MWPhotoProtocol> photo = nil;
     if (index < _photos.count) {
         if ([_photos objectAtIndex:index] == [NSNull null]) {
             if ([_delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:)]) {
@@ -661,8 +661,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     return photo;
 }
 
-- (id<MWPhoto>)thumbPhotoAtIndex:(NSUInteger)index {
-    id <MWPhoto> photo = nil;
+- (id<MWPhotoProtocol>)thumbPhotoAtIndex:(NSUInteger)index {
+    id <MWPhotoProtocol> photo = nil;
     if (index < _thumbPhotos.count) {
         if ([_thumbPhotos objectAtIndex:index] == [NSNull null]) {
             if ([_delegate respondsToSelector:@selector(photoBrowser:thumbPhotoAtIndex:)]) {
@@ -681,7 +681,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if ([_delegate respondsToSelector:@selector(photoBrowser:captionViewForPhotoAtIndex:)]) {
         captionView = [_delegate photoBrowser:self captionViewForPhotoAtIndex:index];
     } else {
-        id <MWPhoto> photo = [self photoAtIndex:index];
+        id <MWPhotoProtocol> photo = [self photoAtIndex:index];
         if ([photo respondsToSelector:@selector(caption)]) {
             if ([photo caption]) captionView = [[MWCaptionView alloc] initWithPhoto:photo];
         }
@@ -708,7 +708,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 }
 
-- (UIImage *)imageForPhoto:(id<MWPhoto>)photo {
+- (UIImage *)imageForPhoto:(id<MWPhotoProtocol>)photo {
 	if (photo) {
 		// Get image or obtain in background
 		if ([photo underlyingImage]) {
@@ -720,7 +720,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	return nil;
 }
 
-- (PHLivePhoto *)livePhotoForPhoto:(id<MWPhoto>)photo {
+- (PHLivePhoto *)livePhotoForPhoto:(id<MWPhotoProtocol>)photo {
     if (photo) {
         if (photo.underlyingLivePhoto) {
             return photo.underlyingLivePhoto;
@@ -731,7 +731,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     return nil;
 }
 
-- (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo {
+- (void)loadAdjacentPhotosIfNecessary:(id<MWPhotoProtocol>)photo {
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
         // If page is current page then initiate loading of previous and next pages
@@ -739,7 +739,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (_currentPageIndex == pageIndex) {
             if (pageIndex > 0) {
                 // Preload index - 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex-1];
+                id <MWPhotoProtocol> photo = [self photoAtIndex:pageIndex-1];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex-1);
@@ -747,7 +747,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             }
             if (pageIndex < [self numberOfPhotos] - 1) {
                 // Preload index + 1
-                id <MWPhoto> photo = [self photoAtIndex:pageIndex+1];
+                id <MWPhotoProtocol> photo = [self photoAtIndex:pageIndex+1];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex+1);
@@ -760,7 +760,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark - MWPhoto Loading Notification
 
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
-    id <MWPhoto> photo = [notification object];
+    id <MWPhotoProtocol> photo = [notification object];
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     
     if (page == nil) {
@@ -908,7 +908,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	return thePage;
 }
 
-- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo {
+- (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhotoProtocol>)photo {
 	MWZoomingScrollView *thePage = nil;
 	for (MWZoomingScrollView *page in _visiblePages) {
 		if (page.photo == photo) {
@@ -974,7 +974,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // Load adjacent images if needed and the photo is already
     // loaded. Also called after photo has been loaded in background
-    id <MWPhoto> currentPhoto = [self photoAtIndex:index];
+    id <MWPhotoProtocol> currentPhoto = [self photoAtIndex:index];
     if ([currentPhoto underlyingImage]) {
         // photo loaded so load ajacent now
         [self loadAdjacentPhotosIfNecessary:currentPhoto];
@@ -1586,7 +1586,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)actionButtonPressed:(id)sender {
 
     // Only react when image has loaded
-    id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+    id <MWPhotoProtocol> photo = [self photoAtIndex:_currentPageIndex];
     if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {
         
         // If they have defined a delegate method then just message them
