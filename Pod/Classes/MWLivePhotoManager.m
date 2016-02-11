@@ -27,8 +27,8 @@
 @property (nonatomic) NSURL *movieFileURL;
 @property (nonatomic) BOOL didDownloadImage;
 @property (nonatomic) BOOL didDownloadMovie;
-@property (nonatomic) MWLivePhotoManagerCompletionBlock completion;
-@property (nonatomic) MWLivePhotoManagerProgressBlock progress;
+@property (nonatomic, strong) MWLivePhotoManagerCompletionBlock completion;
+@property (nonatomic, strong) MWLivePhotoManagerProgressBlock progress;
 
 @end
 
