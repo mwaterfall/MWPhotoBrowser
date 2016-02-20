@@ -26,7 +26,6 @@ static const CGFloat labelPadding = 10;
     if (self) {
         self.userInteractionEnabled = NO;
         _photo = photo;
-        self.barStyle = UIBarStyleBlackTranslucent;
         self.tintColor = nil;
         self.barTintColor = nil;
         self.barStyle = UIBarStyleBlackTranslucent;
