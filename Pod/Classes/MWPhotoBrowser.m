@@ -795,11 +795,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             [page.selectedButton removeFromSuperview];
             [page.playButton removeFromSuperview];
             [page prepareForReuse];
-			[page removeFromSuperview];
 			MWLog(@"Removed page at index %lu", (unsigned long)pageIndex);
 		}
 	}
 	[_visiblePages minusSet:_recycledPages];
+    for (MWZoomingScrollView *page in _recycledPages) {
+        [page removeFromSuperview];
+    }
     while (_recycledPages.count > 2) // Only keep 2 recycled pages
         [_recycledPages removeObject:[_recycledPages anyObject]];
 	
