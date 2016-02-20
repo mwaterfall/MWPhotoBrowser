@@ -40,14 +40,14 @@
 		_tapView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
 		_tapView.tapDelegate = self;
 		_tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		_tapView.backgroundColor = [UIColor blackColor];
+		_tapView.backgroundColor = browser.backgroundColor;;
 		[self addSubview:_tapView];
 		
 		// Image view
 		_photoImageView = [[MWTapDetectingImageView alloc] initWithFrame:CGRectZero];
 		_photoImageView.tapDelegate = self;
 		_photoImageView.contentMode = UIViewContentModeCenter;
-		_photoImageView.backgroundColor = [UIColor blackColor];
+		_photoImageView.backgroundColor = browser.backgroundColor;
 		[self addSubview:_photoImageView];
 		
 		// Loading indicator
@@ -57,7 +57,12 @@
         _loadingIndicator.roundedCorners = NO;
 		_loadingIndicator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin |
         UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
-		[self addSubview:_loadingIndicator];
+        if (browser.progressColor)
+            _loadingIndicator.progressTintColor = browser.progressColor;
+        if (browser.trackTintColor)
+            _loadingIndicator.trackTintColor = browser.trackTintColor;
+
+        [self addSubview:_loadingIndicator];
 
         // Listen progress notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
