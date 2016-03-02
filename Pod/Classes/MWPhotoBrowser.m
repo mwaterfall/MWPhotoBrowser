@@ -1504,6 +1504,15 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
 - (void)showControls { [self setControlsHidden:NO animated:YES permanent:NO]; }
 - (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
+- (void)longPressControls
+{
+    if ([_delegate respondsToSelector:@selector(photoBrowser:longPressAtIndex:)]) {
+        MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
+        if ([photo isVideo]) return ;
+        if (![photo underlyingImage]) return;
+        [_delegate photoBrowser:self longPressAtIndex:_currentPageIndex];
+    }
+}
 
 #pragma mark - Properties
 

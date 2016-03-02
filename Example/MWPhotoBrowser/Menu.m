@@ -1232,6 +1232,34 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser longPressAtIndex:(NSUInteger)index
+{
+    NSLog(@"long press at index = %lu",index);
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"cancel" destructiveButtonTitle:@"save" otherButtonTitles:nil, nil];
+    [actionSheet showInView:self.view];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        MWPhoto *photo = _photos[buttonIndex];
+        UIImageWriteToSavedPhotosAlbum(photo.underlyingImage, self, @selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
+    }
+}
+
+
+
+- (void)imageSavedToPhotosAlbum:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    NSString *message = nil;
+    if (!error) {
+        message = @"图片保存成功";
+    }else {
+        message = @"图片保存失败";
+    }
+    NSLog(@"%@",message);
+}
+
 #pragma mark - Load Assets
 
 - (void)loadAssets {
