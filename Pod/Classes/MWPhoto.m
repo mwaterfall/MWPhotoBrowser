@@ -18,7 +18,7 @@
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
     PHImageRequestID _assetRequestID;
-        
+
 }
 
 @property (nonatomic, strong) UIImage *image;
@@ -145,44 +145,44 @@
 
 // Set the underlyingImage
 - (void)performLoadUnderlyingImageAndNotify {
-    
+
     // Get underlying image
     if (_image) {
-        
+
         // We have UIImage!
         self.underlyingImage = _image;
         [self imageLoadingComplete];
-        
+
     } else if (_photoURL) {
-        
+
         // Check what type of url it is
         if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
-            
+
             // Load from assets library
             [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL: _photoURL];
-            
+
         } else if ([_photoURL isFileReferenceURL]) {
-            
+
             // Load from local file async
             [self _performLoadUnderlyingImageAndNotifyWithLocalFileURL: _photoURL];
-            
+
         } else {
-            
+
             // Load async from web (using SDWebImage)
             [self _performLoadUnderlyingImageAndNotifyWithWebURL: _photoURL];
-            
+
         }
-        
+
     } else if (_asset) {
-        
+
         // Load from photos asset
         [self _performLoadUnderlyingImageAndNotifyWithAsset: _asset targetSize:_assetTargetSize];
-        
+
     } else {
-        
+
         // Image is empty
         [self imageLoadingComplete];
-        
+
     }
 }
 
@@ -190,6 +190,9 @@
 - (void)_performLoadUnderlyingImageAndNotifyWithWebURL:(NSURL *)url {
     @try {
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
+        if (self.referer) {
+            [manager.imageDownloader setValue:self.referer forHTTPHeaderField:@"Referer"];
+        }
         _webImageOperation = [manager downloadImageWithURL:url
                                                    options:0
                                                   progress:^(NSInteger receivedSize, NSInteger expectedSize) {
@@ -264,9 +267,9 @@
 
 // Load from photos library
 - (void)_performLoadUnderlyingImageAndNotifyWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
-    
+
     PHImageManager *imageManager = [PHImageManager defaultManager];
-    
+
     PHImageRequestOptions *options = [PHImageRequestOptions new];
     options.networkAccessAllowed = YES;
     options.resizeMode = PHImageRequestOptionsResizeModeFast;
@@ -278,7 +281,7 @@
                               self, @"photo", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
     };
-    
+
     _assetRequestID = [imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFit options:options resultHandler:^(UIImage *result, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.underlyingImage = result;
