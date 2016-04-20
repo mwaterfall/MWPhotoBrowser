@@ -395,12 +395,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Detect if rotation occurs while we're presenting a modal
     _pageIndexBeforeRotation = _currentPageIndex;
     
-    // Check that we're being popped for good
-    if ([self.navigationController.viewControllers objectAtIndex:0] != self &&
-        ![self.navigationController.viewControllers containsObject:self]) {
-        
+    // Check that we're disappearing for good
+    // self.isMovingFromParentViewController just doesn't work, ever. Or self.isBeingDismissed
+    if ((_doneButton && self.navigationController.isBeingDismissed) ||
+        ([self.navigationController.viewControllers objectAtIndex:0] != self && ![self.navigationController.viewControllers containsObject:self])) {
+
         // State
         _viewIsActive = NO;
+        [self clearCurrentVideo]; // Clear current playing video
         
         // Bar state / appearance
         [self restorePreviousNavBarAppearance:animated];
