@@ -114,7 +114,6 @@
             }
         }];
     }
-    return completion(nil);
 }
 
 #pragma mark - MWPhoto Protocol Methods
