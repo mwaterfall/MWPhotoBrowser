@@ -18,6 +18,7 @@
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
     PHImageRequestID _assetRequestID;
+    PHImageRequestID _assetVideoRequestID;
         
 }
 
@@ -57,6 +58,7 @@
 - (id)init {
     if ((self = [super init])) {
         self.emptyImage = YES;
+        [self setup];
     }
     return self;
 }
@@ -64,6 +66,7 @@
 - (id)initWithImage:(UIImage *)image {
     if ((self = [super init])) {
         self.image = image;
+        [self setup];
     }
     return self;
 }
@@ -71,6 +74,7 @@
 - (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
         self.photoURL = url;
+        [self setup];
     }
     return self;
 }
@@ -80,6 +84,7 @@
         self.asset = asset;
         self.assetTargetSize = targetSize;
         self.isVideo = asset.mediaType == PHAssetMediaTypeVideo;
+        [self setup];
     }
     return self;
 }
@@ -89,8 +94,18 @@
         self.videoURL = url;
         self.isVideo = YES;
         self.emptyImage = YES;
+        [self setup];
     }
     return self;
+}
+
+- (void)setup {
+    _assetRequestID = PHInvalidImageRequestID;
+    _assetVideoRequestID = PHInvalidImageRequestID;
+}
+
+- (void)dealloc {
+    [self cancelAnyLoading];
 }
 
 #pragma mark - Video
@@ -104,9 +119,11 @@
     if (_videoURL) {
         completion(_videoURL);
     } else if (_asset && _asset.mediaType == PHAssetMediaTypeVideo) {
+        [self cancelVideoRequest]; // Cancel any existing
         PHVideoRequestOptions *options = [PHVideoRequestOptions new];
         options.networkAccessAllowed = YES;
-        [[PHImageManager defaultManager] requestAVAssetForVideo:_asset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
+        _assetVideoRequestID = [[PHImageManager defaultManager] requestAVAssetForVideo:_asset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
+            _assetVideoRequestID = PHInvalidImageRequestID;
             if ([asset isKindOfClass:[AVURLAsset class]]) {
                 completion(((AVURLAsset *)asset).URL);
             } else {
@@ -310,9 +327,22 @@
     if (_webImageOperation != nil) {
         [_webImageOperation cancel];
         _loadingInProgress = NO;
-    } else if (_assetRequestID != PHInvalidImageRequestID) {
+    }
+    [self cancelImageRequest];
+    [self cancelVideoRequest];
+}
+
+- (void)cancelImageRequest {
+    if (_assetRequestID != PHInvalidImageRequestID) {
         [[PHImageManager defaultManager] cancelImageRequest:_assetRequestID];
         _assetRequestID = PHInvalidImageRequestID;
+    }
+}
+
+- (void)cancelVideoRequest {
+    if (_assetVideoRequestID != PHInvalidImageRequestID) {
+        [[PHImageManager defaultManager] cancelImageRequest:_assetVideoRequestID];
+        _assetVideoRequestID = PHInvalidImageRequestID;
     }
 }
 
