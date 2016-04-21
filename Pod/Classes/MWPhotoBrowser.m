@@ -1202,7 +1202,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [photo getVideoURL:^(NSURL *url) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 // If the video is not playing anymore then bail
-                if (_currentVideoIndex != index || !_viewIsActive) {
+                typeof(self) strongSelf = weakSelf;
+                if (!strongSelf) return;
+                if (strongSelf->_currentVideoIndex != index || !strongSelf->_viewIsActive) {
                     return;
                 }
                 if (url) {
