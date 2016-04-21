@@ -369,6 +369,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (_currentPageIndex != _pageIndexBeforeRotation) {
         [self jumpToPageAtIndex:_pageIndexBeforeRotation animated:NO];
     }
+    
+    // Layout
+    [self.view setNeedsLayout];
 
 }
 
