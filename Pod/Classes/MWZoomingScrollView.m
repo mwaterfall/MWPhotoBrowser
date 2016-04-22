@@ -42,7 +42,7 @@
 		_tapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		_tapView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_tapView];
-		
+
 		// Image view
 		_photoImageView = [[MWTapDetectingImageView alloc] initWithFrame:CGRectZero];
 		_photoImageView.tapDelegate = self;
@@ -124,52 +124,59 @@
 
 // Get and display image
 - (void)displayImage {
-	if (_photo && _photoImageView.image == nil) {
-		
-		// Reset
-		self.maximumZoomScale = 1;
-		self.minimumZoomScale = 1;
-		self.zoomScale = 1;
-		self.contentSize = CGSizeMake(0, 0);
-		
-		// Get image from browser as it handles ordering of fetching
-		UIImage *img = [_photoBrowser imageForPhoto:_photo];
-		if (img) {
-			
-			// Hide indicator
-			[self hideLoadingIndicator];
-			
-			// Set image
-			_photoImageView.image = img;
-			_photoImageView.hidden = NO;
-			
-			// Setup photo frame
-			CGRect photoImageViewFrame;
-			photoImageViewFrame.origin = CGPointZero;
-			photoImageViewFrame.size = img.size;
-			_photoImageView.frame = photoImageViewFrame;
-			self.contentSize = photoImageViewFrame.size;
+    [self displayPhoto:_photo andShowFailureImageIfFails:YES];
+}
 
-			// Set zoom to minimum zoom
-			[self setMaxMinZoomScalesForCurrentBounds];
-			
-		} else  {
+- (void)displayPlaceholderImage {
+    if (_photoImageView.image == nil) {
+        [self displayPhoto:_photo andShowFailureImageIfFails:NO];
+    }
+}
 
+- (void)displayPhoto:(MWPhoto *)photo andShowFailureImageIfFails:(BOOL)needsFailureImage {
+    if (photo) {
+
+        // Reset
+        self.maximumZoomScale = 1;
+        self.minimumZoomScale = 1;
+        self.zoomScale = 1;
+        self.contentSize = CGSizeMake(0, 0);
+
+        // Get image from browser as it handles ordering of fetching
+        UIImage *img = [_photoBrowser imageForPhoto:photo];
+        if (img) {
+
+            // Hide indicator
+            [self hideLoadingIndicator];
+
+            // Set image
+            _photoImageView.image = img;
+            _photoImageView.hidden = NO;
+
+            // Setup photo frame
+            CGRect photoImageViewFrame;
+            photoImageViewFrame.origin = CGPointZero;
+            photoImageViewFrame.size = img.size;
+            _photoImageView.frame = photoImageViewFrame;
+            self.contentSize = photoImageViewFrame.size;
+
+            // Set zoom to minimum zoom
+            [self setMaxMinZoomScalesForCurrentBounds];
+        } else if (needsFailureImage && !_photoImageView.image) {
             // Show image failure
             [self displayImageFailure];
-			
-		}
-		[self setNeedsLayout];
-	}
+        }
+
+        [self setNeedsLayout];
+    }
 }
 
 // Image failed so just show black!
 - (void)displayImageFailure {
     [self hideLoadingIndicator];
-    _photoImageView.image = nil;
-    
+
     // Show if image is not empty
-    if (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage) {
+    if (_photoImageView.image == nil && (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage)) {
         if (!_loadingError) {
             _loadingError = [UIImageView new];
             _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
