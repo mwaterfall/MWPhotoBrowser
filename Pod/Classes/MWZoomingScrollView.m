@@ -252,7 +252,7 @@
     if (_photoImageView.image == nil) return;
     
     // Reset position
-    _photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
+    _photoImageView.frame = CGRectMake(0, 0, _photoImageView.image.size.width, _photoImageView.image.size.height);
 	
     // Sizes
     CGSize boundsSize = self.bounds.size;
@@ -261,7 +261,7 @@
     // Calculate Min
     CGFloat xScale = boundsSize.width / imageSize.width;    // the scale needed to perfectly fit the image width-wise
     CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
-    CGFloat minScale = MIN(xScale, yScale);                 // use minimum of these to allow the image to become fully visible
+    CGFloat minScale = MIN(xScale, yScale) ? : 1;           // use minimum of these to allow the image to become fully visible
     
     // Calculate Max
     CGFloat maxScale = 3;
@@ -328,27 +328,10 @@
 	[super layoutSubviews];
 	
     // Center the image as it becomes smaller than the size of the screen
-    CGSize boundsSize = self.bounds.size;
-    CGRect frameToCenter = _photoImageView.frame;
-    
-    // Horizontally
-    if (frameToCenter.size.width < boundsSize.width) {
-        frameToCenter.origin.x = floorf((boundsSize.width - frameToCenter.size.width) / 2.0);
-	} else {
-        frameToCenter.origin.x = 0;
-	}
-    
-    // Vertically
-    if (frameToCenter.size.height < boundsSize.height) {
-        frameToCenter.origin.y = floorf((boundsSize.height - frameToCenter.size.height) / 2.0);
-	} else {
-        frameToCenter.origin.y = 0;
-	}
-    
-	// Center
-	if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter))
-		_photoImageView.frame = frameToCenter;
-	
+    if (self.zoomScale == self.minimumZoomScale) {
+        _photoImageView.center = CGPointMake(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) / 2);
+    }
+
 }
 
 #pragma mark - UIScrollViewDelegate
