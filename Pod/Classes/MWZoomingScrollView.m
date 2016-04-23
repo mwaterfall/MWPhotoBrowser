@@ -412,12 +412,21 @@
 	
 }
 
+- (void)handleLongPress:(CGPoint)touchPoint {
+    [_photoBrowser performSelector:@selector(longPressControls)];
+}
+
 // Image View
 - (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch { 
     [self handleSingleTap:[touch locationInView:imageView]];
 }
 - (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch {
     [self handleDoubleTap:[touch locationInView:imageView]];
+}
+
+- (void)imageView:(UIImageView *)imageView longPressDetected:(UITouch *)touch
+{
+    [self handleLongPress:[touch locationInView:imageView]];
 }
 
 // Background View

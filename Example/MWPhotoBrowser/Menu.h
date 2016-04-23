@@ -10,7 +10,13 @@
 #import "MWPhotoBrowser.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
-@interface Menu : UITableViewController <MWPhotoBrowserDelegate> {
+@interface Menu : UITableViewController
+<
+    MWPhotoBrowserDelegate,
+    UIActionSheetDelegate
+>
+
+{
     UISegmentedControl *_segmentedControl;
     NSMutableArray *_selections;
 }

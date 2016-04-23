@@ -8,7 +8,12 @@
 
 #import "MWTapDetectingImageView.h"
 
-@implementation MWTapDetectingImageView
+@implementation MWTapDetectingImageView {
+    NSTimer *_timer;
+    BOOL _longPressDetected;
+    UITouch *_touches;
+}
+
 
 - (id)initWithFrame:(CGRect)frame {
 	if ((self = [super initWithFrame:frame])) {
@@ -31,7 +36,20 @@
 	return self;
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    _longPressDetected = NO;
+    _touches = touches.anyObject;
+    if ([_tapDelegate respondsToSelector:@selector(imageView:longPressDetected:)]) {
+        [self startTimer];
+    }
+}
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    if (_longPressDetected) {
+        return;
+    }
+    [self endTimer];
 	UITouch *touch = [touches anyObject];
 	NSUInteger tapCount = touch.tapCount;
 	switch (tapCount) {
@@ -63,6 +81,39 @@
 - (void)handleTripleTap:(UITouch *)touch {
 	if ([_tapDelegate respondsToSelector:@selector(imageView:tripleTapDetected:)])
 		[_tapDelegate imageView:self tripleTapDetected:touch];
+}
+
+- (void)handleLongPress:(UITouch *)touch {
+    if ([_tapDelegate respondsToSelector:@selector(imageView:longPressDetected:)])
+        [_tapDelegate imageView:self longPressDetected:touch];
+}
+
+- (void)startTimer
+{
+    [_timer invalidate];
+    _timer = [NSTimer timerWithTimeInterval:0.4 target:self selector:@selector(timeFire) userInfo:nil repeats:NO];
+    [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+}
+
+- (void)endTimer
+{
+    [_timer invalidate];
+    _timer = nil;
+}
+
+- (void)timeFire
+{
+    _longPressDetected = YES;
+    [self endTimer];
+    if ([_tapDelegate respondsToSelector:@selector(imageView:longPressDetected:)]) {
+        [self handleLongPress:_touches];
+    }
+}
+
+- (void)dealloc
+{
+    _timer = nil;
+    _touches = nil;
 }
 
 @end
