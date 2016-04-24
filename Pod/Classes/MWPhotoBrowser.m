@@ -851,7 +851,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 selectedButton.frame = [self frameForSelectedButton:selectedButton atIndex:index];
                 [_pagingScrollView addSubview:selectedButton];
                 page.selectedButton = selectedButton;
-                selectedButton.selected = [self photoIsSelectedAtIndex:index];
+                if ([self numberOfPhotos] > 0)
+                {
+                	selectedButton.selected = [self photoIsSelectedAtIndex:index];
+                }
             }
             
 		}
