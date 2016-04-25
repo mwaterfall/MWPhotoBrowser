@@ -11,7 +11,11 @@
 @implementation UIImage (MWPhotoBrowser)
 
 + (UIImage *)imageForResourcePath:(NSString *)path ofType:(NSString *)type inBundle:(NSBundle *)bundle {
+    #ifdef CARTHAGE
+    return [UIImage imageNamed:path inBundle:bundle compatibleWithTraitCollection:nil];
+    #else
     return [UIImage imageWithContentsOfFile:[bundle pathForResource:path ofType:type]];
+    #endif
 }
 
 + (UIImage *)clearImageWithSize:(CGSize)size {

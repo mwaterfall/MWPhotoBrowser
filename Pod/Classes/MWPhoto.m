@@ -6,12 +6,25 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
-#import <SDWebImage/SDWebImageDecoder.h>
-#import <SDWebImage/SDWebImageManager.h>
-#import <SDWebImage/SDWebImageOperation.h>
+
+#ifdef CARTHAGE
+
+#import <WebImage/SDWebImageDecoder.h>
+#import <WebImage/SDWebImageManager.h>
+#import <WebImage/SDWebImageOperation.h>
+
+#else // CocoaPods
+
+#import "SDWebImageDecoder.h"
+#import "SDWebImageManager.h"
+#import "SDWebImageOperation.h"
+
+#endif
+
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
+#import "MWBundlePath.h"
 
 @interface MWPhoto () {
 
