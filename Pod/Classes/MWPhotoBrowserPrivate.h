@@ -14,7 +14,7 @@
 
 // Declare private methods of browser
 @interface MWPhotoBrowser () {
-    
+
 	// Data
     NSUInteger _photoCount;
     NSMutableArray *_photos;
@@ -32,7 +32,6 @@
 	NSUInteger _pageIndexBeforeRotation;
 	
 	// Navigation & controls
-	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
 	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton;
     MBProgressHUD *_progressHUD;
@@ -71,7 +70,11 @@
     BOOL _skipNextPagingScrollViewPositioning;
     BOOL _viewHasAppearedInitially;
     CGPoint _currentGridContentOffset;
-    
+
+@protected    
+ 	// Navigation & controls
+	UIToolbar *_toolbar;
+   
 }
 
 // Properties

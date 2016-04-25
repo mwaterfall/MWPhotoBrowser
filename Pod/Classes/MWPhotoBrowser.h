@@ -42,6 +42,7 @@
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
+@property (nonatomic) BOOL zoomSmallPhotos;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
 @property (nonatomic) BOOL displaySelectionButtons;
@@ -52,6 +53,19 @@
 @property (nonatomic) BOOL autoPlayOnAppear;
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
+
+// Customize Appearance
+@property (nonatomic, assign) UIBarStyle navigationBarStyle;
+@property (nonatomic, strong) UIColor *navigationBarTintColor;
+@property (nonatomic, strong) UIImage *navigationBarBackgroundImage;
+@property (nonatomic, assign) UIBarStyle toolbarBarStyle;
+@property (nonatomic, strong) UIColor *toolbarTintColor;
+@property (nonatomic, strong) UIImage *toolbarBackgroundImage;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *progressColor;
+@property (nonatomic, strong) UIColor *trackTintColor;
+@property (nonatomic, strong) UIColor *imageCellBackgroundColor;
+
 
 // Customise image selection icons as they are the only icons with a colour tint
 // Icon should be located in the app's main bundle
