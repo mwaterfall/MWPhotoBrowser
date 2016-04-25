@@ -183,7 +183,7 @@
             // Load from assets library
             [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL: _photoURL];
             
-        } else if ([_photoURL isFileReferenceURL]) {
+        } else if ([_photoURL isFileReferenceURL] || [_photoURL isFileURL]) {
             
             // Load from local file async
             [self _performLoadUnderlyingImageAndNotifyWithLocalFileURL: _photoURL];
