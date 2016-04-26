@@ -1152,7 +1152,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
-    selectedButton.selected = !selectedButton.selected;
     NSUInteger index = NSUIntegerMax;
     for (MWZoomingScrollView *page in _visiblePages) {
         if (page.selectedButton == selectedButton) {
@@ -1160,6 +1159,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             break;
         }
     }
+    
+    if ([self.delegate respondsToSelector:@selector(photoBrowser:canSelectPhotoAtIndex:withPhotoCurrentStatus:)]) {
+        if (index != NSUIntegerMax) {
+            if ([self.delegate photoBrowser:self canSelectPhotoAtIndex:index withPhotoCurrentStatus:selectedButton.selected]) {
+                selectedButton.selected = !selectedButton.selected;
+            }
+        }
+    }else{
+        selectedButton.selected = !selectedButton.selected;
+    }
+    
     if (index != NSUIntegerMax) {
         [self setPhotoSelected:selectedButton.selected atIndex:index];
     }
