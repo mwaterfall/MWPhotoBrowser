@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 #import "MWPhotoProtocol.h"
+#import <SDWebImage/SDWebImageManager.h>
 
 // This class models a photo/image and it's caption
 // If you want to handle photos, caching, decompression
@@ -31,6 +32,7 @@
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 - (id)initWithVideoURL:(NSURL *)url;
+- (void)setImageOptions:(SDWebImageOptions)options;
 
 @end
 
