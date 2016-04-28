@@ -20,6 +20,11 @@
 
 @class MWPhotoBrowser;
 
+typedef NS_ENUM(NSInteger, MWScrollDirection) {
+    MWScrollDirectionVertical,
+    MWScrollDirectionHorizontal
+};
+
 @protocol MWPhotoBrowserDelegate <NSObject>
 
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
@@ -52,6 +57,7 @@
 @property (nonatomic) BOOL autoPlayOnAppear;
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
+@property (nonatomic) MWScrollDirection scrollDirection;
 
 // Customise image selection icons as they are the only icons with a colour tint
 // Icon should be located in the app's main bundle
