@@ -296,11 +296,7 @@
     if (hideToolbar) {
         [_toolbar removeFromSuperview];
     } else {
-        if (_gridController) {
-            [self.view insertSubview:_toolbar belowSubview:_gridController.view];
-        } else {
-            [self.view addSubview:_toolbar];
-        }
+        [self.view addSubview:_toolbar];
     }
     
     // Update nav
@@ -642,10 +638,6 @@
         }
         [self performLayout];
         [self.view setNeedsLayout];
-
-        if (_gridController) {
-            [_gridController.collectionView reloadData];
-        }
     }
     
 }
@@ -890,8 +882,6 @@
 			thePage = page; break;
 		}
 	}
-    
-    thePage.scrollEnabled = NO;
 	return thePage;
 }
 
