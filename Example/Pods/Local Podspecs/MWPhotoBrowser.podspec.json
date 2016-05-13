@@ -1,0 +1,53 @@
+{
+  "name": "MWPhotoBrowser",
+  "version": "2.1.1",
+  "license": "MIT",
+  "summary": "A simple iOS photo and video browser with optional grid view, captions and selections.",
+  "description": "                  MWPhotoBrowser can display one or more images or videos by providing either UIImage\n                  objects, PHAsset objects, or URLs to library assets, web images/videos or local files.\n                  The photo browser handles the downloading and caching of photos from the web seamlessly.\n                  Photos can be zoomed and panned, and optional (customisable) captions can be displayed.\n",
+  "screenshots": [
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser1.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser2.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser3.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser4.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser5.png",
+    "https://raw.github.com/mwaterfall/MWPhotoBrowser/master/Screenshots/MWPhotoBrowser6.png"
+  ],
+  "homepage": "https://github.com/mwaterfall/MWPhotoBrowser",
+  "authors": {
+    "Michael Waterfall": "michaelwaterfall@gmail.com"
+  },
+  "social_media_url": "https://twitter.com/mwaterfall",
+  "source": {
+    "git": "https://github.com/mwaterfall/MWPhotoBrowser.git",
+    "tag": "2.1.1"
+  },
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "MWPhotoBrowser": [
+      "Pod/Assets/*.png"
+    ]
+  },
+  "requires_arc": true,
+  "frameworks": [
+    "ImageIO",
+    "QuartzCore",
+    "AssetsLibrary",
+    "MediaPlayer"
+  ],
+  "weak_frameworks": "Photos",
+  "dependencies": {
+    "MBProgressHUD": [
+      "~> 0.9"
+    ],
+    "DACircularProgress": [
+      "~> 2.3"
+    ],
+    "SDWebImage": [
+      "~> 3.7",
+      "!= 3.7.2"
+    ]
+  }
+}
