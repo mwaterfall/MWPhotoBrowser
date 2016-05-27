@@ -19,6 +19,7 @@
     id <SDWebImageOperation> _webImageOperation;
     PHImageRequestID _assetRequestID;
     PHImageRequestID _assetVideoRequestID;
+    SDWebImageOptions _imageOptions;
         
 }
 
@@ -99,9 +100,14 @@
     return self;
 }
 
+- (void)setImageOptions:(SDWebImageOptions)options {
+    _imageOptions = options;
+}
+
 - (void)setup {
     _assetRequestID = PHInvalidImageRequestID;
     _assetVideoRequestID = PHInvalidImageRequestID;
+    _imageOptions = SDWebImageRetryFailed;
 }
 
 - (void)dealloc {
@@ -213,7 +219,7 @@
     @try {
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
         _webImageOperation = [manager downloadImageWithURL:url
-                                                   options:0
+                                                   options:_imageOptions
                                                   progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                                       if (expectedSize > 0) {
                                                           float progress = receivedSize / (float)expectedSize;
