@@ -1592,11 +1592,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             
         } else {
             
-            // Show activity view controller
-            NSMutableArray *items = [NSMutableArray arrayWithObject:[photo underlyingImage]];
-            if (photo.caption) {
-                [items addObject:photo.caption];
-            }
+            // Show activity view controller -- self For Delegate Call
+            NSMutableArray *items = [NSMutableArray arrayWithObjects:[photo underlyingImage], self, nil];
+
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
             
             // Show loading spinner after a couple of seconds
@@ -1628,6 +1626,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     }
     
+}
+
+- (NSArray *)activityViewController:(UIActivityViewController *)activityViewController itemsForActivityType:(NSString *)activityType
+{
+    if (![activityType hasPrefix:@"net.whatsapp"]) {
+        id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
+        if (photo.caption) {
+            return  @[photo.caption];
+        }
+    }
+    return nil;
 }
 
 #pragma mark - Action Progress
