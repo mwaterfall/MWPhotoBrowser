@@ -1201,11 +1201,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self setVideoLoadingIndicatorVisible:YES atPageIndex:index];
 
         // Get video and play
-        typeof(self) __weak weakSelf = self;
+        __typeof(self) __weak weakSelf = self;
         [photo getVideoURL:^(NSURL *url) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 // If the video is not playing anymore then bail
-                typeof(self) strongSelf = weakSelf;
+                __typeof(self) strongSelf = weakSelf;
                 if (!strongSelf) return;
                 if (strongSelf->_currentVideoIndex != index || !strongSelf->_viewIsActive) {
                     return;
