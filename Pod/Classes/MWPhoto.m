@@ -6,9 +6,9 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
-#import <SDWebImage/SDWebImageDecoder.h>
-#import <SDWebImage/SDWebImageManager.h>
-#import <SDWebImage/SDWebImageOperation.h>
+#import <WebImage/SDWebImageDecoder.h>
+#import <WebImage/SDWebImageManager.h>
+#import <WebImage/SDWebImageOperation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
@@ -122,11 +122,11 @@
         [self cancelVideoRequest]; // Cancel any existing
         PHVideoRequestOptions *options = [PHVideoRequestOptions new];
         options.networkAccessAllowed = YES;
-        typeof(self) __weak weakSelf = self;
+        __weak __typeof(self) weakSelf = self;
         _assetVideoRequestID = [[PHImageManager defaultManager] requestAVAssetForVideo:_asset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
             
             // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ // Testing
-            typeof(self) strongSelf = weakSelf;
+            __typeof(self) strongSelf = weakSelf;
             if (!strongSelf) return;
             strongSelf->_assetVideoRequestID = PHInvalidImageRequestID;
             if ([asset isKindOfClass:[AVURLAsset class]]) {
