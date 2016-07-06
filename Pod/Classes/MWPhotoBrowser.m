@@ -171,8 +171,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Toolbar Items
     if (self.displayNavArrows) {
         NSString *arrowPathFormat = @"MWPhotoBrowser.bundle/UIBarButtonItemArrow%@";
-        UIImage *previousButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Left"] ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
-        UIImage *nextButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Right"] ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+        UIImage *previousButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Left"] ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
+        UIImage *nextButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Right"] ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
         _previousButton = [[UIBarButtonItem alloc] initWithImage:previousButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:nextButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
@@ -243,7 +243,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Left button - Grid
     if (_enableGrid) {
         hasItems = YES;
-        [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/UIBarButtonItemGrid" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
+        [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/UIBarButtonItemGrid" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
         [items addObject:fixedSpace];
     }
@@ -825,8 +825,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             // Add play button if needed
             if (page.displayingVideo) {
                 UIButton *playButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                [playButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/PlayButtonOverlayLarge" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
-                [playButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/PlayButtonOverlayLargeTap" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateHighlighted];
+                [playButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/PlayButtonOverlayLarge" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] forState:UIControlStateNormal];
+                [playButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/PlayButtonOverlayLargeTap" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] forState:UIControlStateHighlighted];
                 [playButton addTarget:self action:@selector(playButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
                 [playButton sizeToFit];
                 playButton.frame = [self frameForPlayButton:playButton atIndex:index];
@@ -837,12 +837,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             // Add selected button
             if (self.displaySelectionButtons) {
                 UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
+                [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] forState:UIControlStateNormal];
                 UIImage *selectedOnImage;
                 if (self.customImageSelectedIconName) {
                     selectedOnImage = [UIImage imageNamed:self.customImageSelectedIconName];
                 } else {
-                    selectedOnImage = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+                    selectedOnImage = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
                 }
                 [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
                 [selectedButton sizeToFit];
