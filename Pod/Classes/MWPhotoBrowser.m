@@ -12,6 +12,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
+#import <SDWebImage/SDWebImageManager.h>
 
 #define PADDING                  10
 
@@ -82,13 +83,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
+    _ignorePicParameWhenCache = NO;
     
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
                                                  name:MWPHOTO_LOADING_DID_END_NOTIFICATION
                                                object:nil];
-    
 }
 
 - (void)dealloc {
@@ -135,6 +136,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
+    
+    // image cache
+    if (_ignorePicParameWhenCache) {
+        [[SDWebImageManager sharedManager] setCacheKeyFilter:^(NSURL *url) {
+            url = [[NSURL alloc] initWithScheme:url.scheme host:url.host path:url.path];
+            return [url absoluteString];
+        }];
+    } else {
+        [[SDWebImageManager sharedManager] setCacheKeyFilter:nil];
+    }
+
     
     // Validate grid settings
     if (_startOnGrid) _enableGrid = YES;
