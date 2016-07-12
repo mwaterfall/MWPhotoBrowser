@@ -258,30 +258,41 @@
 
 // Load from asset library async
 - (void)_performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL:(NSURL *)url {
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             @try {
-                ALAssetsLibrary *assetslibrary = [[ALAssetsLibrary alloc] init];
-                [assetslibrary assetForURL:url
-                               resultBlock:^(ALAsset *asset){
-                                   ALAssetRepresentation *rep = [asset defaultRepresentation];
-                                   CGImageRef iref = [rep fullScreenImage];
-                                   if (iref) {
-                                       self.underlyingImage = [UIImage imageWithCGImage:iref];
-                                   }
-                                   [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                               }
-                              failureBlock:^(NSError *error) {
-                                  self.underlyingImage = nil;
-                                  MWLog(@"Photo from asset library error: %@",error);
-                                  [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                              }];
+                PHAsset * asset = [[PHAsset fetchAssetsWithALAssetURLs:@[url] options:nil] firstObject];
+                if (! asset) {
+                    MWLog(@"Photo from asset library error");
+                    [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                }
+                PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+                options.synchronous = NO;
+                options.networkAccessAllowed = NO;
+                options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+                [[PHImageManager defaultManager] requestImageDataForAsset:asset
+                                                                  options:options
+                                                            resultHandler:^(NSData * imageData,
+                                                                            NSString * dataUTI,
+                                                                            UIImageOrientation orientation,
+                                                                            NSDictionary * info)
+                 {
+                     if (imageData) {
+                         self.underlyingImage = [UIImage imageWithData:imageData];
+                         [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                     } else {
+                         MWLog(@"Photo from asset library error");
+                         [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
+                     }
+                 }];
             } @catch (NSException *e) {
                 MWLog(@"Photo from asset library error: %@", e);
                 [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
             }
         }
     });
+
 }
 
 // Load from photos library
