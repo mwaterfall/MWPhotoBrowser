@@ -233,7 +233,12 @@
         CGFloat yScale = boundsSize.height / imageSize.height;  // the scale needed to perfectly fit the image height-wise
         // Zooms standard portrait images on a 3.5in screen but not on a 4in screen.
         if (ABS(boundsAR - imageAR) < 0.17) {
-            zoomScale = MAX(xScale, yScale);
+            // for images which are vertically long
+            if (imageAR < 1) {
+                zoomScale = MIN(xScale, yScale);
+            } else {
+                zoomScale = MAX(xScale, yScale);
+            }
             // Ensure we don't zoom in or out too far, just in case
             zoomScale = MIN(MAX(self.minimumZoomScale, zoomScale), self.maximumZoomScale);
         }
@@ -286,8 +291,7 @@
     if (self.zoomScale != minScale) {
         
         // Centralise
-        self.contentOffset = CGPointMake((imageSize.width * self.zoomScale - boundsSize.width) / 2.0,
-                                         (imageSize.height * self.zoomScale - boundsSize.height) / 2.0);
+        self.contentOffset = CGPointMake((imageSize.width * self.zoomScale - boundsSize.width) / 2.0, 0);
 
     }
     
