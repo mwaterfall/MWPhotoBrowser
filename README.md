@@ -1,3 +1,7 @@
+## Fork - Load photos with authorisation
+`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header];`
+
+
 # MWPhotoBrowser
 
 <!--[![CI Status](http://img.shields.io/travis/Michael Waterfall/MWPhotoBrowser.svg?style=flat)](https://travis-ci.org/Michael Waterfall/MWPhotoBrowser)-->
