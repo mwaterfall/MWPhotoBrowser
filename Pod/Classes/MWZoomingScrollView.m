@@ -6,7 +6,7 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
-#import <DACircularProgress/DACircularProgressView.h>
+#import "DACircularProgressView.h"
 #import "MWCommon.h"
 #import "MWZoomingScrollView.h"
 #import "MWPhotoBrowser.h"
@@ -271,9 +271,9 @@
     }
     
     // Image is smaller than screen so no zooming!
-    if (xScale >= 1 && yScale >= 1) {
-        minScale = 1.0;
-    }
+//    if (xScale >= 1 && yScale >= 1) {
+//        minScale = 1.0;
+//    }
     
     // Set min/max zoom
     self.maximumZoomScale = maxScale;

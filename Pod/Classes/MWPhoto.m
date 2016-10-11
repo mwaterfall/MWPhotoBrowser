@@ -6,9 +6,9 @@
 //  Copyright 2010 d3i. All rights reserved.
 //
 
-#import <SDWebImage/SDWebImageDecoder.h>
-#import <SDWebImage/SDWebImageManager.h>
-#import <SDWebImage/SDWebImageOperation.h>
+#import "SDWebImageDecoder.h"
+#import "SDWebImageManager.h"
+#import "SDWebImageOperation.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
@@ -24,6 +24,7 @@
 
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) NSURL *photoURL;
+@property (nonatomic, strong) NSDictionary *headers;
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic) CGSize assetTargetSize;
 
@@ -43,6 +44,10 @@
 
 + (MWPhoto *)photoWithURL:(NSURL *)url {
     return [[MWPhoto alloc] initWithURL:url];
+}
+
++ (MWPhoto *)photoWithURL:(NSURL *)url headers:(NSDictionary *)headers{
+    return [[MWPhoto alloc] initWithURL:url withHeaders:headers];
 }
 
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
@@ -74,6 +79,15 @@
 - (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
         self.photoURL = url;
+        [self setup];
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSURL *)url withHeaders:(NSDictionary *)headers{
+    if ((self = [super init])) {
+        self.photoURL = url;
+        self.headers = headers;
         [self setup];
     }
     return self;
@@ -212,6 +226,11 @@
 - (void)_performLoadUnderlyingImageAndNotifyWithWebURL:(NSURL *)url {
     @try {
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
+        if (_headers != nil) {
+            for (NSString *key in [_headers allKeys]) {
+                [manager.imageDownloader setValue:[_headers objectForKey:key] forHTTPHeaderField:key];
+            }
+        }
         _webImageOperation = [manager downloadImageWithURL:url
                                                    options:0
                                                   progress:^(NSInteger receivedSize, NSInteger expectedSize) {
