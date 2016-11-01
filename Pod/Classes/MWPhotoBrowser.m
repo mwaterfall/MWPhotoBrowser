@@ -1081,7 +1081,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
 	// Title
     NSUInteger numberOfPhotos = [self numberOfPhotos];
-    if (_gridController) {
+    if (self.isInGrid) {
         if (_gridController.selectionMode) {
             self.title = NSLocalizedString(@"Select Photos", nil);
         } else {
@@ -1301,13 +1301,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark - Grid
 
+- (BOOL)isInGrid{
+    return _gridController != nil;
+}
+
 - (void)showGridAnimated {
     [self showGrid:YES];
 }
 
 - (void)showGrid:(BOOL)animated {
 
-    if (_gridController) return;
+    if (self.isInGrid) return;
     
     // Clear video
     [self clearCurrentVideo];
