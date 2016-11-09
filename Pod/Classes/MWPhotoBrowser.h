@@ -38,9 +38,18 @@
 
 @end
 
+@protocol MWProfilePhotosLikeActions <NSObject>
+
+- (NSUInteger)likesCount:(NSInteger)photoIndex;
+- (BOOL)isLiked:(NSInteger)photoIndex;
+- (void)likePhoto:(NSInteger)photoIndex like:(BOOL)like;
+
+@end
+
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
+@property (nonatomic, weak) id<MWProfilePhotosLikeActions> fullscreenPhotoDelegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
@@ -71,5 +80,7 @@
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
+
+- (void)update;
 
 @end
