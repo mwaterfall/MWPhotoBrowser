@@ -159,7 +159,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
     
-    //Setup likes container under scroll view
+    // Setup likes container under scroll view
     CGRect likesContainerRect = [self frameForLikesContainer];
     _likesContainer = [[UIView alloc] initWithFrame:likesContainerRect];
     _likesContainer.backgroundColor = [UIColor clearColor];
@@ -176,6 +176,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Setup like label
     CGRect likesLabelRect = [self frameForLikesLabel];
     _likesLabel = [[UILabel alloc] initWithFrame:likesLabelRect];
+    [_likesLabel setFont:[UIFont systemFontOfSize:22]];
     _likesLabel.textColor = [UIColor colorWithRed:172.0/255.0 green:172.0/255.0 blue:172.0/255.0 alpha:1];
     _likesLabel.numberOfLines = 1;
     [_likesContainer addSubview:_likesLabel];
@@ -212,6 +213,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         swipeGesture.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
         [self.view addGestureRecognizer:swipeGesture];
     }
+    
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-60, -60) forBarMetrics:UIBarMetricsDefault];
     
 	// Super
     [super viewDidLoad];
@@ -332,6 +335,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _previousButton = nil;
     _nextButton = nil;
     _progressHUD = nil;
+    
     [super viewDidUnload];
 }
 
@@ -469,16 +473,18 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-//    navBar.tintColor = [UIColor whiteColor];
-//    navBar.barTintColor = nil;
+    navBar.tintColor = [UIColor whiteColor];
+    navBar.barTintColor = nil;
     navBar.tintColor = [UIColor whiteColor];
     navBar.barTintColor = [UIColor clearColor];
     navBar.shadowImage = nil;
     navBar.translucent = YES;
     navBar.barStyle = UIBarStyleBlackTranslucent;
-    //UIImage *imageForButton = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/back_arrow_white" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
-    UIImage *imageForButton = [UIImage imageNamed:@"back_arrow_white"];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:imageForButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed:)];
+//    self.navigationItem.leftBarButtonItem.title = @"";
+//    self.navigationItem.backBarButtonItem.title = @"";
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:self.navigationItem.backBarButtonItem.style target:nil action:nil];
+//    UIImage *imageForButton = [UIImage imageNamed:@"back_arrow"];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:imageForButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed:)];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
 }
@@ -1036,7 +1042,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (CGRect)frameForLikesContainer {
-    CGFloat containerWidth = 100;
+    CGFloat containerWidth = 120;
     CGFloat containerHeight = 40;
     CGRect scrollViewFrame = [self frameForPagingScrollView];
     CGFloat posX = scrollViewFrame.size.width / 2 - containerWidth / 2;
