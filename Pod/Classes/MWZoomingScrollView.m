@@ -17,7 +17,7 @@
 // Private methods and properties
 @interface MWZoomingScrollView () {
     
-    MWPhotoBrowser __weak *_photoBrowser;
+    //MWPhotoBrowser __weak *_photoBrowser;
 	MWTapDetectingView *_tapView; // for background taps
 	MWTapDetectingImageView *_photoImageView;
 	DACircularProgressView *_loadingIndicator;
@@ -49,7 +49,7 @@
 		_photoImageView.contentMode = UIViewContentModeCenter;
 		_photoImageView.backgroundColor = [UIColor blackColor];
 		[self addSubview:_photoImageView];
-		
+        
 		// Loading indicator
 		_loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(140.0f, 30.0f, 40.0f, 40.0f)];
         _loadingIndicator.userInteractionEnabled = NO;
@@ -305,6 +305,16 @@
 
 }
 
+#pragma mark - Frame calculation
+
+- (CGRect)frameForLikeAnimation:(CGRect)frame {
+    CGFloat animationContainerSize = 125;
+    CGFloat posX = (frame.size.width - animationContainerSize) / 2;
+    CGFloat posY = (frame.size.height - animationContainerSize) / 2;
+    CGRect frameForRect = CGRectMake(posX, posY, animationContainerSize, animationContainerSize);
+    return frameForRect;
+}
+
 #pragma mark - Layout
 
 - (void)layoutSubviews {
@@ -409,6 +419,7 @@
 	
 	// Delay controls
 	[_photoBrowser hideControlsAfterDelay];
+    
 	
 }
 
@@ -416,8 +427,33 @@
 - (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch { 
     [self handleSingleTap:[touch locationInView:imageView]];
 }
+
 - (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch {
-    [self handleDoubleTap:[touch locationInView:imageView]];
+    UIImageView *likeAnimationView = [[UIImageView alloc] initWithFrame:[self frameForLikeAnimation:self.frame]];
+    likeAnimationView.image = [UIImage imageNamed:@"big_heart"];
+    likeAnimationView.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:likeAnimationView];
+    
+    [UIView animateWithDuration:0.1f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+        likeAnimationView.transform = CGAffineTransformMakeScale(1.3, 1.3);
+        likeAnimationView.alpha = 1.0;
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.1f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+            likeAnimationView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.1f delay:0.3 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+                likeAnimationView.transform = CGAffineTransformMakeScale(0.3, 0.3);
+                likeAnimationView.alpha = 0.0;
+            } completion:^(BOOL finished) {
+                likeAnimationView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                [likeAnimationView removeFromSuperview];
+            }];
+        }];
+    }];
+    
+    if (![self.photoBrowser.fullscreenPhotoDelegate isLiked:self.photoBrowser.currentPageIndex]){
+        [self.photoBrowser likeButtonPressed];
+    }
 }
 
 // Background View
@@ -430,16 +466,6 @@
     touchX += self.contentOffset.x;
     touchY += self.contentOffset.y;
     [self handleSingleTap:CGPointMake(touchX, touchY)];
-}
-- (void)view:(UIView *)view doubleTapDetected:(UITouch *)touch {
-    // Translate touch location to image view location
-    CGFloat touchX = [touch locationInView:view].x;
-    CGFloat touchY = [touch locationInView:view].y;
-    touchX *= 1/self.zoomScale;
-    touchY *= 1/self.zoomScale;
-    touchX += self.contentOffset.x;
-    touchY += self.contentOffset.y;
-    [self handleDoubleTap:CGPointMake(touchX, touchY)];
 }
 
 @end
