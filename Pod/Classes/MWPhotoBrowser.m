@@ -384,7 +384,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (_autoPlayOnAppear) {
             MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
             if ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo) {
-                [self playVideoAtIndex:_currentPageIndex];
+                [self requestPlayVideoAtIndex:_currentPageIndex];
             }
         }
     }
@@ -1173,7 +1173,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     NSUInteger index = [self indexForPlayButton:sender];
     if (index != NSUIntegerMax) {
         if (!_currentVideoPlayerViewController) {
-            [self playVideoAtIndex:index];
+            [self requestPlayVideoAtIndex:index];
         }
     }
 }
@@ -1191,9 +1191,24 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark - Video
 
-- (void)playVideoAtIndex:(NSUInteger)index {
-    id photo = [self photoAtIndex:index];
-    if ([photo respondsToSelector:@selector(getVideoURL:)]) {
+- (void)requestPlayVideoAtIndex:(NSUInteger)index {
+    id video = [self photoAtIndex:index];
+    if ([self.delegate respondsToSelector:@selector(photoBrowser:requestVideoPlayback:allowPermission:)]) {
+        
+        // ask for permission to play video
+        [self.delegate photoBrowser:self requestVideoPlayback:video allowPermission:^(BOOL allowPlayback) {
+            if (allowPlayback) {
+                [self playVideo:video];
+            }
+        }];
+        
+    } else { // delegate does not respond - play anyway
+        [self playVideo:video];
+    }
+}
+
+- (void)playVideo:(MWPhoto *)video {
+    if ([video respondsToSelector:@selector(getVideoURL:)]) {
         
         // Valid for playing
         [self clearCurrentVideo];
@@ -1202,7 +1217,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
         // Get video and play
         typeof(self) __weak weakSelf = self;
-        [photo getVideoURL:^(NSURL *url) {
+        [video getVideoURL:^(NSURL *url) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 // If the video is not playing anymore then bail
                 typeof(self) strongSelf = weakSelf;
