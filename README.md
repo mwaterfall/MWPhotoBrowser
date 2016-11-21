@@ -1,7 +1,7 @@
 # Fork 
-## Load photos with placeHolder
-`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header];`
 ## Load photos with authorisation
+`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header];`
+## Load photos with placeHolder
 `photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] placeHolder:placeHolder];`
 ## Load photos with authorisation and placeHolder
 `photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header placeHolder:placeHolder];`
