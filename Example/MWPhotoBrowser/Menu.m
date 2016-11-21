@@ -135,21 +135,26 @@
             break;
         }
         case 6: {
+            cell.textLabel.text = @"Web photos";
+            cell.detailTextLabel.text = @"photos from web with authorisation";
+            break;
+        }
+        case 7: {
             cell.textLabel.text = @"Web photo grid";
             cell.detailTextLabel.text = @"showing grid first";
             break;
         }
-        case 7: {
+        case 8: {
             cell.textLabel.text = @"Single video";
             cell.detailTextLabel.text = @"with auto-play";
             break;
         }
-        case 8: {
+        case 9: {
             cell.textLabel.text = @"Web videos";
             cell.detailTextLabel.text = @"showing grid first";
             break;
         }
-		case 9: {
+		case 10: {
             cell.textLabel.text = @"Library photos and videos";
             cell.detailTextLabel.text = @"media from device library";
             break;
@@ -276,7 +281,22 @@
 			[thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_q.jpg"]]];
             // Options
 			break;
-		case 6:
+        case 6:
+            // Photos
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"] header:@{}]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg"] header:@{}]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"] header:@{}]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg"] header:@{}]];
+            [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_b.jpg"] header:@{}]];
+            // Thumbs
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_q.jpg"] header:@{}]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_q.jpg"] header:@{}]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_q.jpg"] header:@{}]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_q.jpg"] header:@{}]];
+            [thumbs addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm3.static.flickr.com/2449/4052876281_6e068ac860_q.jpg"] header:@{}]];
+            // Options
+            break;
+		case 7:
             // Photos & thumbs
             photo = [MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3779/9522424255_28a5a9d99c_b.jpg"]];
             photo.caption = @"Tube";
@@ -1029,7 +1049,7 @@
             // Options
             startOnGrid = YES;
 			break;
-        case 7: {
+        case 8: {
             
             // Single video
             photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video_thumb" ofType:@"jpg"]]];
@@ -1040,7 +1060,7 @@
             break;
             
         }
-		case 8: {
+		case 9: {
             
             // Videos
             
@@ -1076,7 +1096,7 @@
             startOnGrid = YES;
             break;
         }
-		case 9: {
+		case 10: {
             @synchronized(_assets) {
                 NSMutableArray *copy = [_assets copy];
                 if (NSClassFromString(@"PHAsset")) {

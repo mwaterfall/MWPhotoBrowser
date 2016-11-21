@@ -1,3 +1,12 @@
+# Fork 
+## Load photos with authorisation
+`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header];`
+## Load photos with placeHolder
+`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] placeHolder:placeHolder];`
+## Load photos with authorisation and placeHolder
+`photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:header placeHolder:placeHolder];`
+
+
 # MWPhotoBrowser
 
 <!--[![CI Status](http://img.shields.io/travis/Michael Waterfall/MWPhotoBrowser.svg?style=flat)](https://travis-ci.org/Michael Waterfall/MWPhotoBrowser)-->
@@ -46,6 +55,9 @@ self.photos = [NSMutableArray array];
 [photos addObject:[MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2l" ofType:@"jpg"]]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b.jpg"]]];
 [photos addObject:[MWPhoto photoWithURL:[NSURL URLWithString:@"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b.jpg"]]];
+
+// Add photo with authorisation 
+photo = [MWPhoto photoWithURL:[NSURL URLWithString:stringUrlImage] headers:@{@"Authorisation": "Basic RhjgYKUYQSFDwxxcyfkFHG}];
 
 // Add video with poster photo
 MWPhoto *video = [MWPhoto photoWithURL:[NSURL URLWithString:@"https://scontent.cdninstagram.com/hphotos-xpt1/t51.2885-15/e15/11192696_824079697688618_1761661_n.jpg"]];

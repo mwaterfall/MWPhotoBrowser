@@ -6,7 +6,7 @@
 //
 //
 
-#import <DACircularProgress/DACircularProgressView.h>
+#import "DACircularProgressView.h"
 #import "MWGridCell.h"
 #import "MWCommon.h"
 #import "MWPhotoBrowserPrivate.h"

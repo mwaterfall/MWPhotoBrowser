@@ -23,12 +23,18 @@
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
 + (MWPhoto *)photoWithURL:(NSURL *)url;
++ (MWPhoto *)photoWithURL:(NSURL *)url headers:(NSDictionary *)headers;
++ (MWPhoto *)photoWithURL:(NSURL *)url placeHolder:(UIImage *)placeHolder;
++ (MWPhoto *)photoWithURL:(NSURL *)url headers:(NSDictionary *)headers placeHolder:(UIImage *)placeHolder;
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 + (MWPhoto *)videoWithURL:(NSURL *)url; // Initialise video with no poster image
 
 - (id)init;
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithURL:(NSURL *)url;
+- (id)initWithURL:(NSURL *)url withHeaders:(NSDictionary *)headers;
+- (id)initWithURL:(NSURL *)url withPlaceholder:(UIImage *)placeHolder;
+- (id)initWithURL:(NSURL *)url withHeaders:(NSDictionary *)headers withPlaceholder:(UIImage *)placeHolder;
 - (id)initWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize;
 - (id)initWithVideoURL:(NSURL *)url;
 
