@@ -23,7 +23,7 @@
 @property (nonatomic, weak) UIButton *selectedButton;
 @property (nonatomic, weak) UIButton *playButton;
 
-- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser;
+- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser andBackgroundColor:(UIColor*)color;
 - (void)displayImage;
 - (void)displayImageFailure;
 - (void)setMaxMinZoomScalesForCurrentBounds;
