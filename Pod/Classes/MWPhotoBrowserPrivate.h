@@ -38,7 +38,6 @@
     MBProgressHUD *_progressHUD;
     
     // Grid
-    MWGridViewController *_gridController;
     UIBarButtonItem *_gridPreviousLeftNavItem;
     UIBarButtonItem *_gridPreviousRightNavItem;
     
