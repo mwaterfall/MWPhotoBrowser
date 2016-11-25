@@ -19,6 +19,7 @@
 #endif
 
 @class MWPhotoBrowser;
+@class MWGridViewController;
 
 @protocol MWPhotoBrowserDelegate <NSObject>
 
@@ -38,7 +39,12 @@
 
 @end
 
-@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
+@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate> {
+    
+@public
+    
+    MWGridViewController *_gridController;
+}
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;

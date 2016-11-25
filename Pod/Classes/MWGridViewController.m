@@ -11,6 +11,19 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "MWCommon.h"
 
+#define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+
+#define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
+#define SCREEN_MAX_LENGTH (MAX(SCREEN_WIDTH, SCREEN_HEIGHT))
+#define SCREEN_MIN_LENGTH (MIN(SCREEN_WIDTH, SCREEN_HEIGHT))
+
+#define IS_IPHONE_4_OR_LESS (IS_IPHONE && SCREEN_MAX_LENGTH < 568.0)
+#define IS_IPHONE_5 (IS_IPHONE && SCREEN_MAX_LENGTH == 568.0)
+#define IS_IPHONE_6 (IS_IPHONE && SCREEN_MAX_LENGTH == 667.0)
+#define IS_IPHONE_6P (IS_IPHONE && SCREEN_MAX_LENGTH == 736.0)
+
 @interface MWGridViewController () {
     
     // Store margins for current setup
@@ -36,20 +49,30 @@
             _columns = 6, _columnsL = 8;
             _margin = 1, _gutter = 2;
             _marginL = 1, _gutterL = 2;
-        } else if ([UIScreen mainScreen].bounds.size.height == 480) {
+        } else if (IS_IPHONE_4_OR_LESS) {
             // iPhone 3.5 inch
             _columns = 3, _columnsL = 4;
             _margin = 0, _gutter = 1;
             _marginL = 1, _gutterL = 2;
-        } else {
+        } else if (IS_IPHONE_5) {
             // iPhone 4 inch
             _columns = 3, _columnsL = 5;
             _margin = 0, _gutter = 1;
             _marginL = 0, _gutterL = 2;
         }
-
+        else if (IS_IPHONE_6) {
+            _columns = 4, _columnsL = 7;
+            _margin = 0, _gutter = 1;
+            _marginL = 0, _gutterL = 2;
+        }
+        else if (IS_IPHONE_6P) {
+            _columns = 4, _columnsL = 7;
+            _margin = 0, _gutter = 1;
+            _marginL = 0, _gutterL = 2;
+        }
+        
         _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
- 
+        
     }
     return self;
 }
@@ -76,11 +99,17 @@
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    [self performLayout];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.collectionView reloadData];
+    [self performLayout];
 }
 
 - (void)adjustOffsetsAsRequired {
