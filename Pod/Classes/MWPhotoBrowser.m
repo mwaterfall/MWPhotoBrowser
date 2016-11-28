@@ -1161,6 +1161,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
     if (index != NSUIntegerMax) {
+        if ([self.delegate respondsToSelector:@selector(photoBrowser:shouldSelectPhotoAtIndex:)]) {
+            BOOL shouldSelect = [self.delegate photoBrowser:self shouldSelectPhotoAtIndex:index];
+            if (!shouldSelect && !selectedButton.isSelected) {
+                return;
+            }
+        }
         [self setPhotoSelected:selectedButton.selected atIndex:index];
     }
 }
