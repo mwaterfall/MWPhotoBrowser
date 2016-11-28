@@ -158,6 +158,14 @@
 }
 
 - (void)selectionButtonPressed {
+    
+    if ([_gridController.browser.delegate respondsToSelector:@selector(photoBrowser:shouldSelectPhotoAtIndex:)]) {
+        BOOL shouldSelect = [_gridController.browser.delegate photoBrowser:_gridController.browser shouldSelectPhotoAtIndex:_index];
+        if (!shouldSelect && !_selectedButton.isSelected) {
+            return;
+        }
+    }
+    
     _selectedButton.selected = !_selectedButton.selected;
     [_gridController.browser setPhotoSelected:_selectedButton.selected atIndex:_index];
 }
