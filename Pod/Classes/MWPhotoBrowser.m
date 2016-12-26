@@ -12,6 +12,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
+#import <XCDYouTubeKit.h>
 
 #define PADDING                  10
 
@@ -630,6 +631,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.view setNeedsLayout];
     }
     
+    if (_gridController) {
+        [_gridController.collectionView reloadData];
+    }
+    
 }
 
 - (NSUInteger)numberOfPhotos {
@@ -1222,6 +1227,24 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)_playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index {
+    
+    //檢查是不是 youtube 的連結
+    NSString *urlString = videoURL.absoluteString;
+    NSError *error;
+    NSRegularExpression *regex;
+    NSString *regexString = @"(?:youtube.com.+v[=/]|youtu.be/)([-a-zA-Z0-9_]+)";
+    regex = [NSRegularExpression regularExpressionWithPattern:regexString
+                                                      options:NSRegularExpressionCaseInsensitive
+                                                        error:&error];
+    
+    NSTextCheckingResult *match = [regex firstMatchInString:urlString
+                                                    options:0
+                                                      range:NSMakeRange(0, [urlString length])];
+    if (match) {
+        NSString *youtubeID = [urlString substringWithRange:[match rangeAtIndex:1]];
+        [self playYoutube:youtubeID];
+        return;
+    }
 
     // Setup player
     _currentVideoPlayerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:videoURL];
@@ -1664,6 +1687,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.progressHUD hide:YES];
     }
     self.navigationController.navigationBar.userInteractionEnabled = YES;
+}
+
+-(void)playYoutube:(NSString *)youtubeID{
+    XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:youtubeID];
+    [self presentMoviePlayerViewControllerAnimated:videoPlayerViewController];
 }
 
 @end
