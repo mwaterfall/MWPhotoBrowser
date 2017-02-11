@@ -90,7 +90,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _backgroundColor = [UIColor blackColor];
     _progressColor = nil;
     _imageCellBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
-    _preLoadNum = 1;
+    _preLoadNumLeft = 0;
+    _preLoadNumRight = 0;
 
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -732,14 +733,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         // If page is current page then initiate loading of previous and next pages
         NSUInteger pageIndex = page.index;
         if (_currentPageIndex == pageIndex) {
-            for (int i = MAX(pageIndex - _preLoadNum, 0); i < pageIndex; ++i) {
+            for (int i = MAX(pageIndex - _preLoadNumLeft, 0); i < pageIndex; ++i) {
                 id <MWPhoto> photo = [self photoAtIndex:i];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
                     MWLog(@"Pre-loading image at index %lu", (unsigned long)pageIndex-1);
                 }
             }
-            for (int i = pageIndex+1; i <= pageIndex+_preLoadNum && i < [self numberOfPhotos]; ++i) {
+            for (int i = pageIndex+1; i <= pageIndex+_preLoadNumRight && i < [self numberOfPhotos]; ++i) {
                 id <MWPhoto> photo = [self photoAtIndex:i];
                 if (![photo underlyingImage]) {
                     [photo loadUnderlyingImageAndNotify];
@@ -934,7 +935,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     NSUInteger i;
     if (index > 0) {
         // Release anything < index - 1
-        for (i = 0; i+_preLoadNum < index; i++) {
+        for (i = 0; i+_preLoadNumLeft < index; i++) {
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
                 [photo unloadUnderlyingImage];
@@ -945,7 +946,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     if (index < [self numberOfPhotos] - 1) {
         // Release anything > index + 1
-        for (i = index + _preLoadNum + 1; i < _photos.count; i++) {
+        for (i = index + _preLoadNumRight + 1; i < _photos.count; i++) {
             id photo = [_photos objectAtIndex:i];
             if (photo != [NSNull null]) {
                 [photo unloadUnderlyingImage];

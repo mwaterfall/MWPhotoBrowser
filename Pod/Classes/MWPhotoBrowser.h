@@ -65,7 +65,9 @@
 @property (nonatomic, strong) UIColor *trackTintColor;
 @property (nonatomic, strong) UIColor *imageCellBackgroundColor;
 
-@property (nonatomic) NSUInteger preLoadNum;
+@property (nonatomic) NSUInteger preLoadNumLeft;
+@property (nonatomic) NSUInteger preLoadNumRight;
+
 
 
 // Customise image selection icons as they are the only icons with a colour tint
