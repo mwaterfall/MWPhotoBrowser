@@ -53,6 +53,23 @@
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
+// Customize Appearance
+@property (nonatomic, assign) UIBarStyle navigationBarStyle;
+@property (nonatomic, strong) UIColor *navigationBarTintColor;
+@property (nonatomic, strong) UIImage *navigationBarBackgroundImage;
+@property (nonatomic, assign) UIBarStyle toolbarBarStyle;
+@property (nonatomic, strong) UIColor *toolbarTintColor;
+@property (nonatomic, strong) UIImage *toolbarBackgroundImage;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *progressColor;
+@property (nonatomic, strong) UIColor *trackTintColor;
+@property (nonatomic, strong) UIColor *imageCellBackgroundColor;
+
+@property (nonatomic) NSUInteger preLoadNumLeft;
+@property (nonatomic) NSUInteger preLoadNumRight;
+
+
+
 // Customise image selection icons as they are the only icons with a colour tint
 // Icon should be located in the app's main bundle
 @property (nonatomic, strong) NSString *customImageSelectedIconName;
