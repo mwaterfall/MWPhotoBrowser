@@ -1623,6 +1623,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
             
             // Show loading spinner after a couple of seconds
+            //不懂為什麼要秀，這樣連取消都會跑 loading 了
+            /*
             double delayInSeconds = 2.0;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -1630,6 +1632,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                     [self showProgressHUDWithMessage:nil];
                 }
             });
+             */
 
             // Show
             typeof(self) __weak weakSelf = self;
