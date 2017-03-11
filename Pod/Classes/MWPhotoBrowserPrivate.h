@@ -49,6 +49,7 @@
     UIStatusBarStyle _previousStatusBarStyle;
     UIColor *_previousNavBarTintColor;
     UIColor *_previousNavBarBarTintColor;
+    UIImage *_previousNavBarShadowImage;
     UIBarButtonItem *_previousViewControllerBackButton;
     UIImage *_previousNavigationBarBackgroundImageDefault;
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
