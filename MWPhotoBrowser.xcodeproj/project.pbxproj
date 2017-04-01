@@ -7,27 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		856264E41E8FFF00003279BC /* MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264E21E8FFF00003279BC /* MWPhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		856265061E900131003279BC /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F01E900131003279BC /* MWCaptionView.h */; };
+		856265061E900131003279BC /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F01E900131003279BC /* MWCaptionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265071E900131003279BC /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264F11E900131003279BC /* MWCaptionView.m */; };
-		856265081E900131003279BC /* MWCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F21E900131003279BC /* MWCommon.h */; };
-		856265091E900131003279BC /* MWGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F31E900131003279BC /* MWGridCell.h */; };
+		856265081E900131003279BC /* MWCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F21E900131003279BC /* MWCommon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		856265091E900131003279BC /* MWGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F31E900131003279BC /* MWGridCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8562650A1E900131003279BC /* MWGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264F41E900131003279BC /* MWGridCell.m */; };
-		8562650B1E900131003279BC /* MWGridViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F51E900131003279BC /* MWGridViewController.h */; };
+		8562650B1E900131003279BC /* MWGridViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F51E900131003279BC /* MWGridViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8562650C1E900131003279BC /* MWGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264F61E900131003279BC /* MWGridViewController.m */; };
-		8562650D1E900131003279BC /* MWPhoto.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F71E900131003279BC /* MWPhoto.h */; };
+		8562650D1E900131003279BC /* MWPhoto.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F71E900131003279BC /* MWPhoto.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8562650E1E900131003279BC /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264F81E900131003279BC /* MWPhoto.m */; };
-		8562650F1E900131003279BC /* MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F91E900131003279BC /* MWPhotoBrowser.h */; };
+		8562650F1E900131003279BC /* MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264F91E900131003279BC /* MWPhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265101E900131003279BC /* MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264FA1E900131003279BC /* MWPhotoBrowser.m */; };
-		856265111E900131003279BC /* MWPhotoBrowserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FB1E900131003279BC /* MWPhotoBrowserPrivate.h */; };
-		856265121E900131003279BC /* MWPhotoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FC1E900131003279BC /* MWPhotoProtocol.h */; };
-		856265131E900131003279BC /* MWTapDetectingImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FD1E900131003279BC /* MWTapDetectingImageView.h */; };
+		856265111E900131003279BC /* MWPhotoBrowserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FB1E900131003279BC /* MWPhotoBrowserPrivate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		856265121E900131003279BC /* MWPhotoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FC1E900131003279BC /* MWPhotoProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		856265131E900131003279BC /* MWTapDetectingImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FD1E900131003279BC /* MWTapDetectingImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265141E900131003279BC /* MWTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856264FE1E900131003279BC /* MWTapDetectingImageView.m */; };
-		856265151E900131003279BC /* MWTapDetectingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FF1E900131003279BC /* MWTapDetectingView.h */; };
+		856265151E900131003279BC /* MWTapDetectingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856264FF1E900131003279BC /* MWTapDetectingView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265161E900131003279BC /* MWTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265001E900131003279BC /* MWTapDetectingView.m */; };
-		856265171E900131003279BC /* MWZoomingScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265011E900131003279BC /* MWZoomingScrollView.h */; };
+		856265171E900131003279BC /* MWZoomingScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265011E900131003279BC /* MWZoomingScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265181E900131003279BC /* MWZoomingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265021E900131003279BC /* MWZoomingScrollView.m */; };
-		856265191E900131003279BC /* UIImage+MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265031E900131003279BC /* UIImage+MWPhotoBrowser.h */; };
+		856265191E900131003279BC /* UIImage+MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265031E900131003279BC /* UIImage+MWPhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8562651A1E900131003279BC /* UIImage+MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265041E900131003279BC /* UIImage+MWPhotoBrowser.m */; };
 		856265631E9001B1003279BC /* Assets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 856265621E9001B1003279BC /* Assets.bundle */; };
 		856265661E900316003279BC /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 856265651E900316003279BC /* ImageIO.framework */; };
@@ -35,9 +34,9 @@
 		8562656A1E900326003279BC /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 856265691E900326003279BC /* AssetsLibrary.framework */; };
 		8562656C1E900330003279BC /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8562656B1E900330003279BC /* MediaPlayer.framework */; };
 		8562656E1E900336003279BC /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8562656D1E900336003279BC /* Photos.framework */; };
-		856265741E900522003279BC /* DACircularProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265701E900522003279BC /* DACircularProgressView.h */; };
+		856265741E900522003279BC /* DACircularProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265701E900522003279BC /* DACircularProgressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265751E900522003279BC /* DACircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265711E900522003279BC /* DACircularProgressView.m */; };
-		856265761E900522003279BC /* DALabeledCircularProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265721E900522003279BC /* DALabeledCircularProgressView.h */; };
+		856265761E900522003279BC /* DALabeledCircularProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 856265721E900522003279BC /* DALabeledCircularProgressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		856265771E900522003279BC /* DALabeledCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265731E900522003279BC /* DALabeledCircularProgressView.m */; };
 		856265791E900AF4003279BC /* MBProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 856265781E900AF4003279BC /* MBProgressHUD.framework */; };
 		8562657B1E9015A0003279BC /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8562657A1E9015A0003279BC /* SDWebImage.framework */; };
@@ -191,21 +190,20 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				856265171E900131003279BC /* MWZoomingScrollView.h in Headers */,
-				856265091E900131003279BC /* MWGridCell.h in Headers */,
-				856265741E900522003279BC /* DACircularProgressView.h in Headers */,
-				856265121E900131003279BC /* MWPhotoProtocol.h in Headers */,
-				856265761E900522003279BC /* DALabeledCircularProgressView.h in Headers */,
-				8562650D1E900131003279BC /* MWPhoto.h in Headers */,
-				856265131E900131003279BC /* MWTapDetectingImageView.h in Headers */,
-				856265111E900131003279BC /* MWPhotoBrowserPrivate.h in Headers */,
-				8562650B1E900131003279BC /* MWGridViewController.h in Headers */,
 				856265061E900131003279BC /* MWCaptionView.h in Headers */,
 				856265081E900131003279BC /* MWCommon.h in Headers */,
-				856265151E900131003279BC /* MWTapDetectingView.h in Headers */,
-				856265191E900131003279BC /* UIImage+MWPhotoBrowser.h in Headers */,
+				856265091E900131003279BC /* MWGridCell.h in Headers */,
+				8562650B1E900131003279BC /* MWGridViewController.h in Headers */,
+				8562650D1E900131003279BC /* MWPhoto.h in Headers */,
 				8562650F1E900131003279BC /* MWPhotoBrowser.h in Headers */,
-				856264E41E8FFF00003279BC /* MWPhotoBrowser.h in Headers */,
+				856265111E900131003279BC /* MWPhotoBrowserPrivate.h in Headers */,
+				856265121E900131003279BC /* MWPhotoProtocol.h in Headers */,
+				856265131E900131003279BC /* MWTapDetectingImageView.h in Headers */,
+				856265151E900131003279BC /* MWTapDetectingView.h in Headers */,
+				856265171E900131003279BC /* MWZoomingScrollView.h in Headers */,
+				856265191E900131003279BC /* UIImage+MWPhotoBrowser.h in Headers */,
+				856265741E900522003279BC /* DACircularProgressView.h in Headers */,
+				856265761E900522003279BC /* DALabeledCircularProgressView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
