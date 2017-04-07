@@ -28,11 +28,11 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "UIImage+Diff.h"
+#import <FBSnapshotTestCase/UIImage+Diff.h>
 
 @implementation UIImage (Diff)
 
-- (UIImage *)diffWithImage:(UIImage *)image
+- (UIImage *)fb_diffWithImage:(UIImage *)image
 {
   if (!image) {
     return nil;

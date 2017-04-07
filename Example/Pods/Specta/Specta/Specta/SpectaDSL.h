@@ -54,7 +54,7 @@ OBJC_EXTERN void waitUntil(void (^block)(DoneCallback done));
  *
  * @param timeout timeout for this @c block only; does not affect the global
  *      timeout, as @c setAsyncSpecTimeout() does.
- * @param ^block  runs test code
+ * @param block  runs test code
  */
 OBJC_EXTERN void waitUntilTimeout(NSTimeInterval timeout, void (^block)(DoneCallback done));
 
