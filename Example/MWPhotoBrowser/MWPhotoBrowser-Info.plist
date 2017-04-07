@@ -24,6 +24,10 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>MWPhotoBrowser 需要访问相机</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>MWPhotoBrowser 需要访问相册</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Main</string>
 	<key>UIMainStoryboardFile</key>
