@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MWPhoto.h"
+#import "MWPhotoProtocol.h"
 #import "MWGridViewController.h"
 
 @interface MWGridCell : UICollectionViewCell {}

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MWPhoto.h"
 #import "MWPhotoProtocol.h"
 #import "MWCaptionView.h"
 

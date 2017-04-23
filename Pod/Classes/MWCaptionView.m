@@ -8,7 +8,7 @@
 
 #import "MWCommon.h"
 #import "MWCaptionView.h"
-#import "MWPhoto.h"
+#import "MWPhotoProtocol.h"
 
 static const CGFloat labelPadding = 10;
 
