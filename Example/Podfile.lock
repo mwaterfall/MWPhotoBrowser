@@ -4,12 +4,12 @@ PODS:
   - MWPhotoBrowser (2.1.2):
     - DACircularProgress (~> 2.3)
     - MBProgressHUD
-    - SDWebImage (!= 3.7.2, ~> 3.7)
+    - SDWebImage
     - XCDYouTubeKit
-  - SDWebImage (3.8.2):
-    - SDWebImage/Core (= 3.8.2)
-  - SDWebImage/Core (3.8.2)
-  - XCDYouTubeKit (2.5.3)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
+  - XCDYouTubeKit (2.5.5)
 
 DEPENDENCIES:
   - MWPhotoBrowser (from `../`)
@@ -22,9 +22,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
-  MWPhotoBrowser: 82c808be36f08e13ab20c555a3c6739f3fc45078
-  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  XCDYouTubeKit: 90690f9e3523735dc93b8024269d991b0cfffe78
+  MWPhotoBrowser: ff1338bbaa18628f4c0ddb1cda2400e4eb76f3f2
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  XCDYouTubeKit: 86f4e7a9c2baa7b7adf6abfc28ac3ab34927be2d
 
 PODFILE CHECKSUM: 8d80a550b39a400bc48ef7231048ba8671fc89d2
 

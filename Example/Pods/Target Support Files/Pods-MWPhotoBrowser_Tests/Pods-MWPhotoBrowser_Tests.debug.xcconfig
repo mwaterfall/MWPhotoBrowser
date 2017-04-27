@@ -1,8 +1,8 @@
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/DACircularProgress" "${PODS_ROOT}/Headers/Public/MBProgressHUD" "${PODS_ROOT}/Headers/Public/MWPhotoBrowser" "${PODS_ROOT}/Headers/Public/SDWebImage" "${PODS_ROOT}/Headers/Public/XCDYouTubeKit"
-LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/DACircularProgress-iOS7.1" "$PODS_CONFIGURATION_BUILD_DIR/MBProgressHUD-iOS7.1" "$PODS_CONFIGURATION_BUILD_DIR/MWPhotoBrowser-iOS7.1" "$PODS_CONFIGURATION_BUILD_DIR/SDWebImage-iOS7.1" "$PODS_CONFIGURATION_BUILD_DIR/XCDYouTubeKit-iOS7.1"
+LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/DACircularProgress" "$PODS_CONFIGURATION_BUILD_DIR/MBProgressHUD" "$PODS_CONFIGURATION_BUILD_DIR/MWPhotoBrowser" "$PODS_CONFIGURATION_BUILD_DIR/SDWebImage" "$PODS_CONFIGURATION_BUILD_DIR/XCDYouTubeKit"
 OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/DACircularProgress" -isystem "${PODS_ROOT}/Headers/Public/MBProgressHUD" -isystem "${PODS_ROOT}/Headers/Public/MWPhotoBrowser" -isystem "${PODS_ROOT}/Headers/Public/SDWebImage" -isystem "${PODS_ROOT}/Headers/Public/XCDYouTubeKit"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"DACircularProgress-iOS7.1" -l"MBProgressHUD-iOS7.1" -l"MWPhotoBrowser-iOS7.1" -l"SDWebImage-iOS7.1" -l"XCDYouTubeKit-iOS7.1" -framework "AssetsLibrary" -framework "CoreGraphics" -framework "ImageIO" -framework "JavaScriptCore" -framework "MediaPlayer" -framework "QuartzCore" -weak_framework "Photos"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"DACircularProgress" -l"MBProgressHUD" -l"MWPhotoBrowser" -l"SDWebImage" -l"XCDYouTubeKit" -framework "AssetsLibrary" -framework "CoreGraphics" -framework "ImageIO" -framework "JavaScriptCore" -framework "MediaPlayer" -framework "QuartzCore" -weak_framework "Photos"
 PODS_BUILD_DIR = $BUILD_DIR
 PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_ROOT = ${SRCROOT}/Pods

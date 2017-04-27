@@ -69,11 +69,19 @@
 	}
 	
 	NSRegularExpression *signatureRegularExpression = [NSRegularExpression regularExpressionWithPattern:@"[\"']signature[\"']\\s*,\\s*([^\\(]+)" options:NSRegularExpressionCaseInsensitive error:NULL];
-	NSTextCheckingResult *signatureResult = [signatureRegularExpression firstMatchInString:script options:(NSMatchingOptions)0 range:NSMakeRange(0, script.length)];
-	NSString *signatureFunctionName = signatureResult.numberOfRanges > 1 ? [script substringWithRange:[signatureResult rangeAtIndex:1]] : nil;
-	
-	if (signatureFunctionName)
-		_signatureFunction = self.context[signatureFunctionName];
+	for (NSTextCheckingResult *signatureResult in [signatureRegularExpression matchesInString:script options:(NSMatchingOptions)0 range:NSMakeRange(0, script.length)])
+	{
+		NSString *signatureFunctionName = signatureResult.numberOfRanges > 1 ? [script substringWithRange:[signatureResult rangeAtIndex:1]] : nil;
+		if (!signatureFunctionName)
+			continue;
+		
+		JSValue *signatureFunction = self.context[signatureFunctionName];
+		if (signatureFunction.isObject)
+		{
+			_signatureFunction = signatureFunction;
+			break;
+		}
+	}
 	
 	if (!_signatureFunction)
 		XCDYouTubeLogWarning(@"No signature function in player script");
