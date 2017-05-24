@@ -1,0 +1,2 @@
+github "jdg/MBProgressHUD" ~> 1.0.0
+github "rs/SDWebImage"
