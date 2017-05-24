@@ -40,6 +40,8 @@
 		856265771E900522003279BC /* DALabeledCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 856265731E900522003279BC /* DALabeledCircularProgressView.m */; };
 		856265791E900AF4003279BC /* MBProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 856265781E900AF4003279BC /* MBProgressHUD.framework */; };
 		8562657B1E9015A0003279BC /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8562657A1E9015A0003279BC /* SDWebImage.framework */; };
+		857291971ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 857291951ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		857291981ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 857291961ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +81,8 @@
 		856265731E900522003279BC /* DALabeledCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DALabeledCircularProgressView.m; sourceTree = "<group>"; };
 		856265781E900AF4003279BC /* MBProgressHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MBProgressHUD.framework; path = Carthage/Build/iOS/MBProgressHUD.framework; sourceTree = "<group>"; };
 		8562657A1E9015A0003279BC /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = Carthage/Build/iOS/SDWebImage.framework; sourceTree = "<group>"; };
+		857291951ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNBPhotoBrowserPresentTransition.h; sourceTree = "<group>"; };
+		857291961ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNBPhotoBrowserPresentTransition.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +135,8 @@
 		856264EE1E900131003279BC /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				857291951ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.h */,
+				857291961ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.m */,
 				856264F01E900131003279BC /* MWCaptionView.h */,
 				856264F11E900131003279BC /* MWCaptionView.m */,
 				856264F21E900131003279BC /* MWCommon.h */,
@@ -202,6 +208,7 @@
 				856265151E900131003279BC /* MWTapDetectingView.h in Headers */,
 				856265171E900131003279BC /* MWZoomingScrollView.h in Headers */,
 				856265191E900131003279BC /* UIImage+MWPhotoBrowser.h in Headers */,
+				857291971ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.h in Headers */,
 				856265741E900522003279BC /* DACircularProgressView.h in Headers */,
 				856265761E900522003279BC /* DALabeledCircularProgressView.h in Headers */,
 			);
@@ -286,6 +293,7 @@
 				8562650E1E900131003279BC /* MWPhoto.m in Sources */,
 				856265101E900131003279BC /* MWPhotoBrowser.m in Sources */,
 				8562650A1E900131003279BC /* MWGridCell.m in Sources */,
+				857291981ED5747500009BE5 /* SNBPhotoBrowserPresentTransition.m in Sources */,
 				8562651A1E900131003279BC /* UIImage+MWPhotoBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

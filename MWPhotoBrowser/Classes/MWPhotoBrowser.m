@@ -12,10 +12,22 @@
 #import "MWPhotoBrowserPrivate.h"
 #import <SDWebImage/SDImageCache.h>
 #import "UIImage+MWPhotoBrowser.h"
+#import "SNBPhotoBrowserPresentTransition.h"
+
 
 #define PADDING                  10
 
 static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
+
+
+@interface MWPhotoBrowser ()
+
+@property (nonatomic, strong) SNBPhotoBrowserPresentTransition *interactiveDismiss;
+@property (nonatomic, strong) SNBPhotoBrowserPresentTransition *interactivePush;
+@property (nonatomic, strong) UILabel *titleLabel;
+
+@end
+
 
 @implementation MWPhotoBrowser
 
@@ -146,6 +158,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// View
 	self.view.backgroundColor = [UIColor blackColor];
     self.view.clipsToBounds = YES;
+    self.transitioningDelegate = self;
 	
 	// Setup paging scrolling view
 	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
@@ -390,7 +403,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
     _viewHasAppearedInitially = YES;
-        
+
+    if (!self.titleLabel.superview) {
+        self.titleLabel.frame = [self frameForTitleLabel];
+        [self.view addSubview:self.titleLabel];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -435,6 +452,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)didMoveToParentViewController:(UIViewController *)parent {
     if (!parent) _hasBelongedToViewController = YES;
+}
+
+- (UILabel *)titleLabel
+{
+    if (!_titleLabel) {
+        _titleLabel = [UILabel new];
+        _titleLabel.font = [UIFont systemFontOfSize:18];
+        _titleLabel.textColor = [UIColor whiteColor];
+        _titleLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    return _titleLabel;
 }
 
 #pragma mark - Nav Bar Appearance
@@ -495,6 +523,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	
 	// Toolbar
 	_toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+
+    self.titleLabel.frame = [self frameForTitleLabel];
     
 	// Remember index
 	NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -1042,6 +1072,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                       playButton.frame.size.height);
 }
 
+- (CGRect)frameForTitleLabel
+{
+    CGRect rect = [UIApplication sharedApplication].keyWindow.bounds;
+    return CGRectMake(0, 30, rect.size.width, 20);
+}
+
 #pragma mark - UIScrollView Delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -1098,6 +1134,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
             self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedString(@"of", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
+            self.titleLabel.text = self.title;
         }
 	} else {
 		self.title = nil;
@@ -1628,6 +1665,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     }
     
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source{
+    return [SNBPhotoBrowserPresentTransition transitionWithTransitionType:SNBPhotoBrowserPresentTransitionTypePresent];
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed{
+    return [SNBPhotoBrowserPresentTransition transitionWithTransitionType:SNBPhotoBrowserPresentTransitionTypeDismiss];
 }
 
 #pragma mark - Action Progress
