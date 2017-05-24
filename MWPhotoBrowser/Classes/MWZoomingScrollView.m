@@ -412,6 +412,12 @@
 	
 }
 
+- (void)handleLongPressGesture:(CGPoint)touchPoint
+{
+    [_photoBrowser.delegate photoBrowser:_photoBrowser longPressPhotoAtIndex:self.index withImage:_photoImageView.image];
+}
+
+
 // Image View
 - (void)imageView:(UIImageView *)imageView singleTapDetected:(UITouch *)touch { 
     [self handleSingleTap:[touch locationInView:imageView]];
