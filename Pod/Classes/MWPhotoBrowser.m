@@ -82,7 +82,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
-    
+    _hidesControlsOnSwipe = YES;
+    _enableHideTimer = YES;
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
@@ -355,7 +356,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self setNavBarAppearance:animated];
     
     // Update UI
-	[self hideControlsAfterDelay];
+	if(_enableHideTimer)
+		[self hideControlsAfterDelay];
     
     // Initial appearance
     if (!_viewHasAppearedInitially) {
@@ -577,7 +579,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	_currentPageIndex = _pageIndexBeforeRotation;
 	
 	// Delay control holding
-	[self hideControlsAfterDelay];
+	if(_enableHideTimer)
+		[self hideControlsAfterDelay];
     
     // Layout
     [self layoutVisiblePages];
@@ -1067,7 +1070,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// Hide controls when dragging begins
-	[self setControlsHidden:YES animated:YES permanent:NO];
+	if (_hidesControlsOnSwipe) {
+        [self setControlsHidden:YES animated:YES permanent:NO];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -1129,7 +1134,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	}
 	
 	// Update timer to give more time
-	[self hideControlsAfterDelay];
+	if (_enableHideTimer)
+		[self hideControlsAfterDelay];
 	
 }
 
