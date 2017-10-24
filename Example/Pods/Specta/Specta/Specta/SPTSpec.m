@@ -19,7 +19,7 @@
     [spec spec];
   }
   @catch (NSException *exception) {
-    fprintf(stderr, "%s: An exception has occured outside of tests, aborting.\n\n%s (%s) \n", [specName UTF8String], [[exception name] UTF8String], [[exception reason] UTF8String]);
+    fprintf(stderr, "%s: An exception has occurred outside of tests, aborting.\n\n%s (%s) \n", [specName UTF8String], [[exception name] UTF8String], [[exception reason] UTF8String]);
     if ([exception respondsToSelector:@selector(callStackSymbols)]) {
       NSArray *callStackSymbols = [exception callStackSymbols];
       if (callStackSymbols) {
@@ -33,6 +33,7 @@
     [self spt_unsetCurrentTestSuite];
   }
   [testSuite compile];
+  [[self class] testInvocations];
   [super initialize];
 }
 
@@ -144,6 +145,7 @@
     example.block(self);
   } else if (!example.pending) {
     self.spt_skipped = YES;
+    NSLog(@"Skipping '%@'", example.name);
   }
 
   [[[NSThread currentThread] threadDictionary] removeObjectForKey:spt_kCurrentSpecKey];

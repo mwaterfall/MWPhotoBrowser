@@ -7,6 +7,7 @@
 //
 
 #import <Expecta/Expecta.h>
+#import "ExpectaObject+FBSnapshotTest.h"
 
 @interface EXPExpectFBSnapshotTest : NSObject
 @end

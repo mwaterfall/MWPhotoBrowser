@@ -1,10 +1,6 @@
-# Specta
+# Specta [![Build Status](https://travis-ci.org/specta/specta.svg)](https://travis-ci.org/specta/specta) [![Coverage Status](https://coveralls.io/repos/specta/specta/badge.svg)](https://coveralls.io/r/specta/specta)
 
 A light-weight TDD / BDD framework for Objective-C.
-
-### Status
-[![Build Status](https://travis-ci.org/specta/specta.png)](https://travis-ci.org/specta/specta)
-[![Coverage Status](https://coveralls.io/repos/specta/specta/badge.svg)](https://coveralls.io/r/specta/specta)
 
 ## FEATURES
 
@@ -15,56 +11,7 @@ A light-weight TDD / BDD framework for Objective-C.
 
 ## SCREENSHOT
 
-![Specta Screenshot](https://raw.githubusercontent.com/specta/specta/master/misc/specta_screenshot.jpg)
-
-## SETUP
-
-Use [CocoaPods](http://github.com/CocoaPods/CocoaPods), [Carthage](https://github.com/carthage/carthage) or [Set up manually](#setting-up-manually)
-
-### CocoaPods
-
-1. Add Specta to your project's `Podfile`:
-
-	```ruby
-	target :MyApp do
-	  # your app dependencies
-	end
-
-	target :MyAppTests do
-	  pod 'Specta', '~> 0.5'
-	  # pod 'Expecta',     '~> 0.3'   # expecta matchers
-	  # pod 'OCMock',      '~> 2.2'   # OCMock
-	  # pod 'OCHamcrest',  '~> 3.0'   # hamcrest matchers
-	  # pod 'OCMockito',   '~> 1.0'   # OCMock
-	  # pod 'LRMocky',     '~> 0.9'   # LRMocky
-	end
-	```
-
-2. Run `pod update` or `pod install` in your project directory.
-
-### Carthage
-
-1. Add Specta to your project's `Cartfile.private`
-
-    ```
-    github "specta/specta" ~> 0.5
-    ```
-
-2. Run `carthage update` in your project directory
-3. Drag the appropriate `Specta.framework` for your platform (located in Carthage/Build/) into your application’s Xcode project, and add it to your test target(s).
-4. If you are building for iOS, a new `Run Script Phase` must be added to copy the framework. The instructions can be found on [Carthage's getting started instructions](https://github.com/carthage/carthage#getting-started)
-
-### SETTING UP MANUALLY
-
-1. Clone from Github.
-2. Run `rake` in project root to build.
-3. Add a "Cocoa/Cocoa Touch Unit Testing Bundle" target if you don't already have one.
-4. Copy and add all header files in `Products` folder to the Test target in your Xcode project.
-5. For **OS X projects**, copy and add `Specta.framework` in `Products/osx` folder to the test target in your Xcode project.
-   For **iOS projects**, copy and add `Specta.framework` in `Products/ios` folder to the test target in your Xcode project.
-   You can alternatively use `libSpecta.a`, if you prefer to add it as a static library for your project. (iOS 7 and below require this)
-6. Add `-ObjC` and `-all_load` to the "Other Linker Flags" build setting for the test target in your Xcode project.
-7. If you encounter linking issues with `_llvm_*` symbols, ensure your target's "Generate Test Coverage Files" and "Instrument Program Flow" build settings are set to `Yes`.
+<img src="https://raw.githubusercontent.com/specta/specta/master/misc/specta_screenshot.jpg" width="100%">
 
 ## EXAMPLE
 
@@ -156,12 +103,17 @@ SpecEnd
 * Do `#define SPT_CEDAR_SYNTAX` before importing Specta if you prefer to write `SPEC_BEGIN` and `SPEC_END` instead of `SpecBegin` and `SpecEnd`.
 * Prepend `f` to your `describe`, `context`, `example`, `it`, and `specify` to set focus on examples or groups. When specs are focused, all unfocused specs are skipped.
 * To use original XCTest reporter, set an environment variable named `SPECTA_REPORTER_CLASS` to `SPTXCTestReporter` in your test scheme.
-* Set an environment variable `SPECTA_NO_SHUFFLE` with value `1` to disable test shuffling.
+* Set an environment variable `SPECTA_SHUFFLE` with value `1` to enable test shuffling.
 * Set an environment variable `SPECTA_SEED` to specify the random seed for test shuffling.
 
-Standard XCTest matchers such as `XCTAssertEqualObjects` and `XCTAssertNil` work, but you probably want to add a nicer matcher framework - [Expecta](http://github.com/specta/expecta/) to your setup. Or if you really prefer, [OCHamcrest](https://github.com/jonreid/OCHamcrest) works fine too. Also, add a mocking framework: [OCMock](http://ocmock.org/).
+Standard XCTest matchers such as `XCTAssertEqualObjects` and `XCTAssertNil` work, but you probably want to add a nicer matcher framework - [Expecta](https://github.com/specta/expecta/) to your setup. Or if you really prefer, [OCHamcrest](https://github.com/hamcrest/OCHamcrest) works fine too. Also, add a mocking framework: [OCMock](http://ocmock.org/).
 
-## RUNNING TESTS IN COMMAND LINE
+## STATUS
+
+Specta is considered a done project, there are no plans for _active_ development on the project at the moment aside from ensuring future Xcode compatability.
+Therefore it is a stable dependency, but will not be moving into the Swift world. If you are looking for that, we recommend you consider [Quick](https://github.com/quick/quick).
+
+## RUNNING SPECTA'S TESTS IN COMMAND LINE
 
 * Run `rake test` in the cloned folder.
 
@@ -171,6 +123,57 @@ Standard XCTest matchers such as `XCTAssertEqualObjects` and `XCTAssertNil` work
 * Please prefix instance variable names with a single underscore (`_`).
 * Please prefix custom classes and functions defined in the global scope with `SPT`.
 
+## Installation
+
+Use [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Carthage](https://github.com/carthage/carthage) or [Set up manually](#setting-up-manually)
+
+### CocoaPods
+
+1. Add Specta to your project's `Podfile`:
+
+```ruby
+target :MyApp do
+# your app dependencies
+
+  target :MyAppTests do
+    inherit! :search_paths
+
+    pod 'Specta', '~> 1.0'
+    # pod 'Expecta',     '~> 1.0'   # expecta matchers
+    # pod 'OCMock',      '~> 2.2'   # OCMock
+    # pod 'OCHamcrest',  '~> 3.0'   # hamcrest matchers
+    # pod 'OCMockito',   '~> 1.0'   # OCMock
+    # pod 'LRMocky',     '~> 0.9'   # LRMocky
+  end
+end
+```
+
+2. Run `pod install` in your project directory.
+
+### Carthage
+
+1. Add Specta to your project's `Cartfile.private`
+
+    ```
+    github "specta/specta" ~> 1.0
+    ```
+
+2. Run `carthage update` in your project directory
+3. Drag the appropriate `Specta.framework` for your platform (located in Carthage/Build/) into your application’s Xcode project, and add it to your test target(s).
+4. If you are building for iOS, a new `Run Script Phase` must be added to copy the framework. The instructions can be found on [Carthage's getting started instructions](https://github.com/carthage/carthage#getting-started)
+
+### SETTING UP MANUALLY
+
+1. Clone from Github.
+2. Run `rake` in project root to build.
+3. Add a "Cocoa/Cocoa Touch Unit Testing Bundle" target if you don't already have one.
+4. Copy and add all header files in `Products` folder to the Test target in your Xcode project.
+5. For **OS X projects**, copy and add `Specta.framework` in `Products/osx` folder to the test target in your Xcode project.
+   For **iOS projects**, copy and add `Specta.framework` in `Products/ios` folder to the test target in your Xcode project.
+   You can alternatively use `libSpecta.a`, if you prefer to add it as a static library for your project. (iOS 7 and below require this)
+6. Add `-ObjC` and `-all_load` to the "Other Linker Flags" build setting for the test target in your Xcode project.
+7. If you encounter linking issues with `_llvm_*` symbols, ensure your target's "Generate Test Coverage Files" and "Instrument Program Flow" build settings are set to `Yes`.
+
 ## LICENSE
 
-Copyright (c) 2012-2015 [Specta Team](https://github.com/specta?tab=members). This software is licensed under the [MIT License](http://github.com/specta/specta/raw/master/LICENSE).
+Copyright (c) 2012-2016 [Specta Team](https://github.com/orgs/specta/people). This software is licensed under the [MIT License](http://github.com/specta/specta/raw/master/LICENSE).
