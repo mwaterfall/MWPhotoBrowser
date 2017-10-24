@@ -64,9 +64,8 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageOptions) {
     SDWebImageAllowInvalidSSLCertificates = 1 << 7,
 
     /**
-     * By default, image are loaded in the order they were queued. This flag move them to
-     * the front of the queue and is loaded immediately instead of waiting for the current queue to be loaded (which 
-     * could take a while).
+     * By default, images are loaded in the order in which they were queued. This flag moves them to
+     * the front of the queue.
      */
     SDWebImageHighPriority = 1 << 8,
     
@@ -181,6 +180,12 @@ SDWebImageManager *manager = [SDWebImageManager sharedManager];
  * @return SDWebImageManager shared instance
  */
 + (SDWebImageManager *)sharedManager;
+
+/**
+ * Allows to specify instance of cache and image downloader used with image manager.
+ * @return new instance of `SDWebImageManager` with specified cache and downloader.
+ */
+- (instancetype)initWithCache:(SDImageCache *)cache downloader:(SDWebImageDownloader *)downloader;
 
 /**
  * Downloads the image at the given URL if not present in cache or return the cached version otherwise.

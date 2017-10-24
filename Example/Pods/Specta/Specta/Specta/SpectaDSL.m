@@ -52,11 +52,14 @@ void spt_itShouldBehaveLike_(NSString *fileName, NSUInteger lineNumber, NSString
 
         beforeEach(^{
           NSDictionary *blockData = dataBlock();
-          [dataDict removeAllObjects];
           [dataDict addEntriesFromDictionary:blockData];
         });
 
         block(dataDict);
+
+        afterEach(^{
+          [dataDict removeAllObjects];
+        });
 
         afterAll(^{
           dataDict = nil;
