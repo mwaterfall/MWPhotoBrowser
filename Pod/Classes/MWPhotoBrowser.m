@@ -79,7 +79,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _recycledPages = [[NSMutableSet alloc] init];
     _photos = [[NSMutableArray alloc] init];
     _thumbPhotos = [[NSMutableArray alloc] init];
-    _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
+	if (@available(iOS 11.0, *)) {
+	} else {
+		_currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
+	}
     _didSavePreviousStateOfNavBar = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
@@ -1314,7 +1317,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // Init grid controller
     _gridController = [[MWGridViewController alloc] init];
-    _gridController.initialContentOffset = _currentGridContentOffset;
+	if (@available(iOS 11.0, *)) {
+	} else {
+		_gridController.initialContentOffset = _currentGridContentOffset;
+	}
     _gridController.browser = self;
     _gridController.selectionMode = _displaySelectionButtons;
     _gridController.view.frame = self.view.bounds;
@@ -1360,9 +1366,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     if (!_gridController) return;
     
-    // Remember previous content offset
-    _currentGridContentOffset = _gridController.collectionView.contentOffset;
-    
+	if (@available(iOS 11.0, *)) {
+	} else {
+		// Remember previous content offset
+		_currentGridContentOffset = _gridController.collectionView.contentOffset;
+	}
+	
     // Restore action button if it was removed
     if (_gridPreviousRightNavItem == _actionButton && _actionButton) {
         [self.navigationItem setRightBarButtonItem:_gridPreviousRightNavItem animated:YES];

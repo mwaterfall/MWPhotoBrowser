@@ -70,7 +70,7 @@
     BOOL _didSavePreviousStateOfNavBar;
     BOOL _skipNextPagingScrollViewPositioning;
     BOOL _viewHasAppearedInitially;
-    CGPoint _currentGridContentOffset;
+    CGPoint _currentGridContentOffset; // ignored since iOS 11
     
 }
 

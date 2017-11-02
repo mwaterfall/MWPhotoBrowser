@@ -48,7 +48,10 @@
             _marginL = 0, _gutterL = 2;
         }
 
-        _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
+		if (@available(iOS 11.0, *)) {
+		} else {
+			_initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
+		}
  
     }
     return self;
@@ -86,11 +89,14 @@
 - (void)adjustOffsetsAsRequired {
     
     // Move to previous content offset
-    if (_initialContentOffset.y != CGFLOAT_MAX) {
-        self.collectionView.contentOffset = _initialContentOffset;
-        [self.collectionView layoutIfNeeded]; // Layout after content offset change
-    }
-    
+		if (@available(iOS 11.0, *)) {
+		} else {
+			if (_initialContentOffset.y != CGFLOAT_MAX) {
+				self.collectionView.contentOffset = _initialContentOffset;
+				[self.collectionView layoutIfNeeded]; // Layout after content offset change
+			}
+		}
+			
     // Check if current item is visible and if not, make it so!
     if (_browser.numberOfPhotos > 0) {
         NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
@@ -111,7 +117,12 @@
 
 - (void)performLayout {
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+	CGFloat navBarBottom = 0;
+	if (@available(iOS 11.0, *)) {
+	} else {
+		navBarBottom = navBar.frame.origin.y + navBar.frame.size.height;
+	}
+    self.collectionView.contentInset = UIEdgeInsetsMake(navBarBottom + [self getGutter], 0, 0, 0);
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
