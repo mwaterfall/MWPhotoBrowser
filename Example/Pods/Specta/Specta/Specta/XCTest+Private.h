@@ -17,10 +17,11 @@
 
 @end
 
-#endif
-
 @protocol XCTestObservation <NSObject>
 @end
+
+
+#endif
 
 @interface _XCTestDriverTestObserver : NSObject <XCTestObservation>
 

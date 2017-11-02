@@ -32,6 +32,7 @@
     FBSnapshotTestController *snapshotController = [[FBSnapshotTestController alloc] initWithTestClass:[testCase class]];
     snapshotController.recordMode = record;
     snapshotController.referenceImagesDirectory = referenceDirectory;
+    snapshotController.usesDrawViewHierarchyInRect = [Expecta usesDrawViewHierarchyInRect];
 
     if (! snapshotController.referenceImagesDirectory) {
         [NSException raise:@"Missing value for referenceImagesDirectory" format:@"Call [[EXPExpectFBSnapshotTest instance] setReferenceImagesDirectory"];
@@ -40,6 +41,7 @@
     return [snapshotController compareSnapshotOfViewOrLayer:viewOrLayer
                                                    selector:NSSelectorFromString(snapshot)
                                                  identifier:nil
+                                                  tolerance:0
                                                       error:error];
 }
 

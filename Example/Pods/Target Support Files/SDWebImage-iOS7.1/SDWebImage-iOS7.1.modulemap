@@ -1,0 +1,6 @@
+framework module SDWebImage {
+  umbrella header "SDWebImage-iOS7.1-umbrella.h"
+
+  export *
+  module * { export * }
+}
