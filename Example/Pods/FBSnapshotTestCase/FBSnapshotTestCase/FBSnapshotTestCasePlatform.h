@@ -30,6 +30,14 @@ BOOL FBSnapshotTestCaseIs64Bit(void);
  @returns An @c NSOrderedSet object containing strings that are appended to the reference images directory.
  */
 NSOrderedSet *FBSnapshotTestCaseDefaultSuffixes(void);
+  
+/**
+ Returns a fully «normalized» file name.
+ Strips punctuation and spaces and replaces them with @c _. Also appends the device model, running OS and screen size to the file name.
+ 
+ @returns An @c NSString object containing the passed @c fileName with the device model, OS and screen size appended at the end.
+ */
+NSString *FBDeviceAgnosticNormalizedFileName(NSString *fileName);
 
 #ifdef __cplusplus
 }

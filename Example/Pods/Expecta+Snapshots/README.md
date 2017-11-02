@@ -19,6 +19,8 @@ Use `expect(view).to.recordSnapshotNamed(@"unique snapshot name")` to record a s
 
 If you project was compiled with Specta included, you have two extra methods that use the spec hierarchy to generate the snapshot name for you: `recordSnapshot()` and `haveValidSnapshot()`. You should only call these once per `it()` block.
 
+If you need the `usesDrawViewHierarchyInRect` property in order to correctly render UIVisualEffect, UIAppearance and Size Classes, call `[Expecta setUsesDrawViewHierarchyInRect:NO];` inside `beforeAll`.
+
 ``` Objective-C
 #define EXP_SHORTHAND
 #include <Specta/Specta.h>

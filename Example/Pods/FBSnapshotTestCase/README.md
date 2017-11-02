@@ -1,7 +1,7 @@
 FBSnapshotTestCase
 ======================
 
-[![Build Status](https://travis-ci.org/facebook/ios-snapshot-test-case.svg)](https://travis-ci.org/facebook/ios-snapshot-test-case)
+[![Build Status](https://travis-ci.org/facebook/ios-snapshot-test-case.svg)](https://travis-ci.org/facebook/ios-snapshot-test-case) [![Cocoa Pod Version](https://cocoapod-badges.herokuapp.com/v/FBSnapshotTestCase/badge.svg)](http://cocoadocs.org/docsets/FBSnapshotTestCase/)
 
 What it does
 ------------
@@ -40,13 +40,18 @@ Installation with CocoaPods
      end
      ```
 
+   If you support iOS 7 use `FBSnapshotTestCase/Core` instead, which doesn't contain Swift support.
+
    Replace "Tests" with the name of your test project.
 
-2. Define `FB_REFERENCE_IMAGE_DIR` in `GCC_PREPROCESSOR_DEFINITIONS`. This should
-   point to the directory where you want reference images to be stored. At Facebook,
-   we normally use this:
+2. There are [three ways](https://github.com/facebook/ios-snapshot-test-case/blob/master/FBSnapshotTestCase/FBSnapshotTestCase.h#L19-L29) of setting reference image directories, the recommended one is to define `FB_REFERENCE_IMAGE_DIR` in your scheme. This should point to the directory where you want reference images to be stored. At Facebook, we normally use this:
 
-     `GCC_PREPROCESSOR_DEFINITIONS = $(inherited) FB_REFERENCE_IMAGE_DIR="\"$(SOURCE_ROOT)/$(PROJECT_NAME)Tests/ReferenceImages\""`
+|Name|Value|
+|:---|:----|
+|`FB_REFERENCE_IMAGE_DIR`|`$(SOURCE_ROOT)/$(PROJECT_NAME)Tests/ReferenceImages`|
+
+
+![](FBSnapshotTestCaseDemo/Scheme_FB_REFERENCE_IMAGE_DIR.png)
 
 Creating a snapshot test
 ------------------------
@@ -68,6 +73,8 @@ Features
 - Supply an optional "identifier" if you want to perform multiple snapshots
   in a single test method.
 - Support for `CALayer` via `FBSnapshotVerifyLayer`.
+- `usesDrawViewHierarchyInRect` to handle cases like `UIVisualEffect`, `UIAppearance` and Size Classes.
+- `isDeviceAgnostic` to allow appending the device model (`iPhone`, `iPad`, `iPod Touch`, etc), OS version and screen size to the images (allowing to have multiple tests for the same «snapshot» for different `OS`s and devices).
 
 Notes
 -----

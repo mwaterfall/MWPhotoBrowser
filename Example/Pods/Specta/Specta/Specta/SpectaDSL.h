@@ -10,20 +10,20 @@
 
 typedef void (^DoneCallback)(void);
 
-OBJC_EXTERN void describe(NSString *name, void (^block)());
-OBJC_EXTERN void fdescribe(NSString *name, void (^block)());
+OBJC_EXTERN void describe(NSString *name, void (^block)(void));
+OBJC_EXTERN void fdescribe(NSString *name, void (^block)(void));
 
-OBJC_EXTERN void context(NSString *name, void (^block)());
-OBJC_EXTERN void fcontext(NSString *name, void (^block)());
+OBJC_EXTERN void context(NSString *name, void (^block)(void));
+OBJC_EXTERN void fcontext(NSString *name, void (^block)(void));
 
-OBJC_EXTERN void it(NSString *name, void (^block)());
-OBJC_EXTERN void fit(NSString *name, void (^block)());
+OBJC_EXTERN void it(NSString *name, void (^block)(void));
+OBJC_EXTERN void fit(NSString *name, void (^block)(void));
 
-OBJC_EXTERN void example(NSString *name, void (^block)());
-OBJC_EXTERN void fexample(NSString *name, void (^block)());
+OBJC_EXTERN void example(NSString *name, void (^block)(void));
+OBJC_EXTERN void fexample(NSString *name, void (^block)(void));
 
-OBJC_EXTERN void specify(NSString *name, void (^block)());
-OBJC_EXTERN void fspecify(NSString *name, void (^block)());
+OBJC_EXTERN void specify(NSString *name, void (^block)(void));
+OBJC_EXTERN void fspecify(NSString *name, void (^block)(void));
 
 #define   pending(...) spt_pending_(__VA_ARGS__, nil)
 #define xdescribe(...) spt_pending_(__VA_ARGS__, nil)
@@ -32,14 +32,14 @@ OBJC_EXTERN void fspecify(NSString *name, void (^block)());
 #define       xit(...) spt_pending_(__VA_ARGS__, nil)
 #define  xspecify(...) spt_pending_(__VA_ARGS__, nil)
 
-OBJC_EXTERN void beforeAll(void (^block)());
-OBJC_EXTERN void afterAll(void (^block)());
+OBJC_EXTERN void beforeAll(void (^block)(void));
+OBJC_EXTERN void afterAll(void (^block)(void));
 
-OBJC_EXTERN void beforeEach(void (^block)());
-OBJC_EXTERN void afterEach(void (^block)());
+OBJC_EXTERN void beforeEach(void (^block)(void));
+OBJC_EXTERN void afterEach(void (^block)(void));
 
-OBJC_EXTERN void before(void (^block)());
-OBJC_EXTERN void after(void (^block)());
+OBJC_EXTERN void before(void (^block)(void));
+OBJC_EXTERN void after(void (^block)(void));
 
 OBJC_EXTERN void sharedExamplesFor(NSString *name, void (^block)(NSDictionary *data));
 OBJC_EXTERN void sharedExamples(NSString *name, void (^block)(NSDictionary *data));
@@ -54,7 +54,7 @@ OBJC_EXTERN void waitUntil(void (^block)(DoneCallback done));
  *
  * @param timeout timeout for this @c block only; does not affect the global
  *      timeout, as @c setAsyncSpecTimeout() does.
- * @param ^block  runs test code
+ * @param block  runs test code
  */
 OBJC_EXTERN void waitUntilTimeout(NSTimeInterval timeout, void (^block)(DoneCallback done));
 
@@ -83,8 +83,8 @@ OBJC_EXTERN void setAsyncSpecTimeout(NSTimeInterval timeout);
 } \
 @end
 
-OBJC_EXTERN void spt_it_(NSString *name, NSString *fileName, NSUInteger lineNumber, void (^block)());
-OBJC_EXTERN void spt_fit_(NSString *name, NSString *fileName, NSUInteger lineNumber, void (^block)());
+OBJC_EXTERN void spt_it_(NSString *name, NSString *fileName, NSUInteger lineNumber, void (^block)(void));
+OBJC_EXTERN void spt_fit_(NSString *name, NSString *fileName, NSUInteger lineNumber, void (^block)(void));
 OBJC_EXTERN void spt_pending_(NSString *name, ...);
 OBJC_EXTERN void spt_itShouldBehaveLike_(NSString *fileName, NSUInteger lineNumber, NSString *name, id dictionaryOrBlock);
-OBJC_EXTERN void spt_itShouldBehaveLike_block(NSString *fileName, NSUInteger lineNumber, NSString *name, NSDictionary *(^block)());
+OBJC_EXTERN void spt_itShouldBehaveLike_block(NSString *fileName, NSUInteger lineNumber, NSString *name, NSDictionary *(^block)(void));
