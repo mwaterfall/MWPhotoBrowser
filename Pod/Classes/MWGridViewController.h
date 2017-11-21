@@ -13,7 +13,7 @@
 
 @property (nonatomic, assign) MWPhotoBrowser *browser;
 @property (nonatomic) BOOL selectionMode;
-@property (nonatomic) CGPoint initialContentOffset;
+@property (nonatomic) CGPoint initialContentOffset; // ignored since iOS 11.0
 
 - (void)adjustOffsetsAsRequired;
 
