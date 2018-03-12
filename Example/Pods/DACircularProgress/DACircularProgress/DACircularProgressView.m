@@ -123,7 +123,7 @@
 
 @end
 
-@interface DACircularProgressView ()
+@interface DACircularProgressView ()  <CAAnimationDelegate>
 
 @end
 
