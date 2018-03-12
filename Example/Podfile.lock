@@ -1,22 +1,26 @@
 PODS:
   - DACircularProgress (2.3.1)
-  - Expecta (1.0.0)
-  - Expecta+Snapshots (1.3.4):
+  - Expecta (1.0.6)
+  - Expecta+Snapshots (3.1.1):
     - Expecta (~> 1.0)
-    - FBSnapshotTestCase (~> 1.8)
-  - FBSnapshotTestCase (1.8.1)
-  - MBProgressHUD (0.9.2)
-  - MWPhotoBrowser (2.1.2):
+    - FBSnapshotTestCase/Core (~> 2.0)
+    - Specta (~> 1.0)
+  - FBSnapshotTestCase (2.1.4):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
+  - FBSnapshotTestCase/Core (2.1.4)
+  - FBSnapshotTestCase/SwiftSupport (2.1.4):
+    - FBSnapshotTestCase/Core
+  - MBProgressHUD (1.1.0)
+  - MWPhotoBrowser (3.1):
     - DACircularProgress (~> 2.3)
-    - MBProgressHUD (~> 0.9)
-    - SDWebImage (!= 3.7.2, ~> 3.7)
-  - SDWebImage (3.7.5):
-    - SDWebImage/Core (= 3.7.5)
-  - SDWebImage/Core (3.7.5)
-  - Specta (1.0.2)
+    - MBProgressHUD (~> 1.1.0)
+    - SDWebImage (~> 4.0)
+  - SDWebImage (4.3.2):
+    - SDWebImage/Core (= 4.3.2)
+  - SDWebImage/Core (4.3.2)
+  - Specta (1.0.7)
 
 DEPENDENCIES:
-  - Expecta
   - Expecta+Snapshots
   - FBSnapshotTestCase
   - MWPhotoBrowser (from `../`)
@@ -28,12 +32,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  Expecta: 32604574add2c46a36f8d2f716b6c5736eb75024
-  Expecta+Snapshots: ca15bfb57e7a0f78f86c7699c2c54ffacfa4ad2a
-  FBSnapshotTestCase: 3dc3899168747a0319c5278f5b3445c13a6532dd
-  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
-  MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
-  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
-  Specta: 9cec98310dca411f7c7ffd6943552b501622abfe
+  Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
+  Expecta+Snapshots: dcff217eef506dabd6dfdc7864ea2da321fafbb8
+  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
+  MWPhotoBrowser: fafc172cf4c9f2873f78874ed400f4f85a7b3e2c
+  SDWebImage: 29bd3c0bc1f01e5eb59720847c64ad4c4ca1af5d
+  Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 083034e300dd0645018b4b7b511f5d68e4ac12fe
+
+COCOAPODS: 1.4.0

@@ -32,7 +32,7 @@
     if ((self = [super initWithFrame:frame])) {
 
         // Grey background
-        self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
+        self.backgroundColor = [UIColor whiteColor];
         
         // Image
         _imageView = [UIImageView new];
@@ -223,10 +223,10 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *dict = [notification object];
         id <MWPhoto> photoWithProgress = [dict objectForKey:@"photo"];
-        if (photoWithProgress == _photo) {
+        if (photoWithProgress == self->_photo) {
 //            NSLog(@"%f", [[dict valueForKey:@"progress"] floatValue]);
             float progress = [[dict valueForKey:@"progress"] floatValue];
-            _loadingIndicator.progress = MAX(MIN(1, progress), 0);
+            self->_loadingIndicator.progress = MAX(MIN(1, progress), 0);
         }
     });
 }

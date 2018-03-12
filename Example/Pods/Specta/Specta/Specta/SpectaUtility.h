@@ -15,4 +15,4 @@ BOOL spt_isSpecClass(Class aClass);
 NSString *spt_underscorize(NSString *string);
 NSArray *spt_map(NSArray *array, id (^block)(id obj, NSUInteger idx));
 NSArray *spt_shuffle(NSArray *array);
-unsigned int spt_seed();
+unsigned int spt_seed(void);
