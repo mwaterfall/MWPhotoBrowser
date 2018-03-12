@@ -8,8 +8,8 @@
 @interface SPTExampleGroup : NSObject
 
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic, strong) SPTExampleGroup *root;
-@property (nonatomic, strong) SPTExampleGroup *parent;
+@property (nonatomic, weak) SPTExampleGroup *root;
+@property (nonatomic, weak) SPTExampleGroup *parent;
 @property (nonatomic, strong) NSMutableArray *children;
 @property (nonatomic, strong) NSMutableArray *beforeAllArray;
 @property (nonatomic, strong) NSMutableArray *afterAllArray;

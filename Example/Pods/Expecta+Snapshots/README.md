@@ -3,7 +3,7 @@ Expecta Matchers for FBSnapshotTestCase
 
 [Expecta](https://github.com/specta/expecta) matchers for [ios-snapshot-test-case](https://github.com/facebook/ios-snapshot-test-case).
 
-[![Build Status](https://travis-ci.org/dblock/ios-snapshot-test-case-expecta.png)](https://travis-ci.org/dblock/ios-snapshot-test-case-expecta)
+[![Build Status](https://travis-ci.org/dblock/ios-snapshot-test-case-expecta.svg)](https://travis-ci.org/dblock/ios-snapshot-test-case-expecta)
 
 ### Usage
 
@@ -18,6 +18,8 @@ pod 'Expecta+Snapshots'
 Use `expect(view).to.recordSnapshotNamed(@"unique snapshot name")` to record a snapshot and `expect(view).to.haveValidSnapshotNamed(@"unique snapshot name")` to check it.
 
 If you project was compiled with Specta included, you have two extra methods that use the spec hierarchy to generate the snapshot name for you: `recordSnapshot()` and `haveValidSnapshot()`. You should only call these once per `it()` block.
+
+If you need the `usesDrawViewHierarchyInRect` property in order to correctly render UIVisualEffect, UIAppearance and Size Classes, call `[Expecta setUsesDrawViewHierarchyInRect:NO];` inside `beforeAll`.
 
 ``` Objective-C
 #define EXP_SHORTHAND
@@ -59,6 +61,15 @@ describe(@"test name derived matching", ^{
 });
 
 SpecEnd
+```
+
+### Approximation support
+
+If for some reason you want to specify a tolerance for your test, you can use either named or unnamed matchers, where the `tolerance` parameter is a `CGFloat` in the interval `[0, 1]` and it represents the minimum ratio of unmatched points by the total number of points in your snapshot. In the example below, a tolerance of `0.01` means our `view` could be up to `1%` different from the reference image.
+
+``` Objective-C
+expect(view).to.haveValidSnapshotWithTolerance(0.01);
+expect(view).to.haveValidSnapshotNamedWithTolerance(@"unique snapshot name", 0.01);
 ```
 
 ### Sane defaults
