@@ -43,6 +43,6 @@ Pod::Spec.new do |s|
   # SDWebImage
   # 3.7.2 contains bugs downloading local files
   # https://github.com/rs/SDWebImage/issues/1109
-  s.dependency 'SDWebImage', '~> 3.7', '!= 3.7.2'
+  s.dependency 'SDWebImage'
 
 end
