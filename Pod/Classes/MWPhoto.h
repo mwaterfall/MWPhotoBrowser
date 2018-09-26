@@ -16,6 +16,7 @@
 // conforms to MWPhotoProtocol
 @interface MWPhoto : NSObject <MWPhoto>
 
+@property (nonatomic, assign) NSUInteger sort;
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
