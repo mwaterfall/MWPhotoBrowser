@@ -428,20 +428,25 @@
     [self handleSingleTap:[touch locationInView:imageView]];
 }
 
-- (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch {
+- (void)imageView:(UIImageView *)imageView doubleTapDetected:(UITouch *)touch
+{
+    if (!self.photoBrowser.showLikesContainer) { return; }
+    
+    if (![self.photoBrowser.fullscreenPhotoDelegate canShowLikeAnimation]) { return; }
+    
     UIImageView *likeAnimationView = [[UIImageView alloc] initWithFrame:[self frameForLikeAnimation:self.frame]];
     likeAnimationView.image = [UIImage imageNamed:@"big_heart"];
     likeAnimationView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:likeAnimationView];
     
-    [UIView animateWithDuration:0.1f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+    [UIView animateWithDuration:0.2f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
         likeAnimationView.transform = CGAffineTransformMakeScale(1.3, 1.3);
         likeAnimationView.alpha = 1.0;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.1f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+        [UIView animateWithDuration:0.2f delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
             likeAnimationView.transform = CGAffineTransformMakeScale(1.0, 1.0);
         } completion:^(BOOL finished) {
-            [UIView animateWithDuration:0.1f delay:0.3 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+            [UIView animateWithDuration:0.2f delay:0.3 options:UIViewAnimationOptionAllowUserInteraction animations:^{
                 likeAnimationView.transform = CGAffineTransformMakeScale(0.3, 0.3);
                 likeAnimationView.alpha = 0.0;
             } completion:^(BOOL finished) {
