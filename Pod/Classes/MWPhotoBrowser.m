@@ -454,19 +454,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Detect if rotation occurs while we're presenting a modal
     _pageIndexBeforeRotation = _currentPageIndex;
     
-    // Check that we're disappearing for good
-    // self.isMovingFromParentViewController just doesn't work, ever. Or self.isBeingDismissed
-    //if ((_doneButton && self.navigationController.isBeingDismissed) ||
-    //    ([self.navigationController.viewControllers objectAtIndex:0] != self && ![self.navigationController.viewControllers containsObject:self])) {
-
-        // State
-        _viewIsActive = NO;
-        [self clearCurrentVideo]; // Clear current playing video
-        
-        // Bar state / appearance
-        [self restorePreviousNavBarAppearance:animated];
-        
-    //}
+    // State
+    _viewIsActive = NO;
+    [self clearCurrentVideo]; // Clear current playing video
+    
+    // Bar state / appearance
+    [self restorePreviousNavBarAppearance:YES];
     
     // Controls
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
@@ -498,24 +491,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = [UIColor clearColor];
     navBar.shadowImage = nil;
     navBar.translucent = YES;
     navBar.barStyle = UIBarStyleBlackTranslucent;
-//    self.navigationItem.leftBarButtonItem.title = @"";
-//    self.navigationItem.backBarButtonItem.title = @"";
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:self.navigationItem.backBarButtonItem.style target:nil action:nil];
-//    UIImage *imageForButton = [UIImage imageNamed:@"back_arrow"];
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:imageForButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed:)];
+    navBar.titleTextAttributes = nil;
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
 }
 
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
+    _previousNavBarTitleAttributes = self.navigationController.navigationBar.titleTextAttributes;
     _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     _previousNavBarTranslucent = self.navigationController.navigationBar.translucent;
     _previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
@@ -534,6 +520,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         navBar.translucent = _previousNavBarTranslucent;
         navBar.barTintColor = _previousNavBarBarTintColor;
         navBar.barStyle = _previousNavBarStyle;
+        navBar.titleTextAttributes = _previousNavBarTitleAttributes;
         [navBar setBackgroundImage:_previousNavigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
         [navBar setBackgroundImage:_previousNavigationBarBackgroundImageLandscapePhone forBarMetrics:UIBarMetricsLandscapePhone];
         // Restore back button if we need to
