@@ -458,6 +458,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _viewIsActive = NO;
     [self clearCurrentVideo]; // Clear current playing video
     
+    // Bar state / appearance
+    [self restorePreviousNavBarAppearance:animated];
+    
     // Controls
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // Cancel any pending toggles from taps
