@@ -82,7 +82,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
-    _isLikesViewOpened = NO;
     
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -350,8 +349,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _likesContainer = nil;
     _likesLabel = nil;
     _likesButton = nil;
-    _transparentView = nil;
-    _likesView = nil;
     _visiblePages = nil;
     _recycledPages = nil;
     _toolbar = nil;
@@ -407,8 +404,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self storePreviousNavBarAppearance];
     }
     [self setNavBarAppearance:animated];
-    [self.navigationController setNavigationBarHidden:self.isLikesViewOpened];
-    
     
     // Update UI
 	[self hideControlsAfterDelay];
@@ -1771,61 +1766,15 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 // MARK: - Show likes view
 
 - (void)showLikesView {
-    if (!_isLikesViewOpened && ![_likesLabel.text isEqualToString:@""]) {
-        self.transparentView = [[UIView alloc] initWithFrame:self.view.frame];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeLikesView)];
-        tapGesture.delegate = self;
-        [self.transparentView addGestureRecognizer:tapGesture];
-        [self.view addSubview:self.transparentView];
-        
-        CGRect transparentViewFrame = self.transparentView.frame;
-        CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-        CGFloat likesContainerWidth = transparentViewFrame.size.width * 0.75;
-        CGFloat likesContainerHeight = transparentViewFrame.size.height - statusBarHeight;
-        CGRect likersViewFrame = CGRectMake(self.view.frame.size.width, statusBarHeight, likesContainerWidth, likesContainerHeight);
-        self.likesView = [[UIView alloc] initWithFrame:likersViewFrame];
-        [_transparentView addSubview:_likesView];
+    if (self.fullscreenPhotoDelegate && ![_likesLabel.text isEqualToString:@""]) {
         [self.fullscreenPhotoDelegate showLikes:_currentPageIndex];
-        [self animateLikesView];
     }
-}
-
-- (void)animateLikesView {
-    CGRect likesViewFrame = self.likesView.frame;
-    [UIView animateWithDuration:0.5 animations:^{
-        [self.transparentView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.5]];
-        self.likesView.frame = CGRectMake(self.view.frame.size.width - likesViewFrame.size.width, likesViewFrame.origin.y, likesViewFrame.size.width, likesViewFrame.size.height);
-        [self.navigationController setNavigationBarHidden:YES];
-    } completion:^(BOOL finished) {
-        _isLikesViewOpened = YES;
-    }];
-}
-
-- (void)closeLikesView {
-    CGRect likesViewFrame = self.likesView.frame;
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    [UIView animateWithDuration:0.5 animations:^{
-        [self.transparentView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0]];
-        self.likesView.frame = CGRectMake(self.view.frame.size.width, statusBarHeight, likesViewFrame.size.width, likesViewFrame.size.height);
-    } completion:^(BOOL finished) {
-        [self.navigationController setNavigationBarHidden:NO];
-        [_fullscreenPhotoDelegate removeLikesView];
-        [_likesView removeFromSuperview];
-        [_transparentView removeFromSuperview];
-        _likesView = nil;
-        _transparentView = nil;
-        _isLikesViewOpened = NO;
-    }];
 }
 
 // MARK: - UITapGestureRecognizer
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if (touch.view == _transparentView || touch.view == _likesLabel) {
-        return YES;
-    } else {
-        return NO;
-    }
+    return touch.view == _likesLabel;
 }
 
 #pragma mark - Action Progress

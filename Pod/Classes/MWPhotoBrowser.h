@@ -65,9 +65,6 @@
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 @property (nonatomic) NSUInteger currentPageIndex;
-@property (nonatomic) UIView *transparentView;
-@property (nonatomic) UIView *likesView;
-@property (nonatomic) BOOL isLikesViewOpened;
 @property (nonatomic) BOOL showShareButton;
 @property (nonatomic) BOOL showLikesContainer;
 @property (nonatomic, copy) void(^onShareButtonTappedBlock)(UIButton *button);
