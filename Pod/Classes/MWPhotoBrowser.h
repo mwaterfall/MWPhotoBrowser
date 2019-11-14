@@ -38,9 +38,21 @@
 
 @end
 
-@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
+@protocol MWProfilePhotosLikeActions <NSObject>
+
+- (BOOL)canShowLikeAnimation;
+- (NSUInteger)likesCount:(NSInteger)photoIndex;
+- (BOOL)isLiked:(NSInteger)photoIndex;
+- (void)likePhoto:(NSInteger)photoIndex like:(BOOL)like;
+- (void)showLikes:(NSInteger)photoIndex;
+- (void)removeLikesView;
+
+@end
+
+@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
+@property (nonatomic, weak) id<MWProfilePhotosLikeActions> fullscreenPhotoDelegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
@@ -52,6 +64,10 @@
 @property (nonatomic) BOOL autoPlayOnAppear;
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
+@property (nonatomic) NSUInteger currentPageIndex;
+@property (nonatomic) BOOL showShareButton;
+@property (nonatomic) BOOL showLikesContainer;
+@property (nonatomic, copy) void(^onShareButtonTappedBlock)(UIButton *button);
 
 // Customise image selection icons as they are the only icons with a colour tint
 // Icon should be located in the app's main bundle
@@ -71,5 +87,9 @@
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
+
+// Like button
+- (void)likeButtonPressed;
+- (void)update;
 
 @end

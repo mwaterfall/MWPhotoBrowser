@@ -99,6 +99,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [[SDImageCache sharedImageCache] clearMemory]; // clear memory
 }
 
+
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
     // Create a copy in case this array is modified while we are looping through
     // Release photos
@@ -158,7 +159,46 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	_pagingScrollView.backgroundColor = [UIColor blackColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
-	
+    
+    if (self.showLikesContainer) {
+        // Setup likes container under scroll view
+        CGRect likesContainerRect = [self frameForLikesContainer];
+        _likesContainer = [[UIView alloc] initWithFrame:likesContainerRect];
+        _likesContainer.backgroundColor = [UIColor clearColor];
+        [self.view addSubview:_likesContainer];
+        
+        // Setup like button
+        CGRect likesButtonRect = [self frameForLikeButton];
+        _likesButton = [[UIButton alloc] initWithFrame:likesButtonRect];
+        [_likesButton setImage:[UIImage imageNamed:@"like_unselected"] forState:UIControlStateNormal];
+        [_likesButton setImage:[UIImage imageNamed:@"like_selected"] forState:UIControlStateSelected];
+        [_likesButton addTarget:self action:@selector(likeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [_likesContainer addSubview:_likesButton];
+        
+        // Setup like label
+        CGRect likesLabelRect = [self frameForLikesLabel];
+        _likesLabel = [[UILabel alloc] initWithFrame:likesLabelRect];
+        [_likesLabel setFont:[UIFont systemFontOfSize:20]];
+        [_likesLabel setUserInteractionEnabled:YES];
+        UITapGestureRecognizer *tapOnLikesLabel = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showLikesView)];
+        tapOnLikesLabel.delegate = self;
+        [_likesLabel addGestureRecognizer:tapOnLikesLabel];
+        _likesLabel.textColor = [UIColor colorWithRed:172.0/255.0 green:172.0/255.0 blue:172.0/255.0 alpha:1];
+        _likesLabel.numberOfLines = 1;
+        [_likesContainer addSubview:_likesLabel];
+    }
+    
+    ///
+    if (self.showShareButton) {
+        CGRect shareButtonFrame = [self frameForShareButton];
+        UIButton *shareButton = [[UIButton alloc] initWithFrame:shareButtonFrame];
+        [shareButton setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
+        [shareButton addTarget:self action:@selector(onShareButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:shareButton];
+    }
+    
+    ///
+    
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
     _toolbar.tintColor = [UIColor whiteColor];
@@ -177,7 +217,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _nextButton = [[UIBarButtonItem alloc] initWithImage:nextButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
     if (self.displayActionButton) {
-        _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
+        UIImage *imageForButton = [UIImage imageNamed:@"three_dots"];
+        _actionButton = [[UIBarButtonItem alloc] initWithImage:imageForButton style:UIBarButtonItemStylePlain target:self action:@selector(actionButtonPressed:)];
     }
     
     // Update
@@ -188,6 +229,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(doneButtonPressed:)];
         swipeGesture.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
         [self.view addGestureRecognizer:swipeGesture];
+    }
+    
+    float version = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (version < 11.0) {
+        [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-60, -60) forBarMetrics:UIBarMetricsDefault];
     }
     
 	// Super
@@ -219,6 +265,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.navigationItem.rightBarButtonItem = _doneButton;
     } else {
         // We're not first so show back button
+        
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
         UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -299,12 +346,16 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)viewDidUnload {
 	_currentPageIndex = 0;
     _pagingScrollView = nil;
+    _likesContainer = nil;
+    _likesLabel = nil;
+    _likesButton = nil;
     _visiblePages = nil;
     _recycledPages = nil;
     _toolbar = nil;
     _previousButton = nil;
     _nextButton = nil;
     _progressHUD = nil;
+    
     [super viewDidUnload];
 }
 
@@ -398,19 +449,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Detect if rotation occurs while we're presenting a modal
     _pageIndexBeforeRotation = _currentPageIndex;
     
-    // Check that we're disappearing for good
-    // self.isMovingFromParentViewController just doesn't work, ever. Or self.isBeingDismissed
-    if ((_doneButton && self.navigationController.isBeingDismissed) ||
-        ([self.navigationController.viewControllers objectAtIndex:0] != self && ![self.navigationController.viewControllers containsObject:self])) {
-
-        // State
-        _viewIsActive = NO;
-        [self clearCurrentVideo]; // Clear current playing video
-        
-        // Bar state / appearance
-        [self restorePreviousNavBarAppearance:animated];
-        
-    }
+    // State
+    _viewIsActive = NO;
+    [self clearCurrentVideo]; // Clear current playing video
+    
+    // Bar state / appearance
+    [self restorePreviousNavBarAppearance:animated];
     
     // Controls
     [self.navigationController.navigationBar.layer removeAllAnimations]; // Stop all animations on nav bar
@@ -431,6 +475,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (parent && _hasBelongedToViewController) {
         [NSException raise:@"MWPhotoBrowser Instance Reuse" format:@"MWPhotoBrowser instances cannot be reused."];
     }
+    
+    // Bar state / appearance
+    [self restorePreviousNavBarAppearance:YES];
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent {
@@ -442,17 +489,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
     navBar.shadowImage = nil;
     navBar.translucent = YES;
     navBar.barStyle = UIBarStyleBlackTranslucent;
+    navBar.titleTextAttributes = nil;
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
 }
 
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
+    _previousNavBarTitleAttributes = self.navigationController.navigationBar.titleTextAttributes;
     _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
     _previousNavBarTranslucent = self.navigationController.navigationBar.translucent;
     _previousNavBarTintColor = self.navigationController.navigationBar.tintColor;
@@ -465,11 +512,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)restorePreviousNavBarAppearance:(BOOL)animated {
     if (_didSavePreviousStateOfNavBar) {
         [self.navigationController setNavigationBarHidden:_previousNavBarHidden animated:animated];
+        [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor blackColor]}];
         UINavigationBar *navBar = self.navigationController.navigationBar;
         navBar.tintColor = _previousNavBarTintColor;
         navBar.translucent = _previousNavBarTranslucent;
         navBar.barTintColor = _previousNavBarBarTintColor;
         navBar.barStyle = _previousNavBarStyle;
+        navBar.titleTextAttributes = _previousNavBarTitleAttributes;
         [navBar setBackgroundImage:_previousNavigationBarBackgroundImageDefault forBarMetrics:UIBarMetricsDefault];
         [navBar setBackgroundImage:_previousNavigationBarBackgroundImageLandscapePhone forBarMetrics:UIBarMetricsLandscapePhone];
         // Restore back button if we need to
@@ -966,15 +1015,80 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // Update nav
     [self updateNavigation];
+
+    [self update];
+}
+
+- (void)update
+{
+    BOOL likedByMe = [_fullscreenPhotoDelegate isLiked:_currentPageIndex];
+    _likesButton.selected = likedByMe;
     
+    //Update likes container
+    NSUInteger likes = [_fullscreenPhotoDelegate likesCount:_currentPageIndex];
+    if (likes > 0) {
+        NSString *likesWord = likes == 1 ? @"like" : @"likes";
+        _likesLabel.text = [NSString stringWithFormat:@"%lu %@", (unsigned long)likes, likesWord];
+    } else {
+        _likesLabel.text = @"0 likes";
+    }
 }
 
 #pragma mark - Frame Calculations
 
 - (CGRect)frameForPagingScrollView {
-    CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
-    frame.origin.x -= PADDING;
-    frame.size.width += (2 * PADDING);
+    //FLAG!
+//    CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
+//    frame.origin.x -= PADDING;
+//    frame.size.width += (2 * PADDING);
+    //return CGRectIntegral(frame);
+    CGRect tabbar = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+    CGFloat scrollViewMargin = [UIApplication sharedApplication].statusBarFrame.size.height + tabbar.size.height;
+    CGFloat posX = 0 - PADDING;
+    CGFloat posY = scrollViewMargin;
+    CGFloat width = self.view.frame.size.width + (2 * PADDING);
+    CGFloat height = self.view.frame.size.height - (2 * scrollViewMargin);
+    CGRect frame = CGRectMake(posX, posY, width, height);
+    return CGRectIntegral(frame);
+}
+
+- (CGRect)frameForShareButton
+{
+    CGFloat containerWidth = 40;
+    CGFloat containerHeight = 40;
+    CGRect scrollViewFrame = [self frameForPagingScrollView];
+    CGFloat posX = 12;
+    CGFloat posY = scrollViewFrame.origin.y + scrollViewFrame.size.height;
+    CGRect frame = CGRectMake(posX, posY, containerWidth, containerHeight);
+    return CGRectIntegral(frame);
+}
+
+- (CGRect)frameForLikesContainer {
+    CGFloat containerWidth = 120;
+    CGFloat containerHeight = 40;
+    CGRect scrollViewFrame = [self frameForPagingScrollView];
+    CGFloat posX = scrollViewFrame.size.width / 2 - containerWidth / 2;
+    CGFloat posY = scrollViewFrame.origin.y + scrollViewFrame.size.height;
+    CGRect frame = CGRectMake(posX, posY, containerWidth, containerHeight);
+    return CGRectIntegral(frame);
+}
+
+- (CGRect)frameForLikeButton {
+    CGRect parentContainerRect = [self frameForLikesContainer];
+    CGFloat buttonSide = parentContainerRect.size.height;
+    CGFloat posX = 0;
+    CGFloat posY = 0;
+    CGRect frame = CGRectMake(posX, posY, buttonSide, buttonSide);
+    return CGRectIntegral(frame);
+}
+
+- (CGRect)frameForLikesLabel {
+    CGRect parentContainerRect = [self frameForLikesContainer];
+    CGFloat labelHeight = parentContainerRect.size.height;
+    CGFloat labelWidth = parentContainerRect.size.width - labelHeight;
+    CGFloat posX = labelHeight;
+    CGFloat posY = 0;
+    CGRect frame = CGRectMake(posX, posY, labelWidth, labelHeight);
     return CGRectIntegral(frame);
 }
 
@@ -1102,6 +1216,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	} else {
 		self.title = nil;
 	}
+    //HIDE SELF TITLE ANYWAY
+    self.title = nil;
 	
 	// Buttons
 	_previousButton.enabled = (_currentPageIndex > 0);
@@ -1116,7 +1232,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _actionButton.enabled = YES;
         _actionButton.tintColor = nil;
     }
-	
+    
 }
 
 - (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated {
@@ -1628,6 +1744,37 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     }
     
+}
+
+- (void)backButtonPressed:(id)sender {
+    [self.navigationController popViewControllerAnimated:true];
+}
+
+- (void)likeButtonPressed {
+    BOOL like = !_likesButton.selected;
+    [_fullscreenPhotoDelegate likePhoto:_currentPageIndex like:like];
+    [_fullscreenPhotoDelegate isLiked:_currentPageIndex];
+}
+
+- (void)onShareButtonTapped:(UIButton *)button
+{
+    if (self.onShareButtonTappedBlock) {
+        self.onShareButtonTappedBlock(button);
+    }
+}
+
+// MARK: - Show likes view
+
+- (void)showLikesView {
+    if (self.fullscreenPhotoDelegate && ![_likesLabel.text isEqualToString:@""]) {
+        [self.fullscreenPhotoDelegate showLikes:_currentPageIndex];
+    }
+}
+
+// MARK: - UITapGestureRecognizer
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return touch.view == _likesLabel;
 }
 
 #pragma mark - Action Progress

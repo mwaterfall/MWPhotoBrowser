@@ -23,10 +23,12 @@
 	
 	// Views
 	UIScrollView *_pagingScrollView;
+	UIView *_likesContainer;
+        UILabel *_likesLabel;
+        UIButton *_likesButton;
 	
 	// Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;
-	NSUInteger _currentPageIndex;
     NSUInteger _previousPageIndex;
     CGRect _previousLayoutBounds;
 	NSUInteger _pageIndexBeforeRotation;
@@ -52,6 +54,7 @@
     UIBarButtonItem *_previousViewControllerBackButton;
     UIImage *_previousNavigationBarBackgroundImageDefault;
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
+    NSDictionary *_previousNavBarTitleAttributes;
     
     // Video
     MPMoviePlayerViewController *_currentVideoPlayerViewController;
