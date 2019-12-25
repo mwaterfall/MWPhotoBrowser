@@ -12,7 +12,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
-#import <XCDYouTubeKit.h>
+#import "XCDYouTubeKit.h"
 
 #define PADDING                  10
 
