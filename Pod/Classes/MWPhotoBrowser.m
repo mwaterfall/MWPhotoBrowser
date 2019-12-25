@@ -12,6 +12,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
+#import "XCDYouTubeKit.h"
 
 #define PADDING                  10
 
@@ -67,7 +68,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentVideoIndex = NSUIntegerMax;
     _displayActionButton = YES;
     _displayNavArrows = NO;
-    _zoomPhotosToFill = YES;
+    _zoomPhotosToFill = NO;
     _performingLayout = NO; // Reset on view did appear
     _rotating = NO;
     _viewIsActive = NO;
@@ -628,6 +629,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
         [self performLayout];
         [self.view setNeedsLayout];
+    }
+    
+    if (_gridController) {
+        [_gridController.collectionView reloadData];
     }
     
 }
@@ -1222,6 +1227,24 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)_playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index {
+    
+    //檢查是不是 youtube 的連結
+    NSString *urlString = videoURL.absoluteString;
+    NSError *error;
+    NSRegularExpression *regex;
+    NSString *regexString = @"(?:youtube.com.+v[=/]|youtu.be/)([-a-zA-Z0-9_]+)";
+    regex = [NSRegularExpression regularExpressionWithPattern:regexString
+                                                      options:NSRegularExpressionCaseInsensitive
+                                                        error:&error];
+    
+    NSTextCheckingResult *match = [regex firstMatchInString:urlString
+                                                    options:0
+                                                      range:NSMakeRange(0, [urlString length])];
+    if (match) {
+        NSString *youtubeID = [urlString substringWithRange:[match rangeAtIndex:1]];
+        [self playYoutube:youtubeID];
+        return;
+    }
 
     // Setup player
     _currentVideoPlayerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:videoURL];
@@ -1600,6 +1623,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
             
             // Show loading spinner after a couple of seconds
+            //不懂為什麼要秀，這樣連取消都會跑 loading 了
+            /*
             double delayInSeconds = 2.0;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -1607,6 +1632,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                     [self showProgressHUDWithMessage:nil];
                 }
             });
+             */
 
             // Show
             typeof(self) __weak weakSelf = self;
@@ -1643,27 +1669,32 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)showProgressHUDWithMessage:(NSString *)message {
-    self.progressHUD.labelText = message;
+    self.progressHUD.label.text = message;
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    [self.progressHUD show:YES];
+    [self.progressHUD showAnimated:YES];
     self.navigationController.navigationBar.userInteractionEnabled = NO;
 }
 
 - (void)hideProgressHUD:(BOOL)animated {
-    [self.progressHUD hide:animated];
+    [self.progressHUD hideAnimated:animated];
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
 
 - (void)showProgressHUDCompleteMessage:(NSString *)message {
     if (message) {
-        if (self.progressHUD.isHidden) [self.progressHUD show:YES];
-        self.progressHUD.labelText = message;
+        if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
+        self.progressHUD.label.text = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
-        [self.progressHUD hide:YES afterDelay:1.5];
+        [self.progressHUD hideAnimated:YES afterDelay:1.5];
     } else {
-        [self.progressHUD hide:YES];
+        [self.progressHUD hideAnimated:YES];
     }
     self.navigationController.navigationBar.userInteractionEnabled = YES;
+}
+
+-(void)playYoutube:(NSString *)youtubeID{
+    XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:youtubeID];
+    [self presentMoviePlayerViewControllerAnimated:videoPlayerViewController];
 }
 
 @end

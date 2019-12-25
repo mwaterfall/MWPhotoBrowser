@@ -40,14 +40,16 @@
   "weak_frameworks": "Photos",
   "dependencies": {
     "MBProgressHUD": [
-      "~> 0.9"
+
     ],
     "DACircularProgress": [
       "~> 2.3"
     ],
+    "XCDYouTubeKit": [
+
+    ],
     "SDWebImage": [
-      "~> 3.7",
-      "!= 3.7.2"
+
     ]
   }
 }

@@ -23,7 +23,6 @@
 }
 
 @property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) NSURL *photoURL;
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic) CGSize assetTargetSize;
 
@@ -222,17 +221,16 @@
                                                                                 self, @"photo", nil];
                                                           [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
                                                       }
-                                                  }
-                                                 completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                                                     if (error) {
-                                                         MWLog(@"SDWebImage failed to download image: %@", error);
-                                                     }
-                                                     _webImageOperation = nil;
-                                                     self.underlyingImage = image;
-                                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                                         [self imageLoadingComplete];
-                                                     });
-                                                 }];
+                                                  } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                                                      if (error) {
+                                                          MWLog(@"SDWebImage failed to download image: %@", error);
+                                                      }
+                                                      _webImageOperation = nil;
+                                                      self.underlyingImage = image;
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          [self imageLoadingComplete];
+                                                      });
+                                                  }];
     } @catch (NSException *e) {
         MWLog(@"Photo from web: %@", e);
         _webImageOperation = nil;
