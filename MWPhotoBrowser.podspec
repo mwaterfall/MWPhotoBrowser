@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name = 'MWPhotoBrowser'
-  s.version = '2.1.3'
+  s.version = '2.1.4'
   s.license = 'MIT'
   s.summary = 'A simple iOS photo and video browser with optional grid view, captions and selections.'
   s.description = <<-DESCRIPTION
@@ -37,12 +37,12 @@ Pod::Spec.new do |s|
   s.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
   s.weak_frameworks = 'Photos'
 
-  s.dependency 'MBProgressHUD', '~> 1.0.0'
+  s.dependency 'MBProgressHUD', '~> 1.1.0'
   s.dependency 'DACircularProgress', '~> 2.3.1'
 
   # SDWebImage
   # 3.7.2 contains bugs downloading local files
   # https://github.com/rs/SDWebImage/issues/1109
-  s.dependency 'SDWebImage', '~> 3.8.2'
+  s.dependency 'SDWebImage', '~> 5.4.0'
 
 end
