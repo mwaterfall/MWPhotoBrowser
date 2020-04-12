@@ -27,22 +27,33 @@ Pod::Spec.new do |s|
     :git => 'https://github.com/mwaterfall/MWPhotoBrowser.git',
     :tag => '2.1.2'
   }
+
   s.platform = :ios, '7.0'
-  s.source_files = 'Pod/Classes/**/*'
-  s.resource_bundles = {
-    'MWPhotoBrowser' => ['Pod/Assets/*.png']
-  }
-  s.requires_arc = true
+  s.subspec 'core' do |core|
+    core.source_files = 'Pod/Classes/**/*'
+    core.exclude_files = 'Pod/Classes/MWPhoto.{h,m}'
 
-  s.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
-  s.weak_frameworks = 'Photos'
+    core.resource_bundles = {
+      'MWPhotoBrowser' => ['Pod/Assets/*.png']
+    }
+    core.requires_arc = true
 
-  s.dependency 'MBProgressHUD', '~> 0.9'
-  s.dependency 'DACircularProgress', '~> 2.3'
+    core.frameworks = 'ImageIO', 'QuartzCore', 'AssetsLibrary', 'MediaPlayer'
+    core.weak_frameworks = 'Photos'
 
-  # SDWebImage
-  # 3.7.2 contains bugs downloading local files
-  # https://github.com/rs/SDWebImage/issues/1109
-  s.dependency 'SDWebImage', '~> 3.7', '!= 3.7.2'
+    core.dependency 'MBProgressHUD'
+    core.dependency 'DACircularProgress', '~> 2.3'
+  end
+
+  s.subspec 'SDWebImage' do |sdweb|
+    sdweb.source_files = 'Pod/Classes/MWPhoto.{h,m}'
+    sdweb.dependency 'MWPhotoBrowser/core'
+    # SDWebImage
+    # 3.7.2 contains bugs downloading local files
+    # https://github.com/rs/SDWebImage/issues/1109
+    sdweb.dependency 'SDWebImage', '~> 3.7', '!= 3.7.2'
+  end
+
+  s.default_subspec = 'SDWebImage'
 
 end

@@ -10,7 +10,6 @@
 #import "MWCommon.h"
 #import "MWPhotoBrowser.h"
 #import "MWPhotoBrowserPrivate.h"
-#import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
 
 #define PADDING                  10
@@ -96,7 +95,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _pagingScrollView.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self releaseAllUnderlyingPhotos:NO];
-    [[SDImageCache sharedImageCache] clearMemory]; // clear memory
 }
 
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
@@ -382,7 +380,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Autoplay if first is video
     if (!_viewHasAppearedInitially) {
         if (_autoPlayOnAppear) {
-            MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
+            id<MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
             if ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo) {
                 [self playVideoAtIndex:_currentPageIndex];
             }
@@ -1108,7 +1106,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	_nextButton.enabled = (_currentPageIndex < numberOfPhotos - 1);
     
     // Disable action button if there is no image or it's a video
-    MWPhoto *photo = [self photoAtIndex:_currentPageIndex];
+    id<MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([photo underlyingImage] == nil || ([photo respondsToSelector:@selector(isVideo)] && photo.isVideo)) {
         _actionButton.enabled = NO;
         _actionButton.tintColor = [UIColor clearColor]; // Tint to hide button

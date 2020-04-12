@@ -10,7 +10,7 @@
 #import "MWCommon.h"
 #import "MWZoomingScrollView.h"
 #import "MWPhotoBrowser.h"
-#import "MWPhoto.h"
+#import "MWPhotoProtocol.h"
 #import "MWPhotoBrowserPrivate.h"
 #import "UIImage+MWPhotoBrowser.h"
 
