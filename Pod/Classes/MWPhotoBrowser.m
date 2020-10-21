@@ -190,6 +190,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.view addGestureRecognizer:swipeGesture];
     }
     
+    // Long press to save photo
+    if (_allowSavePhoto) {
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(savePhotoPressed:)];
+        [self.view addGestureRecognizer:longPress];
+    }
+    
     // Super
     [super viewDidLoad];
     
@@ -1609,6 +1615,56 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     }
     
+}
+
+#pragma mark - Save photo
+
+- (void)savePhotoPressed:(UILongPressGestureRecognizer*)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"Long Press");
+        NSMutableArray *imageArray = [NSMutableArray new];
+        MWPhoto *currentMWPhoto = [_photos objectAtIndex:self.currentIndex];
+        [imageArray addObject:currentMWPhoto.underlyingImage];
+
+        [self showSaveImagesWithImage:currentMWPhoto.underlyingImage];
+    }
+}
+
+-(void)showSaveImagesWithImage:(UIImage *)image
+{
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Save Photo" message:@"Save current photo?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *saveAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {}];
+
+    [actionSheet addAction:saveAction];
+    [actionSheet addAction: cancelAction];
+    [self addPopOverController:actionSheet];
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Saved!" message:@"Image saved successfully" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {}];
+    
+    [alert addAction:okAction];
+    [self addPopOverController:alert];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(UIAlertController*)addPopOverController:(UIAlertController*)controller
+{
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
+        UIPopoverPresentationController *popPresenter = [controller popoverPresentationController];
+        popPresenter.sourceView = self.view;
+        popPresenter.sourceRect = CGRectMake(self.view.bounds.size.width/2, self.view.frame.size.height/2, 0, 0);
+        popPresenter.permittedArrowDirections = 0;
+    }
+    return controller;
 }
 
 #pragma mark - Action Progress
