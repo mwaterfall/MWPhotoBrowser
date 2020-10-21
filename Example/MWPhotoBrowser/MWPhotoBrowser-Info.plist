@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>App requires your camera take photo</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires access to your photo library to upload photo</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>App requires access to your photo library to save photo</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

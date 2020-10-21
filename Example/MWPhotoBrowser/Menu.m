@@ -85,7 +85,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger rows = 9;
+    NSInteger rows = 10;
     @synchronized(_assets) {
         if (_assets.count) rows++;
     }
@@ -154,6 +154,11 @@
             cell.detailTextLabel.text = @"media from device library";
             break;
         }
+        case 10: {
+            cell.textLabel.text = @"Long press to save photo";
+            cell.detailTextLabel.text = @"media from device library";
+            break;
+        }
 		default: break;
 	}
     return cell;
@@ -175,6 +180,7 @@
     BOOL enableGrid = YES;
     BOOL startOnGrid = NO;
     BOOL autoPlayOnAppear = NO;
+    BOOL allowSavePhoto = NO;
 	switch (indexPath.row) {
 		case 0:
             // Photos
@@ -1107,6 +1113,29 @@
             }
 			break;
         }
+        case 10: {
+            // Local Photos and Videos
+            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo5" ofType:@"jpg"]]];
+            photo.caption = @"Fireworks";
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo2" ofType:@"jpg"]]];
+            photo.caption = @"The London Eye is a giant Ferris wheel situated on the banks of the River Thames, in London, England.";
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"photo3" ofType:@"jpg"]]];
+            photo.caption = @"York Floods";
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video_thumb" ofType:@"jpg"]]];
+            photo.videoURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"]];
+            photo.caption = @"Big Buck Bunny";
+            [photos addObject:photo];
+            photo = [MWPhoto photoWithImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"photo4" ofType:@"jpg"]]];
+            photo.caption = @"Campervan";
+            [photos addObject:photo];
+            // Options
+            enableGrid = NO;
+            allowSavePhoto = YES;
+            break;
+        }
 		default: break;
 	}
     self.photos = photos;
@@ -1123,6 +1152,7 @@
     browser.startOnGrid = startOnGrid;
     browser.enableSwipeToDismiss = NO;
     browser.autoPlayOnAppear = autoPlayOnAppear;
+    browser.allowSavePhoto = allowSavePhoto;
     [browser setCurrentPhotoIndex:0];
     
     // Test custom selection images
