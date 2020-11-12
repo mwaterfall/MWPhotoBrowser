@@ -1274,7 +1274,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 //                                               object:_currentVideoPlayerViewController.moviePlayer];
 //
 //    // Show
-//    [self presentViewController:_currentVideoPlayerViewController animated:YES completion:nil];
+    [self presentViewController:_currentPlayerViewController animated:YES completion:nil];
 
 }
 
