@@ -1228,11 +1228,30 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     _avPlayer = [AVPlayer playerWithPlayerItem:playerItem];
 
-    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:_avPlayer];
-
-    playerLayer.frame = self.view.bounds;//放置播放器的视图
-
-    [self.view.layer addSublayer:playerLayer];
+    //初始化AVPlayerViewController
+    _currentPlayerViewController = [[AVPlayerViewController alloc] init];
+    _currentPlayerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    _currentPlayerViewController.player =_avPlayer;
+    
+    /// 添加监听.以及回调
+    __weak typeof(_avPlayer) weakPlayer = _avPlayer;
+    
+    __weak typeof(self) weakSelf = self;
+    [_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
+        //进度 当前时间/总时间
+        CGFloat progress = CMTimeGetSeconds(weakPlayer.currentItem.currentTime) / CMTimeGetSeconds(weakPlayer.currentItem.duration);
+        NSLog(@"播放当前进度：%f",CMTimeGetSeconds(weakPlayer.currentItem.currentTime));
+        NSLog(@"播放总进度：%f",CMTimeGetSeconds(weakPlayer.currentItem.duration));
+        if (progress == 1.0f) {
+            
+            NSLog(@"播放完毕");
+            
+            [weakPlayer pause];
+        
+            [weakSelf clearCurrentVideo];
+        }
+    }];
 
     //监听status属性，注意监听的是AVPlayerItem
     [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
@@ -1270,6 +1289,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
             //如果视频准备好 就开始播放
             [_avPlayer play];
+            
+            [_currentVideoLoadingIndicator removeFromSuperview];
+            _currentVideoLoadingIndicator = nil;
+            [[self pageDisplayedAtIndex:_currentVideoIndex] playButton].hidden = NO;
+            _currentVideoIndex = NSUIntegerMax;
 
         }else if(playerItem.status==AVPlayerStatusUnknown){
             NSLog(@"playerItem Unknown错误");
@@ -1307,6 +1331,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 //    [_currentVideoPlayerViewController.moviePlayer stop];
     [_currentVideoLoadingIndicator removeFromSuperview];
     _avPlayer = nil;
+    _currentPlayerViewController = nil;
     _currentVideoLoadingIndicator = nil;
     [[self pageDisplayedAtIndex:_currentVideoIndex] playButton].hidden = NO;
     _currentVideoIndex = NSUIntegerMax;
