@@ -1658,19 +1658,23 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 [items addObject:photo.caption];
             }
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
-            
             // Show loading spinner after a couple of seconds
-            double delayInSeconds = 2.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                if (self.activityViewController) {
-                    [self showProgressHUDWithMessage:nil];
-                }
-            });
+//            double delayInSeconds = 2.0;
+//            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                if (self.activityViewController) {
+//                    [self showProgressHUDWithMessage:nil];
+//                }
+//            });
 
             // Show
             typeof(self) __weak weakSelf = self;
             [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+                if ([weakSelf.delegate respondsToSelector:@selector(photoBrowser:activityViewControllerSelect:completed:)]) {
+                    // Let delegate handle things
+                    [weakSelf.delegate photoBrowser:self activityViewControllerSelect:activityType completed:completed];
+                    
+                }
                 weakSelf.activityViewController = nil;
                 [weakSelf hideControlsAfterDelay];
                 [weakSelf hideProgressHUD:YES];
