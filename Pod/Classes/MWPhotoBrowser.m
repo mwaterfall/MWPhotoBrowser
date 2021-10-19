@@ -227,6 +227,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             titleAttributes = @{
                 NSForegroundColorAttributeName: _navigationBarTintColor
             };
+            newBackButton.tintColor = _navigationBarTintColor;
         } else {
             titleAttributes = @{};
         }
