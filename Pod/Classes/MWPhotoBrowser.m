@@ -146,9 +146,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// View
 	self.view.backgroundColor = [UIColor blackColor];
     self.view.clipsToBounds = YES;
-    if (_navigationBarTintColor) {
-        self.navigationController.navigationBar.tintColor = _navigationBarTintColor;
-    }
 
 	// Setup paging scrolling view
 	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
@@ -164,7 +161,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-    _toolbar.tintColor = [UIColor whiteColor];
+    _toolbar.tintColor = _navigationBarTintColor ?: [UIColor whiteColor];
     _toolbar.barTintColor = nil;
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsLandscapePhone];
