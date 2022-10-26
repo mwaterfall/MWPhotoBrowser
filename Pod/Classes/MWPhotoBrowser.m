@@ -442,13 +442,27 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
+    navBar.tintColor = [UIColor blackColor];
+    navBar.barTintColor = [UIColor whiteColor];
     navBar.shadowImage = nil;
     navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
+    navBar.barStyle = UIBarStyleBlack;
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
+    
+    if(@available(iOS 15, *)) {
+        UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
+        [appearance configureWithOpaqueBackground];
+        
+        NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+        [attributes setValue:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+        appearance.titleTextAttributes = attributes;
+        
+        self.navigationController.navigationBar.standardAppearance = appearance;
+    }
+    else{
+        [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor blackColor]}];
+    }
 }
 
 - (void)storePreviousNavBarAppearance {
