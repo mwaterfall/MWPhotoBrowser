@@ -442,13 +442,27 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
+    navBar.tintColor = [UIColor blackColor];
+    navBar.barTintColor = [UIColor whiteColor];
     navBar.shadowImage = nil;
     navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
+    navBar.barStyle = UIBarStyleBlack;
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
+    
+    if(@available(iOS 15, *)) {
+        UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
+        [appearance configureWithOpaqueBackground];
+        
+        NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+        [attributes setValue:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+        appearance.titleTextAttributes = attributes;
+        
+        self.navigationController.navigationBar.standardAppearance = appearance;
+    }
+    else{
+        [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor blackColor]}];
+    }
 }
 
 - (void)storePreviousNavBarAppearance {
@@ -1172,7 +1186,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     NSUInteger index = [self indexForPlayButton:sender];
     if (index != NSUIntegerMax) {
-        if (!_currentVideoPlayerViewController) {
+        if (!_avPlayer) {
             [self playVideoAtIndex:index];
         }
     }
@@ -1224,54 +1238,114 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)_playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index {
 
     // Setup player
-    _currentVideoPlayerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:videoURL];
-    [_currentVideoPlayerViewController.moviePlayer prepareToPlay];
-    _currentVideoPlayerViewController.moviePlayer.shouldAutoplay = YES;
-    _currentVideoPlayerViewController.moviePlayer.scalingMode = MPMovieScalingModeAspectFit;
-    _currentVideoPlayerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:videoURL];
+
+    _avPlayer = [AVPlayer playerWithPlayerItem:playerItem];
+
+    //初始化AVPlayerViewController
+    _currentPlayerViewController = [[AVPlayerViewController alloc] init];
+    _currentPlayerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    _currentPlayerViewController.player =_avPlayer;
+    
+    /// 添加监听.以及回调
+    __weak typeof(_avPlayer) weakPlayer = _avPlayer;
+    
+    __weak typeof(self) weakSelf = self;
+    [_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
+        //进度 当前时间/总时间
+        CGFloat progress = CMTimeGetSeconds(weakPlayer.currentItem.currentTime) / CMTimeGetSeconds(weakPlayer.currentItem.duration);
+        NSLog(@"播放当前进度：%f",CMTimeGetSeconds(weakPlayer.currentItem.currentTime));
+        NSLog(@"播放总进度：%f",CMTimeGetSeconds(weakPlayer.currentItem.duration));
+        if (progress == 1.0f) {
+            
+            NSLog(@"播放完毕");
+            
+            [weakPlayer pause];
+        
+            [weakSelf clearCurrentVideo];
+        }
+    }];
+
+    //监听status属性，注意监听的是AVPlayerItem
+    [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+    
+    
+//    _currentVideoPlayerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:videoURL];
+//    [_currentVideoPlayerViewController.moviePlayer prepareToPlay];
+//    _currentVideoPlayerViewController.moviePlayer.shouldAutoplay = YES;
+//    _currentVideoPlayerViewController.moviePlayer.scalingMode = MPMovieScalingModeAspectFit;
+//    _currentVideoPlayerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
     // Remove the movie player view controller from the "playback did finish" notification observers
     // Observe ourselves so we can get it to use the crossfade transition
-    [[NSNotificationCenter defaultCenter] removeObserver:_currentVideoPlayerViewController
-                                                    name:MPMoviePlayerPlaybackDidFinishNotification
-                                                  object:_currentVideoPlayerViewController.moviePlayer];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(videoFinishedCallback:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification
-                                               object:_currentVideoPlayerViewController.moviePlayer];
-
-    // Show
-    [self presentViewController:_currentVideoPlayerViewController animated:YES completion:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:_currentVideoPlayerViewController
+//                                                    name:MPMoviePlayerPlaybackDidFinishNotification
+//                                                  object:_currentVideoPlayerViewController.moviePlayer];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(videoFinishedCallback:)
+//                                                 name:MPMoviePlayerPlaybackDidFinishNotification
+//                                               object:_currentVideoPlayerViewController.moviePlayer];
+//
+//    // Show
+    [self presentViewController:_currentPlayerViewController animated:YES completion:nil];
 
 }
 
-- (void)videoFinishedCallback:(NSNotification*)notification {
-    
-    // Remove observer
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MPMoviePlayerPlaybackDidFinishNotification
-                                                  object:_currentVideoPlayerViewController.moviePlayer];
-    
-    // Clear up
-    [self clearCurrentVideo];
-    
-    // Dismiss
-    BOOL error = [[[notification userInfo] objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue] == MPMovieFinishReasonPlaybackError;
-    if (error) {
-        // Error occured so dismiss with a delay incase error was immediate and we need to wait to dismiss the VC
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self dismissViewControllerAnimated:YES completion:nil];
-        });
-    } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
+//AVPlayerItem监听的回调函数
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    AVPlayerItem *playerItem = (AVPlayerItem *)object;
+
+    if ([keyPath isEqualToString:@"status"]){
+        if (playerItem.status == AVPlayerItemStatusReadyToPlay){
+            NSLog(@"playerItem is ready");
+
+            //如果视频准备好 就开始播放
+            [_avPlayer play];
+            
+            [_currentVideoLoadingIndicator removeFromSuperview];
+            _currentVideoLoadingIndicator = nil;
+            [[self pageDisplayedAtIndex:_currentVideoIndex] playButton].hidden = NO;
+            _currentVideoIndex = NSUIntegerMax;
+
+        }else if(playerItem.status==AVPlayerStatusUnknown){
+            NSLog(@"playerItem Unknown错误");
+        }else if (playerItem.status==AVPlayerStatusFailed){
+            NSLog(@"playerItem 失败");
+        }
     }
-    
 }
+
+//- (void)videoFinishedCallback:(NSNotification*)notification {
+//
+//    // Remove observer
+//    [[NSNotificationCenter defaultCenter] removeObserver:self
+//                                                    name:MPMoviePlayerPlaybackDidFinishNotification
+//                                                  object:_currentVideoPlayerViewController.moviePlayer];
+//
+//    // Clear up
+//    [self clearCurrentVideo];
+//
+//    // Dismiss
+//    BOOL error = [[[notification userInfo] objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue] == MPMovieFinishReasonPlaybackError;
+//    if (error) {
+//        // Error occured so dismiss with a delay incase error was immediate and we need to wait to dismiss the VC
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [self dismissViewControllerAnimated:YES completion:nil];
+//        });
+//    } else {
+//        [self dismissViewControllerAnimated:YES completion:nil];
+//    }
+//
+//}
 
 - (void)clearCurrentVideo {
-    [_currentVideoPlayerViewController.moviePlayer stop];
+    [_avPlayer pause];
+//    [_currentVideoPlayerViewController.moviePlayer stop];
     [_currentVideoLoadingIndicator removeFromSuperview];
-    _currentVideoPlayerViewController = nil;
+    _avPlayer = nil;
+    _currentPlayerViewController = nil;
     _currentVideoLoadingIndicator = nil;
     [[self pageDisplayedAtIndex:_currentVideoIndex] playButton].hidden = NO;
     _currentVideoIndex = NSUIntegerMax;
@@ -1598,19 +1672,23 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 [items addObject:photo.caption];
             }
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
-            
             // Show loading spinner after a couple of seconds
-            double delayInSeconds = 2.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                if (self.activityViewController) {
-                    [self showProgressHUDWithMessage:nil];
-                }
-            });
+//            double delayInSeconds = 2.0;
+//            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                if (self.activityViewController) {
+//                    [self showProgressHUDWithMessage:nil];
+//                }
+//            });
 
             // Show
             typeof(self) __weak weakSelf = self;
             [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+                if ([weakSelf.delegate respondsToSelector:@selector(photoBrowser:activityViewControllerSelect:completed:)]) {
+                    // Let delegate handle things
+                    [weakSelf.delegate photoBrowser:self activityViewControllerSelect:activityType completed:completed];
+                    
+                }
                 weakSelf.activityViewController = nil;
                 [weakSelf hideControlsAfterDelay];
                 [weakSelf hideProgressHUD:YES];
