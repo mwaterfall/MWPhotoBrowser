@@ -39,6 +39,7 @@ Pod::Spec.new do |s|
 
   s.dependency 'MBProgressHUD', '~> 1.0'
   s.dependency 'DACircularProgress', '~> 2.3'
+  s.dependency 'Masonry', '~> 1.1'
 
   s.dependency 'SDWebImage', '~> 4.3'
 

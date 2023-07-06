@@ -12,6 +12,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
+#import "Masonry.h"
 
 #define PADDING                  10
 
@@ -159,6 +160,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
 
+    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectZero];
+    _pageControl.hidesForSinglePage = YES;
+    _pageControl.currentPageIndicatorTintColor = [UIColor colorWithWhite:0.4 alpha:1];
+    _pageControl.pageIndicatorTintColor = [UIColor colorWithWhite:0.4 alpha:0.6];
+    [_pageControl addTarget:self action:@selector(pageSelected:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:_pageControl];
+
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
     _toolbar.tintColor = _navigationBarTintColor ?: [UIColor whiteColor];
@@ -190,7 +198,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.view addGestureRecognizer:swipeGesture];
     }
 
-	// Super
+    [_pageControl mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.and.right.equalTo(self.view);
+        make.bottom.equalTo(self.view).offset(-100);
+    }];
+
+    // Super
     [super viewDidLoad];
 
 }
@@ -301,7 +314,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:_currentPageIndex];
     [self tilePages];
     _performingLayout = NO;
-
 }
 
 // Release any retained subviews of the main view.
@@ -630,6 +642,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _currentPageIndex = 0;
     }
 
+    _pageControl.numberOfPages = numberOfPhotos;
+    _pageControl.currentPage = _currentPageIndex;
+
     // Update layout
     if ([self isViewLoaded]) {
         while (_pagingScrollView.subviews.count) {
@@ -920,6 +935,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 // Handle page changes
 - (void)didStartViewingPageAtIndex:(NSUInteger)index {
+    _pageControl.currentPage = index;
 
     // Handle 0 photos
     if (![self numberOfPhotos]) {
@@ -1673,6 +1689,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.progressHUD hideAnimated:YES];
     }
     self.navigationController.navigationBar.userInteractionEnabled = YES;
+}
+
+- (void)pageSelected:(UIPageControl *)sender {
+    [self jumpToPageAtIndex:(NSUInteger) sender.currentPage animated:YES];
 }
 
 @end
